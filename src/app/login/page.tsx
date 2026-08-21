@@ -13,7 +13,6 @@ function LoginContent() {
   const { signInWithGoogle, signInWithDemo, isAuthenticated, isLoading: authLoading, isSupabaseConfigured } = useAuth();
 
   const [isSigningIn, setIsSigningIn] = useState(false);
-  const [isDemoSigningIn, setIsDemoSigningIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const redirectUrl = searchParams.get('redirect') || searchParams.get('next') || '/dashboard';
@@ -56,16 +55,6 @@ function LoginContent() {
       setErrorMessage("We couldn't complete your sign-in. Please try again.");
       setIsSigningIn(false);
     }
-  };
-
-  const handleDemoSignIn = async () => {
-    setIsDemoSigningIn(true);
-    await signInWithDemo({
-      id: 'demo_google_ramesh',
-      fullName: 'Ramesh Kumar',
-      email: 'ramesh.kumar@gmail.com',
-      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    }, redirectUrl);
   };
 
   return (
@@ -166,7 +155,7 @@ function LoginContent() {
           <div className="space-y-3 pt-2">
             <button
               onClick={handleGoogleSignIn}
-              disabled={isSigningIn || isDemoSigningIn || authLoading}
+              disabled={isSigningIn || authLoading}
               className="w-full h-14 rounded-2xl bg-white hover:bg-zinc-100 active:scale-[0.99] text-zinc-950 font-bold text-sm sm:text-base flex items-center justify-center gap-3 transition-all duration-200 shadow-xl disabled:opacity-75 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-blue-400"
               aria-label="Continue with Google authentication"
             >
@@ -197,25 +186,6 @@ function LoginContent() {
                     />
                   </svg>
                   <span>Continue with Google</span>
-                </>
-              )}
-            </button>
-
-            {/* 1-Click Instant Demo Login (Judge & Hackathon Instant Mode) */}
-            <button
-              onClick={handleDemoSignIn}
-              disabled={isSigningIn || isDemoSigningIn || authLoading}
-              className="w-full h-12 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800 border border-blue-500/40 text-blue-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-md hover:border-blue-400"
-            >
-              {isDemoSigningIn ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
-                  <span>Logging in as Ramesh Kumar...</span>
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4 text-yellow-300" />
-                  <span>⚡ 1-Click Demo Login (Ramesh Kumar - Kannada)</span>
                 </>
               )}
             </button>
