@@ -5,7 +5,13 @@ import { TransferPreview } from '@/types/banking';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { amount = 0, recipientName = 'Ramesh', recipientAccount = 'XXXXXX1234', language = 'kn' } = body;
+    const { 
+      amount = 0, 
+      recipientName = 'Ramesh', 
+      recipientAccount = 'XXXXXX1234', 
+      language = 'kn',
+      userConfiguredLimit = 5000 
+    } = body;
 
     const numAmount = Number(amount);
     if (isNaN(numAmount) || numAmount <= 0) {
@@ -21,15 +27,23 @@ export async function POST(req: NextRequest) {
     const finalRecipientName = matchedBeneficiary ? matchedBeneficiary.name : recipientName;
     const finalRecipientAccount = matchedBeneficiary ? matchedBeneficiary.maskedAccountNumber : recipientAccount;
 
-    const riskAssessment = evaluateTransferRisk(numAmount, finalRecipientName);
+    const riskAssessment = evaluateTransferRisk(numAmount, finalRecipientName, Number(userConfiguredLimit) || 5000);
 
     const formattedAmount = `₹${numAmount.toLocaleString('en-IN')}`;
     const transferId = `TRF-${Date.now().toString().slice(-6)}`;
 
-    // Generate language-specific natural spoken confirmation prompts
-    const spokenPromptKannada = `ನೀವು ${finalRecipientName} ಅವರಿಗೆ ${numAmount} ರೂಪಾಯಿಗಳನ್ನು ಕಳುಹಿಸುತ್ತಿದ್ದೀರಿ. ದಯವಿಟ್ಟು ದೃಢೀಕರಿಸಿ.`;
-    const spokenPromptHindi = `आप ${finalRecipientName} को ${numAmount} रुपये भेज रहे हैं। कृपया पुष्टि करें।`;
-    const spokenPromptText = `You are sending ${formattedAmount} to ${finalRecipientName}. Please confirm.`;
+    // Generate language-specific natural spoken confirmation prompts reflecting safety limits
+    const spokenPromptKannada = riskAssessment.isLimitExceeded
+      ? `ಈ ಪಾವತಿಯು ನಿಮ್ಮ ${riskAssessment.configuredLimit} ರೂಪಾಯಿ ಸುರಕ್ಷತಾ ಮಿತಿಗಿಂತ ಹೆಚ್ಚಾಗಿದೆ. ಮುಂದುವರಿಯುವ ಮೊದಲು ನೀವು ಇದನ್ನು ಪರಿಶೀಲಿಸಬೇಕು.`
+      : `ನೀವು ${finalRecipientName} ಅವರಿಗೆ ${numAmount} ರೂಪಾಯಿಗಳನ್ನು ಕಳುಹಿಸುತ್ತಿದ್ದೀರಿ. ದಯವಿಟ್ಟು ದೃಢೀಕರಿಸಿ.`;
+
+    const spokenPromptHindi = riskAssessment.isLimitExceeded
+      ? `यह भुगतान आपकी ${riskAssessment.configuredLimit} रुपये की सुरक्षा सीमा से अधिक है। आगे बढ़ने से पहले कृपया इसका सत्यापन करें।`
+      : `आप ${finalRecipientName} को ${numAmount} रुपये भेज रहे हैं। कृपया पुष्टि करें।`;
+
+    const spokenPromptText = riskAssessment.isLimitExceeded
+      ? `This payment is above your ₹${riskAssessment.configuredLimit.toLocaleString('en-IN')} safety limit. I'll ask you to verify the transaction before it can continue.`
+      : `You are sending ${formattedAmount} to ${finalRecipientName}. Please confirm.`;
 
     const preview: TransferPreview = {
       transferId,

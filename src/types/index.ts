@@ -1,11 +1,13 @@
 export type TextSize = 'normal' | 'large' | 'xlarge' | 'xxlarge';
 export type ContrastTheme = 'standard' | 'high-contrast-dark' | 'high-contrast-light' | 'warm-paper';
+export type ThemeMode = 'light' | 'dark' | 'system';
 export type InteractionStyle = 'touch' | 'keyboard' | 'voice' | 'large-controls' | 'assisted';
 export type InfoFormat = 'read' | 'hear' | 'read-hear' | 'simplified';
 export type CognitiveLevel = 'standard' | 'step-by-step' | 'guided-visual' | 'max-simplified';
 export type SupportedLanguage = 'en' | 'kn' | 'hi' | 'ta' | 'te' | 'ml' | 'mr' | 'bn';
 
 export interface AccessibilityProfile {
+  themeMode?: ThemeMode;
   textSize: TextSize;
   contrastTheme: ContrastTheme;
   interactionMode: InteractionStyle;

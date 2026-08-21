@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAccessibility } from '@/context/AccessibilityContext';
@@ -21,8 +21,12 @@ import {
   Check,
   LogIn,
   LogOut,
-  User as UserIcon
+  User as UserIcon,
+  Lock
 } from 'lucide-react';
+
+import { ThemeSelector } from '@/components/ui/ThemeSelector';
+import { TransactionLimitSettingsModal } from '@/components/banking/TransactionLimitSettingsModal';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -30,6 +34,25 @@ export function Navbar() {
   const { user, profile: authProfile, isAuthenticated, signOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isQuickPanelOpen, setIsQuickPanelOpen] = useState(false);
+  const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
+  const [userLimit, setUserLimit] = useState(5000);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('nayan_transaction_limit');
+      if (stored) {
+        const num = Number(stored);
+        if (!isNaN(num) && num > 0) setUserLimit(num);
+      }
+    } catch (e) {}
+  }, [isQuickPanelOpen, isSecurityModalOpen]);
+
+  const handleSaveUserLimit = (newLimit: number) => {
+    setUserLimit(newLimit);
+    try {
+      localStorage.setItem('nayan_transaction_limit', String(newLimit));
+    } catch (e) {}
+  };
 
   // If on login page, render minimal clean top banner
   if (pathname === '/login') {
@@ -41,7 +64,7 @@ export function Navbar() {
   const navLinks = [
     { href: '/', label: t('home', 'Home') },
     { href: '/banking', label: 'Banking (Demo)' },
-    { href: '/dashboard', label: t('services', 'Services') },
+    { href: '/services', label: t('services', 'Services') },
     { href: '/audit', label: t('auditService', 'Audit a Service') },
     { href: '/provider', label: t('providerMode', 'Provider Mode') },
   ];
@@ -97,8 +120,13 @@ export function Navbar() {
             })}
           </nav>
 
-          {/* Accessibility Quick Controls, User Auth & Emergency Action */}
+          {/* Accessibility Quick Controls, Theme Selector, User Auth & Emergency Action */}
           <div className="flex items-center gap-2 sm:gap-3">
+
+            {/* Light / Dark / System Theme Toggle */}
+            <div className="hidden sm:block">
+              <ThemeSelector variant="compact" />
+            </div>
 
             {/* Quick Profile Toggle Modal Button */}
             <button
@@ -194,8 +222,16 @@ export function Navbar() {
       {/* Quick Accessibility Adjustments Drawer */}
       {isQuickPanelOpen && (
         <div className="border-t border-[var(--border-color)] bg-[var(--bg-surface)] p-4 sm:p-6 shadow-lg animate-in slide-in-from-top duration-200">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             
+            {/* Appearance Theme Selector */}
+            <div>
+              <label className="block text-acc-xs font-bold text-[var(--text-primary)] mb-2">
+                Appearance Theme
+              </label>
+              <ThemeSelector variant="full" className="w-full justify-between" />
+            </div>
+
             {/* Text Size Selector */}
             <div>
               <label className="block text-acc-xs font-bold text-[var(--text-primary)] mb-2">
@@ -262,7 +298,7 @@ export function Navbar() {
                 >
                   <span className="flex items-center gap-2">
                     <BrainCircuit className="w-4 h-4" />
-                    {t('focusMode', '1 Step / Screen (Focus Mode)')}
+                    {t('focusMode', '1 Step / Screen')}
                   </span>
                   {profile.cognitiveLevel === 'step-by-step' && <Check className="w-4 h-4" />}
                 </button>
@@ -280,20 +316,30 @@ export function Navbar() {
               </div>
             </div>
 
-            {/* Reset / Preset Actions */}
+            {/* Reset / Security Actions */}
             <div className="flex flex-col justify-end gap-2">
+              <button
+                onClick={() => {
+                  setIsSecurityModalOpen(true);
+                  setIsQuickPanelOpen(false);
+                }}
+                className="w-full py-2 bg-amber-600/10 hover:bg-amber-600/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-acc-xs font-bold text-center rounded-lg transition-colors flex items-center justify-center gap-1.5"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>Security: Warning Limit (₹{userLimit.toLocaleString('en-IN')})</span>
+              </button>
               <Link
                 href="/onboarding"
                 onClick={() => setIsQuickPanelOpen(false)}
                 className="w-full py-2 bg-civic-navy text-white text-acc-xs font-bold text-center rounded-lg hover:bg-slate-800 transition-colors"
               >
-                {t('reconfigureProfile', 'Re-configure Full Profile →')}
+                {t('reconfigureProfile', 'Full Profile Settings →')}
               </Link>
               <button
                 onClick={resetProfile}
                 className="w-full py-1 text-acc-xs text-[var(--text-secondary)] hover:underline"
               >
-                {t('resetDefaults', 'Reset to Standard Defaults')}
+                {t('resetDefaults', 'Reset Defaults')}
               </button>
             </div>
 
@@ -304,6 +350,10 @@ export function Navbar() {
       {/* Mobile Navigation Drawer */}
       {isMobileMenuOpen && (
         <div className="lg:hidden border-t border-[var(--border-color)] bg-[var(--bg-surface)] px-4 py-4 space-y-3">
+          <div className="pb-2 border-b border-[var(--border-color)] flex items-center justify-between">
+            <span className="text-acc-xs font-bold text-[var(--text-primary)]">Theme</span>
+            <ThemeSelector variant="full" />
+          </div>
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -330,6 +380,15 @@ export function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Security Warning Limit Modal */}
+      <TransactionLimitSettingsModal
+        isOpen={isSecurityModalOpen}
+        onClose={() => setIsSecurityModalOpen(false)}
+        currentLimit={userLimit}
+        onSaveLimit={handleSaveUserLimit}
+        language={profile.language}
+      />
     </header>
   );
 }

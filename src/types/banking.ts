@@ -1,3 +1,21 @@
+export type TransactionState = 
+  | 'DRAFT'
+  | 'PENDING_REVIEW'
+  | 'LIMIT_CHECK'
+  | 'LIMIT_WARNING'
+  | 'USER_CONFIRMATION'
+  | 'USER_VERIFICATION'
+  | 'AUTHENTICATION'
+  | 'COMPLETED'
+  | 'CANCELLED';
+
+export interface UserTransactionLimit {
+  warningThreshold: number; // e.g. 5000
+  enabled: boolean;
+  currency: string;
+  lastUpdated: string;
+}
+
 export interface BankAccount {
   accountNumber: string;
   maskedAccountNumber: string;
@@ -7,6 +25,22 @@ export interface BankAccount {
   accountType: 'Savings' | 'Current';
   ifscCode: string;
   averageTransactionAmount: number;
+  userConfiguredLimit?: number;
+}
+
+export interface BankCard {
+  id: string;
+  cardNumber: string;
+  maskedCardNumber: string;
+  cardHolderName: string;
+  expiryDate: string;
+  cvv: string;
+  cardType: 'VISA' | 'Mastercard' | 'RuPay';
+  network: string;
+  bankName: string;
+  isFrozen: boolean;
+  isContactless: boolean;
+  dailyLimit: number;
 }
 
 export interface Beneficiary {
@@ -20,6 +54,8 @@ export interface Beneficiary {
   relation: string;
   frequentlyUsed: boolean;
   avatarColor: string;
+  colorHex?: string;
+  avatarImage?: string;
 }
 
 export interface BankTransaction {
@@ -27,12 +63,51 @@ export interface BankTransaction {
   title: string;
   titleKannada: string;
   titleHindi: string;
-  category: 'upi' | 'utility' | 'salary' | 'recharge' | 'transfer';
+  merchant?: string;
+  category: 'upi' | 'utility' | 'salary' | 'recharge' | 'transfer' | 'entertainment' | 'food' | 'shopping';
   amount: number;
   type: 'debit' | 'credit';
   timestamp: string;
+  dateFormatted?: string;
   status: 'completed' | 'pending' | 'failed';
   recipientOrSource: string;
+  paymentMethod?: string;
+  referenceId?: string;
+  note?: string;
+}
+
+export interface BillItem {
+  id: string;
+  title: string;
+  category: 'electricity' | 'mobile' | 'internet' | 'water' | 'gas';
+  billerName: string;
+  amount: number;
+  dueDate: string;
+  isDueToday?: boolean;
+  consumerNumber: string;
+  status: 'unpaid' | 'paid';
+}
+
+export interface SpendingCategory {
+  id: string;
+  name: string;
+  nameKannada: string;
+  nameHindi: string;
+  amount: number;
+  percentage: number;
+  color: string;
+  trend: string;
+}
+
+export interface SpendingAnalytics {
+  monthName: string;
+  totalIncome: number;
+  totalExpense: number;
+  spentPercentage: number;
+  savedPercentage: number;
+  categories: SpendingCategory[];
+  monthlyHistory: { month: string; amount: number }[];
+  foodExpenseIncreasePct: number;
 }
 
 export interface RiskAssessment {
@@ -40,6 +115,9 @@ export interface RiskAssessment {
   multiplier: number;
   averageAmount: number;
   requestedAmount: number;
+  configuredLimit: number;
+  isLimitExceeded: boolean;
+  exceededBy: number;
   warningTitle: string;
   warningTitleKannada: string;
   warningTitleHindi: string;
@@ -60,6 +138,7 @@ export interface TransferRequest {
   amount: number;
   note?: string;
   language?: string;
+  userConfiguredLimit?: number;
 }
 
 export interface TransferPreview {
@@ -75,15 +154,18 @@ export interface TransferPreview {
   spokenPromptText: string;
   spokenPromptKannada: string;
   spokenPromptHindi: string;
+  note?: string;
 }
 
 export interface VoiceIntent {
-  intent: 'SEND_MONEY' | 'CHECK_BALANCE' | 'RECENT_TRANSACTIONS' | 'GET_HELP' | 'CONFIRM' | 'CANCEL' | 'UNKNOWN';
+  intent: 'SEND_MONEY' | 'CHECK_BALANCE' | 'RECENT_TRANSACTIONS' | 'GET_HELP' | 'CONFIRM' | 'CANCEL' | 'UNKNOWN' | 'EXPLAIN_SPENDING' | 'PAY_BILL';
   recipient?: string;
   amount?: number;
+  category?: string;
   currency?: string;
   confidence: number;
   originalQuery: string;
   translatedQuery: string;
   languageDetected: string;
+  spokenResponse?: string;
 }

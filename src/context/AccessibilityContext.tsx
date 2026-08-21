@@ -1,10 +1,11 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { AccessibilityProfile } from '@/types';
+import { AccessibilityProfile, ThemeMode } from '@/types';
 import { PERSONA_PRESETS } from '@/lib/servicesData';
 
 export const DEFAULT_ACCESSIBILITY_PROFILE: AccessibilityProfile = {
+  themeMode: 'system',
   textSize: 'normal',
   contrastTheme: 'standard',
   interactionMode: 'touch',
@@ -22,6 +23,9 @@ interface AccessibilityContextType {
   profile: AccessibilityProfile;
   setProfile: React.Dispatch<React.SetStateAction<AccessibilityProfile>>;
   updateProfileKey: <K extends keyof AccessibilityProfile>(key: K, value: AccessibilityProfile[K]) => void;
+  themeMode: ThemeMode;
+  resolvedTheme: 'light' | 'dark';
+  setThemeMode: (mode: ThemeMode) => void;
   loadPersona: (personaId: string) => void;
   activePersonaName?: string;
   resetProfile: () => void;
@@ -34,17 +38,47 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
   const [profile, setProfile] = useState<AccessibilityProfile>(DEFAULT_ACCESSIBILITY_PROFILE);
   const [activePersonaName, setActivePersonaName] = useState<string | undefined>(undefined);
   const [isDbSynced, setIsDbSynced] = useState<boolean>(false);
+  const [themeMode, setThemeModeState] = useState<ThemeMode>('system');
+  const [systemIsDark, setSystemIsDark] = useState<boolean>(true);
 
-  // Load from MongoDB / localStorage on client mount
+  // 1. Listen to system dark/light preference
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    setSystemIsDark(mediaQuery.matches);
+
+    const handler = (e: MediaQueryListEvent) => {
+      setSystemIsDark(e.matches);
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handler);
+      return () => mediaQuery.removeEventListener('change', handler);
+    } else {
+      mediaQuery.addListener(handler);
+      return () => mediaQuery.removeListener(handler);
+    }
+  }, []);
+
+  // 2. Load saved theme and profile on client mount
   useEffect(() => {
     async function loadSavedProfile() {
       // 1. Try local storage first for instant render
       try {
+        const savedTheme = localStorage.getItem('nayan_theme_mode') as ThemeMode | null;
+        if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
+          setThemeModeState(savedTheme);
+        }
+
         const saved = localStorage.getItem('nayan_accessibility_profile');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed && typeof parsed === 'object') {
             setProfile(prev => ({ ...DEFAULT_ACCESSIBILITY_PROFILE, ...prev, ...parsed }));
+            if (parsed.themeMode) {
+              setThemeModeState(parsed.themeMode);
+            }
           }
         }
       } catch (e) {
@@ -58,6 +92,9 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
           const data = await res.json();
           if (data.success && data.profile) {
             setProfile(prev => ({ ...DEFAULT_ACCESSIBILITY_PROFILE, ...prev, ...data.profile }));
+            if (data.profile.themeMode) {
+              setThemeModeState(data.profile.themeMode);
+            }
             if (data.activePersonaName) {
               setActivePersonaName(data.activePersonaName);
             }
@@ -72,16 +109,22 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
     loadSavedProfile();
   }, []);
 
-  // Update HTML data attributes and sync to MongoDB / localStorage whenever profile changes
+  // Calculate resolved active theme ('light' or 'dark')
+  const resolvedTheme: 'light' | 'dark' = 
+    themeMode === 'system' ? (systemIsDark ? 'dark' : 'light') : themeMode;
+
+  // 3. Update HTML data attributes and sync to MongoDB / localStorage whenever profile or theme changes
   useEffect(() => {
     if (typeof document !== 'undefined') {
       const root = document.documentElement;
+      root.setAttribute('data-theme', resolvedTheme);
       root.setAttribute('data-text-size', profile?.textSize || 'normal');
       root.setAttribute('data-contrast', profile?.contrastTheme || 'standard');
       root.setAttribute('data-reduced-motion', profile?.motionReduction ? 'true' : 'false');
 
       try {
-        localStorage.setItem('nayan_accessibility_profile', JSON.stringify(profile));
+        localStorage.setItem('nayan_theme_mode', themeMode);
+        localStorage.setItem('nayan_accessibility_profile', JSON.stringify({ ...profile, themeMode }));
       } catch (e) {
         // ignore quota errors
       }
@@ -91,7 +134,7 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
         fetch('/api/profile', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ profile, activePersonaName }),
+          body: JSON.stringify({ profile: { ...profile, themeMode }, activePersonaName }),
         }).then(res => res.json()).then(data => {
           if (data?.source === 'mongodb') {
             setIsDbSynced(true);
@@ -103,10 +146,21 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
 
       return () => clearTimeout(timeout);
     }
-  }, [profile, activePersonaName]);
+  }, [profile, activePersonaName, themeMode, resolvedTheme]);
+
+  const setThemeMode = (mode: ThemeMode) => {
+    setThemeModeState(mode);
+    setProfile(prev => ({ ...prev, themeMode: mode }));
+    try {
+      localStorage.setItem('nayan_theme_mode', mode);
+    } catch (e) {}
+  };
 
   const updateProfileKey = <K extends keyof AccessibilityProfile>(key: K, value: AccessibilityProfile[K]) => {
     setProfile(prev => ({ ...prev, [key]: value }));
+    if (key === 'themeMode' && value) {
+      setThemeModeState(value as ThemeMode);
+    }
     setActivePersonaName(undefined);
   };
 
@@ -114,12 +168,16 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
     const persona = PERSONA_PRESETS.find(p => p.id === personaId);
     if (persona) {
       setProfile(persona.profile);
+      if (persona.profile.themeMode) {
+        setThemeModeState(persona.profile.themeMode);
+      }
       setActivePersonaName(persona.name);
     }
   };
 
   const resetProfile = () => {
     setProfile(DEFAULT_ACCESSIBILITY_PROFILE);
+    setThemeModeState('system');
     setActivePersonaName(undefined);
   };
 
@@ -128,6 +186,9 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
       profile,
       setProfile,
       updateProfileKey,
+      themeMode,
+      resolvedTheme,
+      setThemeMode,
       loadPersona,
       activePersonaName,
       resetProfile,

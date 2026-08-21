@@ -231,6 +231,29 @@ export default function OnboardingPage() {
           </h2>
 
           <div className="space-y-6">
+            {/* Appearance Theme Selector */}
+            <div>
+              <label className="block text-acc-sm font-bold mb-2">Appearance Mode (Theme)</label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: 'light', label: '☀️ Light' },
+                  { id: 'dark', label: '🌙 Dark' },
+                  { id: 'system', label: '💻 System' },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => updateProfileKey('themeMode', item.id as any)}
+                    className={`py-3 rounded-xl border font-bold text-acc-xs ${
+                      (profile.themeMode || 'system') === item.id ? 'bg-civic-blue text-white border-civic-blue shadow-md' : 'border-[var(--border-color)] bg-[var(--bg-surface)]'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Text Scale */}
             <div>
               <label className="block text-acc-sm font-bold mb-2">{t('textSize', 'Text Scale')}</label>

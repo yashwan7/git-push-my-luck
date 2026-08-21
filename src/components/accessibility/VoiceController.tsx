@@ -40,7 +40,7 @@ export function VoiceController() {
               ) : isSpeaking ? (
                 <span className="flex items-center gap-1.5 text-civic-green font-bold">
                   <Volume2 className="w-3.5 h-3.5 animate-bounce" />
-                  Speaking with Sarvam AI...
+                  Speaking...
                 </span>
               ) : (
                 <span className="text-slate-400 font-semibold">{t('voice', 'Voice Input')}</span>

@@ -1,147 +1,194 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAccessibility } from '@/context/AccessibilityContext';
 import { useVoice } from '@/context/VoiceContext';
-import { getTranslation, LANGUAGE_NAMES } from '@/lib/multilingualEngine';
+import { useAuth } from '@/context/AuthContext';
+import { getTranslation } from '@/lib/multilingualEngine';
 import { SteadyTapShield } from '@/components/banking/SteadyTapShield';
+import { TransactionSecurityCheck } from '@/components/banking/TransactionSecurityCheck';
+import { TransactionLimitSettingsModal } from '@/components/banking/TransactionLimitSettingsModal';
+import { TransactionDetailModal } from '@/components/banking/TransactionDetailModal';
+import { BillPaymentModal } from '@/components/banking/BillPaymentModal';
+import { ReceiveMoneyModal } from '@/components/banking/ReceiveMoneyModal';
+import { ManageCardsModal } from '@/components/banking/ManageCardsModal';
+import { NayanFinancialAssistant } from '@/components/banking/NayanFinancialAssistant';
 import { 
   BankAccount, 
+  BankCard,
   Beneficiary, 
   BankTransaction, 
+  BillItem,
   TransferPreview, 
-  RiskAssessment,
-  VoiceIntent 
+  TransactionState
 } from '@/types/banking';
 import { 
   MOCK_BANK_ACCOUNT, 
+  MOCK_SECONDARY_ACCOUNT,
+  MOCK_PRIMARY_CARD,
   MOCK_BENEFICIARIES, 
   MOCK_TRANSACTIONS, 
-  evaluateTransferRisk 
 } from '@/lib/bankingMockData';
 import { 
-  Send, 
-  CreditCard, 
-  Clock, 
-  HelpCircle, 
-  Mic, 
-  MicOff, 
-  Volume2, 
-  VolumeX, 
-  ShieldAlert, 
-  CheckCircle2, 
-  ArrowLeft, 
-  Sparkles, 
-  ArrowRight, 
-  User, 
-  Info, 
-  Layers, 
-  RefreshCw,
-  Play,
-  RotateCcw
+  Home,
+  Clock,
+  Users,
+  Wallet,
+  Settings,
+  HelpCircle,
+  LogOut,
+  Bell,
+  Search,
+  ChevronRight,
+  MoreVertical,
+  ArrowLeft,
+  CheckCircle2,
+  ArrowRight,
+  Sparkles,
+  Send,
+  QrCode,
+  Receipt,
+  CreditCard,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 export default function AdaptiveBankingPage() {
-  const { profile, updateProfileKey } = useAccessibility();
-  const { speak, stopSpeaking, isSpeaking } = useVoice();
+  const { profile } = useAccessibility();
+  const { speak } = useVoice();
+  const { user, profile: authProfile } = useAuth();
 
   // State Machine for Banking Demo Flow
   const [currentView, setCurrentView] = useState<'dashboard' | 'send_money' | 'review' | 'confirm' | 'success' | 'transactions'>('dashboard');
+  const [transactionState, setTransactionState] = useState<TransactionState>('DRAFT');
   
-  // Banking data
+  // Banking data state
   const [account, setAccount] = useState<BankAccount>(MOCK_BANK_ACCOUNT);
+  const [primaryCard, setPrimaryCard] = useState<BankCard>(MOCK_PRIMARY_CARD);
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>(MOCK_BENEFICIARIES);
   const [transactions, setTransactions] = useState<BankTransaction[]>(MOCK_TRANSACTIONS);
+  const [isBalanceHidden, setIsBalanceHidden] = useState<boolean>(false);
+  const [activeSidebarTab, setActiveSidebarTab] = useState<'home' | 'history' | 'users' | 'wallet' | 'settings'>('home');
 
-  // Form / Transaction state
+  // Security Configuration
+  const [userWarningLimit, setUserWarningLimit] = useState<number>(5000);
+  const [isLimitModalOpen, setIsLimitModalOpen] = useState<boolean>(false);
+
+  // Modals state
+  const [selectedTxForDetail, setSelectedTxForDetail] = useState<BankTransaction | null>(null);
+  const [isBillModalOpen, setIsBillModalOpen] = useState<boolean>(false);
+  const [isReceiveModalOpen, setIsReceiveModalOpen] = useState<boolean>(false);
+  const [isCardModalOpen, setIsCardModalOpen] = useState<boolean>(false);
+
+  // Transfer Form state
   const [selectedRecipient, setSelectedRecipient] = useState<Beneficiary>(MOCK_BENEFICIARIES[0]);
   const [transferAmount, setTransferAmount] = useState<number>(5000);
+  const [transferNote, setTransferNote] = useState<string>('Lunch split');
   const [transferPreview, setTransferPreview] = useState<TransferPreview | null>(null);
   const [transferReceipt, setTransferReceipt] = useState<any>(null);
 
-  // Voice Interaction state
-  const [isVoiceListening, setIsVoiceListening] = useState(false);
-  const [spokenTranscript, setSpokenTranscript] = useState('');
-  const [interpretedIntent, setInterpretedIntent] = useState<VoiceIntent | null>(null);
-  const [isProcessingVoice, setIsProcessingVoice] = useState(false);
-
-  // Motor assistance active indicator
   const isMotorAssist = profile.buttonTargetSize === 'large' || profile.buttonTargetSize === 'extra-large' || profile.interactionMode === 'large-controls';
   const lang = profile.language;
 
-  // Translation helper
-  const t = (key: string, fallback?: string) => getTranslation(lang, key, fallback);
+  // Extract User Name
+  const userDisplayName = authProfile?.fullName || user?.user_metadata?.full_name || 'Alif Reza';
+  const userInitial = userDisplayName.charAt(0).toUpperCase();
 
-  // 1. Initial Account Load
   useEffect(() => {
-    fetch('/api/bank/account')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.account) setAccount(data.account);
-      })
-      .catch(() => {});
+    try {
+      const stored = localStorage.getItem('nayan_transaction_limit');
+      if (stored) {
+        const parsed = Number(stored);
+        if (!isNaN(parsed) && parsed > 0) setUserWarningLimit(parsed);
+      }
+    } catch (e) {}
   }, []);
 
-  // 2. Automated Spoken Guidance on view transition
+  const handleSaveLimit = (newLimit: number) => {
+    setUserWarningLimit(newLimit);
+    try {
+      localStorage.setItem('nayan_transaction_limit', String(newLimit));
+    } catch (e) {}
+    setTransferPreview(null);
+  };
+
   const speakCurrentStep = (text: string) => {
     speak(text);
   };
 
-  // 3. Trigger 90-Second Golden Demo Scenario
-  const launchGoldenDemo = () => {
-    updateProfileKey('language', 'kn');
-    updateProfileKey('interactionMode', 'voice');
-    updateProfileKey('textSize', 'large');
-    updateProfileKey('buttonTargetSize', 'extra-large');
-    updateProfileKey('motionReduction', true);
-    
+  const handleQuickSendTo = (b: Beneficiary, defaultAmt: number = 2000) => {
+    setSelectedRecipient(b);
+    setTransferAmount(defaultAmt);
     setCurrentView('send_money');
-    setSelectedRecipient(MOCK_BENEFICIARIES[0]);
-    setTransferAmount(5000);
-
-    // Simulate Golden Demo Voice Input in Kannada
-    setTimeout(() => {
-      handleSimulateKannadaSpeech();
-    }, 600);
+    speakCurrentStep(`Send money to ${b.name}.`);
   };
 
-  // 4. Simulate / Execute Kannada Speech Command
-  const handleSimulateKannadaSpeech = async (customSpeech?: string) => {
-    const text = customSpeech || 'ರಮೇಶ್ಗೆ 5000 ರೂಪಾಯಿ ಕಳುಹಿಸಬೇಕು';
-    setIsVoiceListening(true);
-    setSpokenTranscript('ಆಲಿಸಲಾಗುತ್ತಿದೆ... (Listening...)');
-
-    setTimeout(async () => {
-      setIsVoiceListening(false);
-      setSpokenTranscript(text);
-      setIsProcessingVoice(true);
-
-      try {
-        const res = await fetch('/api/bank/intent', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ speechText: text, language: lang }),
-        });
-        const data = await res.json();
-        if (data.voiceIntent) {
-          setInterpretedIntent(data.voiceIntent);
-          if (data.voiceIntent.amount) setTransferAmount(data.voiceIntent.amount);
-          if (data.voiceIntent.recipient) {
-            const found = MOCK_BENEFICIARIES.find(b => b.name.toLowerCase() === data.voiceIntent.recipient?.toLowerCase());
-            if (found) setSelectedRecipient(found);
-          }
-        }
-      } catch (e) {
-        console.error('Intent error:', e);
-      } finally {
-        setIsProcessingVoice(false);
-      }
-    }, 1200);
+  const handleAmountChange = (amt: number) => {
+    setTransferAmount(amt);
+    setTransferPreview(null);
+    setTransactionState('DRAFT');
   };
 
-  // 5. Preview Transfer & Evaluate Adaptive Friction
+  const handleRecipientChange = (rec: Beneficiary) => {
+    setSelectedRecipient(rec);
+    setTransferPreview(null);
+    setTransactionState('DRAFT');
+  };
+
+  // Execute Demo Bill Payment
+  const handlePayBill = (bill: BillItem) => {
+    const newTx: BankTransaction = {
+      id: `tx-bill-${Date.now()}`,
+      title: `${bill.billerName}`,
+      titleKannada: `${bill.billerName} ಬಿಲ್`,
+      titleHindi: `${bill.billerName} बिल`,
+      merchant: bill.billerName,
+      category: 'utility',
+      amount: bill.amount,
+      type: 'debit',
+      timestamp: 'Today',
+      dateFormatted: 'Today',
+      status: 'completed',
+      recipientOrSource: bill.billerName,
+      paymentMethod: 'BBPS Instant Settlement',
+      referenceId: `BBPS-${Date.now().toString().slice(-6)}`,
+      note: `${bill.title} payment`,
+    };
+
+    setTransactions(prev => [newTx, ...prev]);
+    setAccount(prev => ({ ...prev, availableBalance: prev.availableBalance - bill.amount }));
+    speakCurrentStep(`Payment of ₹${bill.amount} to ${bill.billerName} completed.`);
+  };
+
+  // Execute Demo Simulated Incoming Transfer
+  const handleSimulateReceive = (amount: number, sender: string) => {
+    const newTx: BankTransaction = {
+      id: `tx-rec-${Date.now()}`,
+      title: `Received from ${sender}`,
+      titleKannada: `${sender} ಅವರಿಂದ ಸ್ವೀಕರಿಸಲಾಗಿದೆ`,
+      titleHindi: `${sender} से प्राप्त हुआ`,
+      merchant: sender,
+      category: 'transfer',
+      amount,
+      type: 'credit',
+      timestamp: 'Today',
+      dateFormatted: 'Today',
+      status: 'completed',
+      recipientOrSource: sender,
+      paymentMethod: 'UPI Instant Credit',
+      referenceId: `UPI-REC-${Date.now().toString().slice(-6)}`,
+      note: 'UPI Payment Settlement',
+    };
+
+    setTransactions(prev => [newTx, ...prev]);
+    setAccount(prev => ({ ...prev, availableBalance: prev.availableBalance + amount }));
+    speakCurrentStep(`₹${amount} credited from ${sender}.`);
+  };
+
+  // Preview Transfer & Evaluate Adaptive Friction
   const handleInitiateReview = async () => {
+    setTransactionState('PENDING_REVIEW');
     try {
       const res = await fetch('/api/bank/transfer/preview', {
         method: 'POST',
@@ -151,6 +198,8 @@ export default function AdaptiveBankingPage() {
           recipientName: selectedRecipient.name,
           recipientAccount: selectedRecipient.maskedAccountNumber,
           language: lang,
+          userConfiguredLimit: userWarningLimit,
+          note: transferNote,
         }),
       });
 
@@ -159,7 +208,12 @@ export default function AdaptiveBankingPage() {
         setTransferPreview(data.preview);
         setCurrentView('review');
 
-        // Speak Adaptive Warning
+        if (data.preview.riskAssessment.isLimitExceeded) {
+          setTransactionState('LIMIT_WARNING');
+        } else {
+          setTransactionState('USER_CONFIRMATION');
+        }
+
         const spokenText = lang === 'kn' 
           ? data.preview.spokenPromptKannada 
           : lang === 'hi' 
@@ -173,8 +227,9 @@ export default function AdaptiveBankingPage() {
     }
   };
 
-  // 6. Execute Final Transfer Confirmation
+  // Execute Final Transfer Confirmation
   const handleExecuteTransfer = async () => {
+    setTransactionState('AUTHENTICATION');
     try {
       const res = await fetch('/api/bank/transfer/confirm', {
         method: 'POST',
@@ -190,13 +245,30 @@ export default function AdaptiveBankingPage() {
       if (data.success) {
         setTransferReceipt(data);
         setAccount(prev => ({ ...prev, availableBalance: data.remainingBalance }));
-        setCurrentView('success');
 
-        const successSpoken = lang === 'kn'
-          ? `ರಮೇಶ್ ಅವರಿಗೆ ₹${transferAmount} ಯಶಸ್ವಿಯಾಗಿ ಕಳುಹಿಸಲಾಗಿದೆ.`
-          : lang === 'hi'
-          ? `रमेश को ₹${transferAmount} सफलतापूर्वक भेज दिया गया है।`
-          : `Payment of ₹${transferAmount.toLocaleString('en-IN')} completed successfully to Ramesh.`;
+        const newTx: BankTransaction = {
+          id: data.transactionId || `tx-${Date.now()}`,
+          title: `Transfer to ${selectedRecipient.name}`,
+          titleKannada: `${selectedRecipient.nameKannada} ಅವರಿಗೆ ವರ್ಗಾವಣೆ`,
+          titleHindi: `${selectedRecipient.nameHindi} को स्थानांतरण`,
+          merchant: selectedRecipient.name,
+          category: 'transfer',
+          amount: transferAmount,
+          type: 'debit',
+          timestamp: 'Today',
+          dateFormatted: 'Today',
+          status: 'completed',
+          recipientOrSource: selectedRecipient.name,
+          paymentMethod: 'NAYAN Direct Bank Transfer',
+          referenceId: data.transactionId,
+          note: transferNote,
+        };
+        setTransactions(prev => [newTx, ...prev]);
+
+        setCurrentView('success');
+        setTransactionState('COMPLETED');
+
+        const successSpoken = `Payment of ₹${transferAmount.toLocaleString('en-IN')} completed successfully to ${selectedRecipient.name}.`;
         speakCurrentStep(successSpoken);
       }
     } catch (e) {
@@ -205,616 +277,860 @@ export default function AdaptiveBankingPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto py-2 text-white font-sans">
+    <div className="min-h-screen bg-[#ECECEC] dark:bg-[#121316] text-[#1E2024] dark:text-[#EAECEF] p-2 sm:p-4 md:p-6 font-sans transition-colors">
       
-      {/* ─────────────────────────────────────────────────────────────
-          TOP BAR: GOLDEN DEMO PRESET & PERSPECTIVE SWITCHER
-         ───────────────────────────────────────────────────────────── */}
-      <div className="p-3.5 rounded-2xl bg-zinc-950/90 border border-blue-500/30 flex flex-wrap items-center justify-between gap-3 shadow-xl backdrop-blur-md">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold">
-            <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-extrabold text-sm text-white">NAYAN Adaptive Banking Experience</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                Hackathon Golden Demo
-              </span>
-            </div>
-            <p className="text-[11px] text-zinc-400">
-              {lang === 'kn' ? 'ಒಂದೇ ಸೇವೆ • ಬಳಕೆದಾರರಿಗೆ ತಕ್ಕಂತೆ ವಿಭಿನ್ನ ಅನುಭವ' : 'Same banking service • Different adaptive experience'}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* Quick 90s Golden Demo Preset Button */}
-          <button
-            onClick={launchGoldenDemo}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-lg flex items-center gap-1.5 transition-all"
-          >
-            <Play className="w-3.5 h-3.5 fill-current" />
-            <span>90s Golden Demo (Kannada + Voice)</span>
-          </button>
-        </div>
-      </div>
-
-      {/* ─────────────────────────────────────────────────────────────
-          STEADYTAP MOTOR ASSISTANCE INDICATOR (If active)
-         ───────────────────────────────────────────────────────────── */}
+      {/* SteadyTap Motor Assistance Shield */}
       <SteadyTapShield enabled={isMotorAssist} stabilizationLevel={100} language={lang} />
 
+      {/* Modals */}
+      <TransactionLimitSettingsModal
+        isOpen={isLimitModalOpen}
+        onClose={() => setIsLimitModalOpen(false)}
+        currentLimit={userWarningLimit}
+        onSaveLimit={handleSaveLimit}
+        language={lang}
+      />
+
+      <TransactionDetailModal
+        transaction={selectedTxForDetail}
+        isOpen={Boolean(selectedTxForDetail)}
+        onClose={() => setSelectedTxForDetail(null)}
+        onAskNayan={(query) => {
+          speakCurrentStep(`Explaining transaction: ${query}`);
+        }}
+        language={lang}
+      />
+
+      <BillPaymentModal
+        isOpen={isBillModalOpen}
+        onClose={() => setIsBillModalOpen(false)}
+        onPayBill={handlePayBill}
+        language={lang}
+      />
+
+      <ReceiveMoneyModal
+        isOpen={isReceiveModalOpen}
+        onClose={() => setIsReceiveModalOpen(false)}
+        onSimulateReceive={handleSimulateReceive}
+        userUpiId={`${userDisplayName.toLowerCase().replace(/\s+/g, '')}@nayan`}
+        userName={userDisplayName}
+      />
+
+      <ManageCardsModal
+        card={primaryCard}
+        isOpen={isCardModalOpen}
+        onClose={() => setIsCardModalOpen(false)}
+        onUpdateCard={(updated) => setPrimaryCard(prev => ({ ...prev, ...updated }))}
+      />
+
       {/* ─────────────────────────────────────────────────────────────
-          SUB-VIEW 1: ADAPTIVE BANKING DASHBOARD
+          MAIN FENCO DASHBOARD CANVAS CONTAINER
          ───────────────────────────────────────────────────────────── */}
-      {currentView === 'dashboard' && (
-        <div className="space-y-6 animate-in fade-in duration-200">
+      <div className="max-w-[1340px] mx-auto bg-[#ECECEC] dark:bg-[#18191D] rounded-[36px] p-3 sm:p-5 md:p-7 flex gap-5 sm:gap-7">
+        
+        {/* ═══════════════════════════════════════════════════════════
+            LEFT DARK SIDEBAR PILL (EXACT AS IN REFERENCE IMAGE)
+           ═══════════════════════════════════════════════════════════ */}
+        <aside className="hidden lg:flex flex-col justify-between w-16 py-5 rounded-[28px] bg-[#232428] text-white shrink-0 items-center shadow-md">
           
-          {/* Account Balance Card */}
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-zinc-900 via-zinc-950 to-black border-2 border-blue-500/30 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
-            
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <span className="text-xs font-bold text-blue-400 uppercase tracking-widest block mb-1">
-                  {lang === 'kn' ? 'ಶುಭ ಮುಂಜಾನೆ, ರಮೇಶ್' : lang === 'hi' ? 'शुभ प्रभात, रमेश' : 'GOOD MORNING, RAMESH'}
-                </span>
-                <p className="text-sm text-zinc-400 font-medium">
-                  {lang === 'kn' ? 'ಉಳಿತಾಯ ಖಾತೆ' : 'Savings Account'} &bull; {account.maskedAccountNumber}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => speakCurrentStep(`Your available account balance is ${account.availableBalance} rupees.`)}
-                  className="p-2.5 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white"
-                  title="Read balance aloud"
-                >
-                  <Volume2 className="w-4 h-4 text-blue-400" />
-                </button>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-6 border-t border-zinc-800/80">
-              <span className="text-xs font-semibold text-zinc-400 block mb-1">
-                {lang === 'kn' ? 'ಲಭ್ಯವಿರುವ ಬ್ಯಾಲೆನ್ಸ್' : lang === 'hi' ? 'उपलब्ध शेष राशि' : 'Available Balance'}
-              </span>
-              <div className="text-4xl sm:text-5xl font-black text-white tracking-tight">
-                ₹{account.availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-              </div>
-            </div>
-          </div>
-
-          {/* PRIMARY 4 ADAPTIVE ACTIONS */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            
-            {/* SEND MONEY */}
+          {/* Top Icons */}
+          <div className="flex flex-col items-center gap-4">
             <button
               onClick={() => {
-                setCurrentView('send_money');
-                speakCurrentStep(lang === 'kn' ? 'ಹಣ ಕಳುಹಿಸುವ ಪರದೆ. ನೀವು ಯಾರಿಗೆ ಕಳುಹಿಸಬೇಕು?' : 'Send money screen. Who would you like to send to?');
+                setActiveSidebarTab('home');
+                setCurrentView('dashboard');
               }}
-              className={`p-6 rounded-3xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold shadow-xl transition-all flex flex-col justify-between ${
-                isMotorAssist ? 'min-h-[140px] text-xl ring-4 ring-blue-400/30' : 'min-h-[120px] text-lg'
+              className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
+                activeSidebarTab === 'home' 
+                  ? 'bg-white text-[#232428] shadow-md scale-105' 
+                  : 'text-slate-400 hover:text-white'
               }`}
+              title="Dashboard Home"
             >
-              <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
-                <Send className="w-6 h-6" />
-              </div>
-              <div className="text-left mt-4">
-                <span>{lang === 'kn' ? 'ಹಣ ಕಳುಹಿಸಿ' : lang === 'hi' ? 'पैसे भेजें' : 'SEND MONEY'}</span>
-                <p className="text-xs text-blue-100 font-medium mt-0.5">
-                  {lang === 'kn' ? 'ಧ್ವನಿ ಅಥವಾ ಸ್ಪರ್ಶದ ಮೂಲಕ' : 'Via Voice or Tap'}
-                </p>
-              </div>
+              <Home className="w-5 h-5" />
             </button>
 
-            {/* CHECK BALANCE */}
             <button
-              onClick={() => speakCurrentStep(`Your available balance is ${account.availableBalance} rupees.`)}
-              className={`p-6 rounded-3xl bg-zinc-900 hover:bg-zinc-800 border-2 border-zinc-800 text-white font-extrabold shadow-md transition-all flex flex-col justify-between ${
-                isMotorAssist ? 'min-h-[140px] text-xl' : 'min-h-[120px] text-lg'
+              onClick={() => {
+                setActiveSidebarTab('history');
+                setCurrentView('transactions');
+              }}
+              className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
+                activeSidebarTab === 'history' 
+                  ? 'bg-white text-[#232428] shadow-md' 
+                  : 'text-slate-400 hover:text-white'
               }`}
+              title="Transaction History"
             >
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                <CreditCard className="w-6 h-6" />
-              </div>
-              <div className="text-left mt-4">
-                <span>{lang === 'kn' ? 'ಬ್ಯಾಲೆನ್ಸ್ ಪರಿಶೀಲಿಸಿ' : lang === 'hi' ? 'बैलेंस चेक करें' : 'CHECK BALANCE'}</span>
-                <p className="text-xs text-zinc-400 font-medium mt-0.5">
-                  {lang === 'kn' ? 'ಧ್ವನಿ ಓದುವಿಕೆ' : 'Audio read-aloud'}
-                </p>
-              </div>
+              <Clock className="w-5 h-5" />
             </button>
 
-            {/* RECENT PAYMENTS */}
             <button
-              onClick={() => setCurrentView('transactions')}
-              className={`p-6 rounded-3xl bg-zinc-900 hover:bg-zinc-800 border-2 border-zinc-800 text-white font-extrabold shadow-md transition-all flex flex-col justify-between ${
-                isMotorAssist ? 'min-h-[140px] text-xl' : 'min-h-[120px] text-lg'
+              onClick={() => {
+                setActiveSidebarTab('users');
+                setCurrentView('send_money');
+              }}
+              className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
+                activeSidebarTab === 'users' 
+                  ? 'bg-white text-[#232428] shadow-md' 
+                  : 'text-slate-400 hover:text-white'
               }`}
+              title="Beneficiaries"
             >
-              <div className="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
-                <Clock className="w-6 h-6" />
-              </div>
-              <div className="text-left mt-4">
-                <span>{lang === 'kn' ? 'ಇತ್ತೀಚಿನ ವಹಿವಾಟು' : lang === 'hi' ? 'हाल के भुगतान' : 'RECENT PAYMENTS'}</span>
-                <p className="text-xs text-zinc-400 font-medium mt-0.5">
-                  {lang === 'kn' ? 'ಕಳೆದ 4 ಖರ್ಚುಗಳು' : 'Last 4 transactions'}
-                </p>
-              </div>
+              <Users className="w-5 h-5" />
             </button>
 
-            {/* GET HELP */}
             <button
-              onClick={() => speakCurrentStep('NAYAN Voice Assistant is here. You can speak in Kannada, Hindi, or English.')}
-              className={`p-6 rounded-3xl bg-zinc-900 hover:bg-zinc-800 border-2 border-zinc-800 text-white font-extrabold shadow-md transition-all flex flex-col justify-between ${
-                isMotorAssist ? 'min-h-[140px] text-xl' : 'min-h-[120px] text-lg'
+              onClick={() => {
+                setActiveSidebarTab('wallet');
+                setIsCardModalOpen(true);
+              }}
+              className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
+                activeSidebarTab === 'wallet' 
+                  ? 'bg-white text-[#232428] shadow-md' 
+                  : 'text-slate-400 hover:text-white'
               }`}
+              title="Card Wallet"
             >
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
-                <HelpCircle className="w-6 h-6" />
-              </div>
-              <div className="text-left mt-4">
-                <span>{lang === 'kn' ? 'ಸಹಾಯ ಪಡೆಯಿರಿ' : lang === 'hi' ? 'सहायता लें' : 'GET HELP'}</span>
-                <p className="text-xs text-zinc-400 font-medium mt-0.5">
-                  {lang === 'kn' ? 'ನೇರ ಮಾರ್ಗದರ್ಶನ' : 'Direct Assistance'}
-                </p>
-              </div>
+              <Wallet className="w-5 h-5" />
             </button>
 
+            <button
+              onClick={() => {
+                setActiveSidebarTab('settings');
+                setIsLimitModalOpen(true);
+              }}
+              className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
+                activeSidebarTab === 'settings' 
+                  ? 'bg-white text-[#232428] shadow-md' 
+                  : 'text-slate-400 hover:text-white'
+              }`}
+              title="Security & Warning Limits"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
           </div>
 
-          {/* RECENT TRANSACTIONS SNIPPET */}
-          <div className="p-6 rounded-3xl bg-zinc-950 border border-zinc-800 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-extrabold text-base text-zinc-200">
-                {lang === 'kn' ? 'ಇತ್ತೀಚಿನ ಪಾವತಿಗಳು' : 'Recent Transactions'}
-              </h3>
-              <button
-                onClick={() => setCurrentView('transactions')}
-                className="text-xs text-blue-400 hover:text-blue-300 font-bold"
-              >
-                {lang === 'kn' ? 'ಎಲ್ಲವನ್ನೂ ವೀಕ್ಷಿಸಿ' : 'View All'} &rarr;
-              </button>
-            </div>
+          {/* Bottom Icons */}
+          <div className="flex flex-col items-center gap-4">
+            <Link
+              href="/emergency"
+              className="w-10 h-10 rounded-2xl text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+              title="Help & Emergency"
+            >
+              <HelpCircle className="w-5 h-5" />
+            </Link>
 
-            <div className="divide-y divide-zinc-800/80">
-              {transactions.slice(0, 3).map((tx) => (
-                <div key={tx.id} className="py-3.5 flex items-center justify-between">
-                  <div>
-                    <p className="font-bold text-sm text-white">
-                      {lang === 'kn' ? tx.titleKannada : tx.title}
-                    </p>
-                    <p className="text-xs text-zinc-400">{tx.timestamp} &bull; {tx.recipientOrSource}</p>
-                  </div>
-                  <div className={`font-extrabold text-sm ${tx.type === 'credit' ? 'text-emerald-400' : 'text-zinc-200'}`}>
-                    {tx.type === 'credit' ? '+' : '-'}₹{tx.amount.toLocaleString('en-IN')}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <Link
+              href="/"
+              className="w-10 h-10 rounded-2xl text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+              title="Exit to Portal"
+            >
+              <LogOut className="w-5 h-5" />
+            </Link>
           </div>
 
-        </div>
-      )}
+        </aside>
 
-      {/* ─────────────────────────────────────────────────────────────
-          SUB-VIEW 2: SEND MONEY & VOICE INPUT (THE KANNADA HERO DEMO)
-         ───────────────────────────────────────────────────────────── */}
-      {currentView === 'send_money' && (
-        <div className="space-y-6 animate-in fade-in duration-200">
+        {/* ═══════════════════════════════════════════════════════════
+            MAIN DASHBOARD CONTENT AREA
+           ═══════════════════════════════════════════════════════════ */}
+        <div className="flex-1 space-y-6">
           
-          <button
-            onClick={() => setCurrentView('dashboard')}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-bold text-xs"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>{lang === 'kn' ? 'ಹಿಂದಕ್ಕೆ ಹೋಗಿ' : 'Back to Dashboard'}</span>
-          </button>
+          {/* TOP APP HEADER BAR */}
+          <div className="flex items-center justify-end pb-1">
 
-          {/* VOICE INPUT HERO BANNER */}
-          <div className="p-8 rounded-3xl bg-gradient-to-b from-blue-950/60 to-zinc-950 border-2 border-blue-500/50 shadow-2xl space-y-6 text-center">
-            <span className="text-xs font-bold text-blue-400 uppercase tracking-widest block">
-              {lang === 'kn' ? 'ಧ್ವನಿ ಬ್ಯಾಂಕಿಂಗ್ (ವಾಯ್ಸ್ ಇನ್ಪುಟ್)' : 'Multilingual Voice Banking'}
-            </span>
-
-            <div className="relative inline-flex items-center justify-center">
-              <button
-                onClick={() => handleSimulateKannadaSpeech()}
-                className={`w-24 h-24 rounded-full flex flex-col items-center justify-center shadow-2xl transition-all duration-300 ${
-                  isVoiceListening
-                    ? 'bg-rose-600 animate-pulse ring-8 ring-rose-500/40 text-white'
-                    : isProcessingVoice
-                    ? 'bg-amber-600 text-white animate-spin'
-                    : 'bg-blue-600 hover:bg-blue-500 text-white hover:scale-105 shadow-blue-500/50'
-                }`}
-                aria-label="Voice Input"
+            {/* Right: Notification + Search + Avatar */}
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              {/* Notification Bell */}
+              <button 
+                onClick={() => speakCurrentStep(`You have 1 pending bill from BESCOM of ₹1,240.`)}
+                className="w-10 h-10 rounded-full bg-white dark:bg-[#232428] border border-slate-300 dark:border-white/10 flex items-center justify-center text-[#1E2024] dark:text-white shadow-sm hover:scale-105 transition-transform"
+                aria-label="Notifications"
               >
-                <Mic className="w-10 h-10" />
+                <Bell className="w-4 h-4" />
               </button>
-            </div>
 
-            <div className="space-y-2">
-              <h2 className="text-2xl font-black text-white">
-                {isVoiceListening 
-                  ? (lang === 'kn' ? 'ಆಲಿಸಲಾಗುತ್ತಿದೆ... (LISTENING...)' : 'LISTENING...')
-                  : isProcessingVoice 
-                  ? (lang === 'kn' ? 'ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲಾಗುತ್ತಿದೆ...' : 'Processing Intent with Gemini...')
-                  : (lang === 'kn' ? 'ಧ್ವನಿ ಮೂಲಕ ಕಳುಹಿಸಿ' : 'Speak your command')}
-              </h2>
-              <p className="text-sm text-zinc-300 max-w-md mx-auto">
-                {lang === 'kn' 
-                  ? 'ಉದಾಹರಣೆಗೆ ಹೀಗೆ ಹೇಳಿ: "ರಮೇಶ್ಗೆ 5000 ರೂಪಾಯಿ ಕಳುಹಿಸಬೇಕು"'
-                  : 'Example: "Send five thousand rupees to Ramesh"'}
-              </p>
-            </div>
-
-            {/* Quick Kannada Voice Trigger Shortcut Button */}
-            <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-              <button
-                onClick={() => handleSimulateKannadaSpeech('ರಮೇಶ್ಗೆ 5000 ರೂಪಾಯಿ ಕಳುಹಿಸಬೇಕು')}
-                className="px-4 py-2 rounded-xl bg-blue-600/30 hover:bg-blue-600/50 border border-blue-500/40 text-blue-200 text-xs font-extrabold transition-all"
-              >
-                🗣️ Say: &ldquo;ರಮೇಶ್ಗೆ 5000 ರೂಪಾಯಿ ಕಳುಹಿಸಬೇಕು&rdquo;
-              </button>
-              <button
-                onClick={() => handleSimulateKannadaSpeech('Send 5000 rupees to Ramesh')}
-                className="px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs font-semibold transition-all"
-              >
-                🗣️ Say: &ldquo;Send ₹5,000 to Ramesh&rdquo;
-              </button>
-            </div>
-
-            {/* SPEECH TRANSCRIPTION & INTENT DISPLAY */}
-            {spokenTranscript && (
-              <div className="p-4 rounded-2xl bg-zinc-900/90 border border-blue-400/40 text-left max-w-lg mx-auto space-y-2 animate-in fade-in">
-                <div className="text-[11px] font-bold text-zinc-400 uppercase">
-                  {lang === 'kn' ? 'ನೀವು ಹೇಳಿದ್ದು (Spoken Text)' : 'Captured Speech'}
-                </div>
-                <p className="text-base font-bold text-yellow-300">&ldquo;{spokenTranscript}&rdquo;</p>
-                
-                {interpretedIntent && (
-                  <div className="pt-2 border-t border-zinc-800 flex items-center justify-between text-xs font-bold text-emerald-400">
-                    <span>✓ Understood: Send ₹{interpretedIntent.amount?.toLocaleString('en-IN')} to {interpretedIntent.recipient}</span>
-                    <span className="text-zinc-400 font-mono text-[10px]">{selectedRecipient.maskedAccountNumber}</span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* BENEFICIARY & MANUAL AMOUNT SELECTOR */}
-          <div className="p-8 rounded-3xl bg-zinc-950 border border-zinc-800 space-y-6">
-            <h3 className="text-lg font-extrabold text-white">
-              {lang === 'kn' ? 'ಸ್ವೀಕರಿಸುವವರನ್ನು ಆಯ್ಕೆಮಾಡಿ' : 'Select Recipient'}
-            </h3>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {beneficiaries.map((b) => (
-                <button
-                  key={b.id}
-                  onClick={() => setSelectedRecipient(b)}
-                  className={`p-4 rounded-2xl border-2 text-left transition-all ${
-                    selectedRecipient.id === b.id
-                      ? 'border-blue-500 bg-blue-500/10 shadow-lg'
-                      : 'border-zinc-800 bg-zinc-900/60 hover:bg-zinc-900'
-                  }`}
-                >
-                  <div className={`w-10 h-10 rounded-xl ${b.avatarColor} text-white flex items-center justify-center font-bold mb-2`}>
-                    {b.name.charAt(0)}
-                  </div>
-                  <div className="font-extrabold text-sm text-white">
-                    {lang === 'kn' ? b.nameKannada : b.name}
-                  </div>
-                  <div className="text-xs text-zinc-400 font-mono">{b.maskedAccountNumber}</div>
-                </button>
-              ))}
-            </div>
-
-            {/* Amount Selection */}
-            <div className="space-y-3">
-              <label className="block text-sm font-extrabold text-zinc-300">
-                {lang === 'kn' ? 'ವರ್ಗಾವಣೆ ಮೊತ್ತ (ರೂಪಾಯಿಗಳಲ್ಲಿ)' : 'Transfer Amount (INR)'}
-              </label>
-
-              <div className="flex items-center gap-3">
-                <span className="text-2xl font-black text-zinc-400">₹</span>
-                <input
-                  type="number"
-                  value={transferAmount}
-                  onChange={(e) => setTransferAmount(Number(e.target.value))}
-                  className="w-full p-4 rounded-2xl bg-zinc-900 border-2 border-zinc-700 text-white font-black text-2xl focus:border-blue-500 outline-none"
+              {/* Search Capsule */}
+              <div className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-full bg-white dark:bg-[#232428] border border-slate-300 dark:border-white/10 shadow-sm text-xs text-[#8B929A]">
+                <Search className="w-3.5 h-3.5 text-[#8B929A]" />
+                <input 
+                  type="text" 
+                  placeholder="Search me..." 
+                  className="bg-transparent outline-none w-24 md:w-32 text-xs text-[#1E2024] dark:text-white font-medium" 
                 />
               </div>
 
-              {/* Quick Amount Pills */}
-              <div className="flex flex-wrap gap-2 pt-1">
-                {[500, 1000, 5000, 10000, 25000].map((amt) => (
+              {/* Profile Avatar Initial Circle */}
+              <div className="w-10 h-10 rounded-full bg-[#1E2024] text-white font-serif font-bold text-base flex items-center justify-center shadow-sm border border-slate-300 dark:border-white/20">
+                {userInitial}
+              </div>
+            </div>
+
+          </div>
+
+          {currentView === 'dashboard' ? (
+            <div className="space-y-5 sm:space-y-6 animate-in fade-in duration-200">
+              
+              {/* ═══════════════════════════════════════════════════════════
+                  GREETING + PEOPLE AVATAR CAPSULE ROW
+                 ═══════════════════════════════════════════════════════════ */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                
+                {/* Left: Hello, Alif Reza */}
+                <div>
+                  <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1E2024] dark:text-white tracking-tight">
+                    Hello, <span className="text-[#8494B6] font-extrabold">{userDisplayName}</span>
+                  </h1>
+                  <p className="text-xs sm:text-sm text-[#8B929A] font-medium mt-0.5">
+                    View and control your finances here!
+                  </p>
+                </div>
+
+                {/* Right: People Initial Circular Avatars Capsule */}
+                <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 shadow-sm self-start md:self-auto overflow-x-auto">
+                  <div className="flex items-center gap-2">
+                    {beneficiaries.map((b) => {
+                      const letter = b.name.charAt(0).toUpperCase();
+                      return (
+                        <button
+                          key={b.id}
+                          onClick={() => handleQuickSendTo(b, 2000)}
+                          title={`Send money to ${b.name}`}
+                          className="group relative focus:outline-none focus:ring-2 focus:ring-[#779AE6] rounded-full shrink-0"
+                        >
+                          <div 
+                            style={{ backgroundColor: b.colorHex || '#4F46E5' }}
+                            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full text-white font-black text-xs sm:text-sm flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform ring-2 ring-white dark:ring-[#232428]"
+                          >
+                            {letter}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
                   <button
-                    key={amt}
-                    onClick={() => setTransferAmount(amt)}
-                    className={`px-3.5 py-1.5 rounded-xl font-bold text-xs border transition-all ${
-                      transferAmount === amt
-                        ? 'bg-blue-600 text-white border-blue-500'
-                        : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:bg-zinc-800'
-                    }`}
+                    onClick={() => setCurrentView('send_money')}
+                    className="w-8 h-8 rounded-full bg-[#ECECEC] dark:bg-white/10 hover:bg-[#779AE6] hover:text-white text-[#1E2024] dark:text-white flex items-center justify-center transition-colors shrink-0"
+                    title="Send money"
                   >
-                    ₹{amt.toLocaleString('en-IN')}
+                    <ChevronRight className="w-4 h-4" />
                   </button>
-                ))}
+                </div>
+
               </div>
-            </div>
 
-            {/* CONTINUE CTA */}
-            <div className="pt-4 flex items-center gap-3">
-              <button
-                onClick={handleInitiateReview}
-                className={`flex-1 py-4 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-lg shadow-xl flex items-center justify-center gap-2 transition-all ${
-                  isMotorAssist ? 'min-h-[68px] text-xl' : ''
-                }`}
-              >
-                <span>{lang === 'kn' ? 'ಪಾವತಿ ಪರಿಶೀಲಿಸಿ (Review Payment)' : 'Review Payment'}</span>
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
-
-          </div>
-
-        </div>
-      )}
-
-      {/* ─────────────────────────────────────────────────────────────
-          SUB-VIEW 3: ADAPTIVE FRICTION REVIEW SCREEN (SIGNATURE FEATURE)
-         ───────────────────────────────────────────────────────────── */}
-      {currentView === 'review' && transferPreview && (
-        <div className="space-y-6 max-w-2xl mx-auto animate-in fade-in duration-200">
-          
-          <button
-            onClick={() => setCurrentView('send_money')}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-bold text-xs"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>{lang === 'kn' ? 'ಬದಲಾಯಿಸಿ (Edit)' : 'Back to Edit'}</span>
-          </button>
-
-          <div className="p-8 rounded-3xl bg-zinc-950 border-2 border-zinc-800 shadow-2xl space-y-6">
-            
-            {/* Header */}
-            <div className="text-center space-y-1">
-              <span className="text-xs font-bold text-blue-400 uppercase tracking-widest block">
-                {lang === 'kn' ? 'ಹಣ ಕಳುಹಿಸುವ ವಿವರ' : 'SEND MONEY REVIEW'}
-              </span>
-              <div className="text-4xl sm:text-5xl font-black text-white">
-                {transferPreview.formattedAmount}
-              </div>
-              <p className="text-sm font-semibold text-zinc-400">
-                {lang === 'kn' ? 'ಸ್ವೀಕರಿಸುವವರು:' : 'To:'} <span className="text-white font-bold">{transferPreview.recipientName}</span> ({transferPreview.recipientAccount})
-              </p>
-            </div>
-
-            {/* ADAPTIVE FRICTION WARNING BANNER */}
-            {transferPreview.riskAssessment.level === 'elevated' || transferPreview.riskAssessment.level === 'high' ? (
-              <div className="p-5 rounded-2xl bg-amber-500/10 border-2 border-amber-500/40 text-amber-200 space-y-3">
-                <div className="flex items-start gap-3">
-                  <ShieldAlert className="w-6 h-6 text-amber-400 shrink-0 mt-0.5" />
+              {/* ═══════════════════════════════════════════════════════════
+                  MIDDLE 3 CARDS ROW: BALANCE STATS + CARD + ANALYTICS
+                 ═══════════════════════════════════════════════════════════ */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                
+                {/* 1. BALANCE STATISTICS CARD */}
+                <div className="p-6 rounded-[28px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col justify-between min-h-[220px]">
                   <div>
-                    <h4 className="font-black text-base text-amber-300">
-                      ⚠ {lang === 'kn' ? transferPreview.riskAssessment.warningTitleKannada : transferPreview.riskAssessment.warningTitle}
-                    </h4>
-                    <p className="text-sm text-amber-200/90 font-medium mt-1">
-                      {lang === 'kn' ? transferPreview.riskAssessment.warningDescriptionKannada : transferPreview.riskAssessment.warningDescription}
-                    </p>
+                    <span className="text-xs font-bold text-[#71767B] dark:text-slate-400 block">
+                      Balance Statistics
+                    </span>
+                    <div className="flex items-baseline gap-2 mt-2">
+                      <div className="text-3xl sm:text-4xl font-black text-[#1E2024] dark:text-white tracking-tight">
+                        {isBalanceHidden ? '₹••,•••.••' : `₹${account.availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
+                      </div>
+                      <span className="text-xs font-medium text-[#8B929A]">Total amount</span>
+                      <button
+                        onClick={() => setIsBalanceHidden(!isBalanceHidden)}
+                        className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white"
+                        aria-label="Toggle balance visibility"
+                      >
+                        {isBalanceHidden ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Sparkline wave + 5 rounded bar pillars */}
+                  <div className="flex items-end justify-between pt-3">
+                    {/* Left: Sparkline + 14% */}
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <svg className="w-14 h-6 text-[#779AE6]" viewBox="0 0 60 25" fill="none">
+                          <path d="M 2 20 Q 15 5, 30 18 T 58 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                        </svg>
+                        <div className="w-6 h-6 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[10px] font-bold text-[#1E2024] dark:text-white">
+                          ↑
+                        </div>
+                        <span className="text-xs font-bold text-[#1E2024] dark:text-white">
+                          14%
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-[#8B929A] block leading-tight">
+                        Always see your earning updates
+                      </span>
+                    </div>
+
+                    {/* Right: 5 Monthly Bar Pillars (Nov, Dec, Jan, Feb, Mar) */}
+                    <div className="flex items-end gap-1.5 pb-0.5">
+                      {[
+                        { m: 'Nov', h: 'h-3.5' },
+                        { m: 'Dec', h: 'h-2' },
+                        { m: 'Jan', h: 'h-6' },
+                        { m: 'Feb', h: 'h-5' },
+                        { m: 'Mar', h: 'h-7' },
+                      ].map((bar, idx) => (
+                        <div key={idx} className="flex flex-col items-center gap-1">
+                          <div className={`w-3 ${bar.h} rounded-full bg-[#779AE6]`} />
+                          <span className="text-[9px] font-bold text-[#8B929A]">{bar.m}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                {/* "WHY THIS CHECK?" TRANSPARENT REASONS */}
-                <div className="p-3.5 rounded-xl bg-black/40 border border-amber-500/20 text-xs text-zinc-300 space-y-1.5">
-                  <span className="font-extrabold text-amber-400 block uppercase tracking-wider text-[10px]">
-                    {lang === 'kn' ? 'ಈ ಪರಿಶೀಲನೆ ಏಕೆ? (WHY THIS CHECK?)' : 'WHY THIS CHECK?'}
+                {/* 2. THE BANK OF ANYTHING DIGITAL CARD (SOFT SKY-BLUE THEME) */}
+                <div className="p-6 rounded-[28px] bg-gradient-to-br from-[#779AE6] to-[#8FAEE8] text-white shadow-sm flex flex-col justify-between min-h-[220px] relative overflow-hidden">
+                  
+                  {/* Sheen effect */}
+                  <div className="absolute top-0 right-0 w-44 h-44 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+
+                  <div className="flex justify-between items-start z-10">
+                    <span className="text-[12px] font-bold tracking-wider text-white/90 uppercase">
+                      Debit Card
+                    </span>
+                  </div>
+
+                  {/* Golden Chip */}
+                  <div className="my-1 z-10">
+                    <div className="w-10 h-7 rounded-md bg-[#F4D068] border border-yellow-300 shadow-inner grid grid-cols-2 gap-0.5 p-1">
+                      <div className="border-r border-b border-amber-600/30" />
+                      <div className="border-b border-amber-600/30" />
+                      <div className="border-r border-amber-600/30" />
+                      <div />
+                    </div>
+                  </div>
+
+                  {/* Card Number */}
+                  <div className="z-10 font-mono text-lg sm:text-xl font-bold tracking-widest text-white drop-shadow-sm">
+                    ••••  ••••  ••••  2734
+                  </div>
+
+                  {/* Expiry, Name & Dual-Circle Logo */}
+                  <div className="flex justify-between items-end z-10 pt-1">
+                    <div>
+                      <div className="flex gap-4 text-[9px] text-white/80 font-mono mb-1">
+                        <span>3/18</span>
+                        <span>3/28</span>
+                      </div>
+                      <span className="text-xs font-bold text-white">{userDisplayName}</span>
+                    </div>
+
+                    {/* Dual circle logo (MasterCard style) */}
+                    <div className="flex -space-x-2.5">
+                      <div className="w-6 h-6 rounded-full bg-[#EB5757]" />
+                      <div className="w-6 h-6 rounded-full bg-[#F2C94C]/90" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. ANALYTICS CARD (RADIAL GAUGE 90% DONE) */}
+                <div className="p-6 rounded-[28px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col justify-between min-h-[220px]">
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-bold text-[#71767B] dark:text-slate-400">
+                      Analytics
+                    </span>
+                    <button 
+                      onClick={() => setIsLimitModalOpen(true)}
+                      className="text-slate-400 hover:text-slate-700 dark:hover:text-white"
+                    >
+                      <MoreVertical className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Legend row */}
+                  <div className="flex items-center justify-between text-[11px] font-bold">
+                    <span className="text-[#779AE6]">● Done</span>
+                    <span className="text-[#F2C94C]">● In progres</span>
+                    <span className="text-[#EB5757]">● To do</span>
+                  </div>
+
+                  {/* Semi-circle Gauge Meter (Exact Reference) */}
+                  <div className="flex flex-col items-center justify-center pt-2">
+                    <div className="relative w-36 h-20 overflow-hidden flex items-end justify-center">
+                      <svg className="w-36 h-36 -rotate-90 transform" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#ECECEC" strokeWidth="10" />
+                        <circle 
+                          cx="50" 
+                          cy="50" 
+                          r="40" 
+                          fill="none" 
+                          stroke="#779AE6" 
+                          strokeWidth="10" 
+                          strokeDasharray="251.2" 
+                          strokeDashoffset="75"
+                          strokeLinecap="round"
+                        />
+                        <circle 
+                          cx="50" 
+                          cy="50" 
+                          r="40" 
+                          fill="none" 
+                          stroke="#F2C94C" 
+                          strokeWidth="10" 
+                          strokeDasharray="251.2" 
+                          strokeDashoffset="210"
+                          strokeLinecap="round"
+                        />
+                        <circle 
+                          cx="50" 
+                          cy="50" 
+                          r="40" 
+                          fill="none" 
+                          stroke="#EB5757" 
+                          strokeWidth="10" 
+                          strokeDasharray="251.2" 
+                          strokeDashoffset="235"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <div className="absolute bottom-1 text-center">
+                        <div className="text-2xl font-black text-[#1E2024] dark:text-white leading-none">90%</div>
+                        <span className="text-[10px] font-bold text-[#8B929A]">Done</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* ═══════════════════════════════════════════════════════════
+                  BOTTOM 2 CARDS ROW: LAST TRANSACTIONS + EXPENSES & INCOME
+                 ═══════════════════════════════════════════════════════════ */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                
+                {/* 4. LAST TRANSACTIONS CARD (WITH CLEAN BLACK/AVATAR BADGES) */}
+                <div className="p-6 sm:p-7 rounded-[28px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
+                  
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-extrabold text-base text-[#1E2024] dark:text-white">
+                      Last Transactions
+                    </h3>
+                    <button 
+                      onClick={() => setCurrentView('transactions')}
+                      className="text-slate-400 hover:text-slate-700 dark:hover:text-white"
+                    >
+                      <MoreVertical className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Transactions List */}
+                  <div className="space-y-4">
+                    
+                    {/* 1. Apple */}
+                    <div 
+                      onClick={() => setSelectedTxForDetail(transactions[0])}
+                      className="flex items-center justify-between cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 p-2 rounded-2xl transition-colors"
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-11 h-11 rounded-full bg-[#1E2024] text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                          
+                        </div>
+                        <div>
+                          <div className="font-bold text-sm text-[#1E2024] dark:text-white">Apple</div>
+                          <div className="text-xs text-[#8B929A]">03 April, 2024</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <span className="font-black text-sm text-[#1E2024] dark:text-white">₹653</span>
+                        <MoreVertical className="w-3.5 h-3.5 text-slate-300" />
+                      </div>
+                    </div>
+
+                    {/* 2. Ralph Edwards */}
+                    <div 
+                      onClick={() => setSelectedTxForDetail(transactions[2])}
+                      className="flex items-center justify-between cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 p-2 rounded-2xl transition-colors"
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-11 h-11 rounded-full bg-[#D97706] text-white font-black text-sm shadow-sm flex items-center justify-center">
+                          R
+                        </div>
+                        <div>
+                          <div className="font-bold text-sm text-[#1E2024] dark:text-white">Ralph Edwards</div>
+                          <div className="text-xs text-[#8B929A]">01 April, 2024</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <span className="font-black text-sm text-[#1E2024] dark:text-white">₹2,643</span>
+                        <MoreVertical className="w-3.5 h-3.5 text-slate-300" />
+                      </div>
+                    </div>
+
+                    {/* 3. Jerome Bell */}
+                    <div 
+                      onClick={() => setSelectedTxForDetail(transactions[3])}
+                      className="flex items-center justify-between cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 p-2 rounded-2xl transition-colors"
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-11 h-11 rounded-full bg-[#E11D48] text-white font-black text-sm shadow-sm flex items-center justify-center">
+                          J
+                        </div>
+                        <div>
+                          <div className="font-bold text-sm text-[#1E2024] dark:text-white">Jerome Bell</div>
+                          <div className="text-xs text-[#8B929A]">27 March, 2024</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <span className="font-black text-sm text-[#1E2024] dark:text-white">₹520</span>
+                        <MoreVertical className="w-3.5 h-3.5 text-slate-300" />
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+
+                {/* 5. EXPENSES & INCOME + BOTTOM DARK PILL BANNER */}
+                <div className="p-6 sm:p-7 rounded-[28px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col justify-between space-y-6">
+                  
+                  <div>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="font-extrabold text-base text-[#1E2024] dark:text-white">
+                        Expenses & Income
+                      </h3>
+                      <button className="text-slate-400 hover:text-slate-700 dark:hover:text-white">
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Big Numbers Header */}
+                    <div className="flex justify-between items-baseline mb-3">
+                      <div>
+                        <div className="text-2xl sm:text-3xl font-black text-[#1E2024] dark:text-white">60%</div>
+                        <span className="text-xs font-semibold text-[#8B929A]">Expenses</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl sm:text-3xl font-black text-[#1E2024] dark:text-white">40%</div>
+                        <span className="text-xs font-semibold text-[#8B929A]">Income</span>
+                      </div>
+                    </div>
+
+                    {/* Rounded Wide Horizontal Bar (Exact 60/40 colors from reference) */}
+                    <div className="w-full h-7 rounded-full flex gap-1.5 overflow-hidden">
+                      <div className="bg-[#789DEC] h-full rounded-l-full" style={{ width: '60%' }} />
+                      <div className="bg-[#F0DC9B] h-full rounded-r-full" style={{ width: '40%' }} />
+                    </div>
+                  </div>
+
+                  {/* 📊 EXPENDITURE GRAPH & CATEGORY BREAKDOWN */}
+                  <div className="pt-2 space-y-4">
+                    
+                    {/* Weekly Expenditure Pillars */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="font-bold text-[#1E2024] dark:text-white">
+                          Weekly Expenditure
+                        </span>
+                        <span className="text-[11px] font-bold text-[#779AE6]">
+                          Avg. ₹1,700 / day
+                        </span>
+                      </div>
+
+                      {/* 7-Day Pillars Chart */}
+                      <div className="flex items-end justify-between h-20 pt-2 px-1 border-b border-slate-100 dark:border-white/5 pb-2">
+                        {[
+                          { day: 'Mon', amt: '₹1.2k', h: 'h-8', val: 40 },
+                          { day: 'Tue', amt: '₹2.4k', h: 'h-14', val: 70 },
+                          { day: 'Wed', amt: '₹950', h: 'h-6', val: 30 },
+                          { day: 'Thu', amt: '₹3.1k', h: 'h-16', val: 85 },
+                          { day: 'Fri', amt: '₹2.8k', h: 'h-14', val: 75 },
+                          { day: 'Sat', amt: '₹4.2k', h: 'h-20', val: 100, active: true },
+                          { day: 'Sun', amt: '₹1.8k', h: 'h-10', val: 50 },
+                        ].map((item, i) => (
+                          <div key={i} className="flex-1 flex flex-col items-center gap-1 group cursor-pointer">
+                            <span className="text-[8px] font-bold text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                              {item.amt}
+                            </span>
+                            <div 
+                              className={`w-4 sm:w-5 ${item.h} rounded-full transition-all duration-300 ${
+                                item.active 
+                                  ? 'bg-[#789DEC] shadow-sm scale-105' 
+                                  : 'bg-[#789DEC]/40 group-hover:bg-[#789DEC]'
+                              }`} 
+                            />
+                            <span className="text-[9px] font-bold text-[#8B929A]">{item.day}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Top Expense Categories Mini Grid */}
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <div className="p-2.5 rounded-2xl bg-[#ECECEC]/60 dark:bg-white/5 flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-[#789DEC]" />
+                          <span className="font-bold text-[#1E2024] dark:text-white">Food & Dining</span>
+                        </div>
+                        <span className="font-black text-[#1E2024] dark:text-white">₹6,420</span>
+                      </div>
+
+                      <div className="p-2.5 rounded-2xl bg-[#ECECEC]/60 dark:bg-white/5 flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-[#F0DC9B]" />
+                          <span className="font-bold text-[#1E2024] dark:text-white">Shopping</span>
+                        </div>
+                        <span className="font-black text-[#1E2024] dark:text-white">₹2,800</span>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* ═══════════════════════════════════════════════════════════
+                  QUICK INTERACTIVE ACTIONS BAR
+                 ═══════════════════════════════════════════════════════════ */}
+              <div className="p-5 rounded-[28px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#8B929A]">
+                    Interactive Actions
                   </span>
-                  <p>
-                    {lang === 'kn' 
-                      ? `ಈ ಮೊತ್ತವು ನಿಮ್ಮ ಸಾಮಾನ್ಯ ಸರಾಸರಿ ವಹಿವಾಟು (₹${transferPreview.riskAssessment.averageAmount}) ಕ್ಕಿಂತ ${transferPreview.riskAssessment.multiplier} ಪಟ್ಟು ಹೆಚ್ಚಾಗಿದೆ.`
-                      : `Amount is ${transferPreview.riskAssessment.multiplier}× your usual transaction size (₹${transferPreview.riskAssessment.averageAmount}).`}
-                  </p>
-                  <p className="text-[11px] text-zinc-400">
-                    NAYAN Adaptive Friction Prototype &bull; Contextual Protection Layer
-                  </p>
+                  <span className="text-xs text-[#779AE6] font-bold">Demo Settlement Active</span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <button
+                    onClick={() => setCurrentView('send_money')}
+                    className="p-3.5 rounded-2xl bg-[#ECECEC] dark:bg-white/5 hover:bg-[#779AE6] hover:text-white border border-transparent font-bold text-xs flex items-center gap-2.5 transition-all group"
+                  >
+                    <Send className="w-4 h-4 text-[#779AE6] group-hover:text-white" />
+                    <span>Send Money</span>
+                  </button>
+
+                  <button
+                    onClick={() => setIsReceiveModalOpen(true)}
+                    className="p-3.5 rounded-2xl bg-[#ECECEC] dark:bg-white/5 hover:bg-emerald-600 hover:text-white border border-transparent font-bold text-xs flex items-center gap-2.5 transition-all group"
+                  >
+                    <QrCode className="w-4 h-4 text-emerald-500 group-hover:text-white" />
+                    <span>Receive QR</span>
+                  </button>
+
+                  <button
+                    onClick={() => setIsBillModalOpen(true)}
+                    className="p-3.5 rounded-2xl bg-[#ECECEC] dark:bg-white/5 hover:bg-[#F0DC9B] hover:text-[#1E2024] border border-transparent font-bold text-xs flex items-center gap-2.5 transition-all group"
+                  >
+                    <Receipt className="w-4 h-4 text-amber-500 group-hover:text-[#1E2024]" />
+                    <span>Pay Bills</span>
+                  </button>
+
+                  <button
+                    onClick={() => setIsCardModalOpen(true)}
+                    className="p-3.5 rounded-2xl bg-[#ECECEC] dark:bg-white/5 hover:bg-[#8FAEE8] hover:text-[#1E2024] border border-transparent font-bold text-xs flex items-center gap-2.5 transition-all group"
+                  >
+                    <CreditCard className="w-4 h-4 text-[#779AE6] group-hover:text-[#1E2024]" />
+                    <span>Card Controls</span>
+                  </button>
                 </div>
               </div>
-            ) : (
-              <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-3 text-emerald-300 text-sm font-semibold">
-                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                <span>Transaction matches your standard spending profile.</span>
-              </div>
-            )}
 
-            {/* AUDIO PROMPT REPLAY BUTTON */}
-            <div className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Volume2 className="w-4 h-4 text-blue-400" />
-                <span className="text-xs text-zinc-300 font-medium">
-                  {lang === 'kn' ? transferPreview.spokenPromptKannada : transferPreview.spokenPromptText}
-                </span>
-              </div>
-              <button
-                onClick={() => speakCurrentStep(lang === 'kn' ? transferPreview.spokenPromptKannada : transferPreview.spokenPromptText)}
-                className="px-3 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-blue-400"
-              >
-                {lang === 'kn' ? 'ಮತ್ತೆ ಆಲಿಸಿ' : 'Replay Voice'}
-              </button>
-            </div>
-
-            {/* ACTIONS */}
-            <div className="space-y-3 pt-2">
-              <button
-                onClick={() => {
-                  setCurrentView('confirm');
-                  speakCurrentStep(lang === 'kn' ? 'ದಯವಿಟ್ಟು ಅಂತಿಮವಾಗಿ ದೃಢೀಕರಿಸಿ.' : 'Please confirm your transfer.');
+              {/* NAYAN CONVERSATIONAL ASSISTANT */}
+              <NayanFinancialAssistant
+                balance={account.availableBalance}
+                foodExpense={6420}
+                language={lang}
+                onTriggerTransfer={(name, amt) => {
+                  const found = beneficiaries.find(b => b.name.toLowerCase().includes(name.toLowerCase())) || beneficiaries[0];
+                  setSelectedRecipient(found);
+                  setTransferAmount(amt);
+                  setCurrentView('send_money');
                 }}
-                className={`w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-lg shadow-xl transition-all ${
-                  isMotorAssist ? 'min-h-[68px] text-xl' : ''
-                }`}
-              >
-                {lang === 'kn' ? 'ಮುಂದುವರಿಯಿರಿ (Continue)' : 'Continue'}
-              </button>
+                onOpenBills={() => setIsBillModalOpen(true)}
+              />
 
-              <button
-                onClick={() => setCurrentView('send_money')}
-                className="w-full py-3 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-bold text-sm"
-              >
-                {lang === 'kn' ? 'ರದ್ದುಮಾಡಿ (Cancel)' : 'Cancel'}
-              </button>
             </div>
-
-          </div>
-
-        </div>
-      )}
-
-      {/* ─────────────────────────────────────────────────────────────
-          SUB-VIEW 4: EXPLICIT CONFIRMATION SCREEN
-         ───────────────────────────────────────────────────────────── */}
-      {currentView === 'confirm' && transferPreview && (
-        <div className="space-y-6 max-w-xl mx-auto animate-in fade-in duration-200">
-          
-          <div className="p-8 rounded-3xl bg-zinc-950 border-2 border-blue-500/50 shadow-2xl text-center space-y-6">
-            <div className="w-16 h-16 rounded-3xl bg-blue-600/20 text-blue-400 flex items-center justify-center mx-auto">
-              <ShieldAlert className="w-8 h-8 text-blue-400" />
-            </div>
-
-            <div className="space-y-2">
-              <h2 className="text-2xl font-black text-white">
-                {lang === 'kn' ? 'ಅಂತಿಮ ದೃಢೀಕರಣ' : 'Final Explicit Confirmation'}
-              </h2>
-              <p className="text-base text-zinc-300 font-medium leading-relaxed">
-                {lang === 'kn'
-                  ? `ನೀವು ${transferPreview.recipientName} ಅವರಿಗೆ ${transferPreview.formattedAmount} ಕಳುಹಿಸಲು ಖಚಿತಪಡಿಸುತ್ತೀರಾ?`
-                  : `You are sending ${transferPreview.formattedAmount} to ${transferPreview.recipientName} (${transferPreview.recipientAccount}). Please confirm.`}
-              </p>
-            </div>
-
-            <div className="space-y-3 pt-4">
-              <button
-                onClick={handleExecuteTransfer}
-                className={`w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xl shadow-2xl transition-all flex items-center justify-center gap-2 ${
-                  isMotorAssist ? 'min-h-[68px]' : ''
-                }`}
-              >
-                <CheckCircle2 className="w-6 h-6" />
-                <span>{lang === 'kn' ? 'ಖಚಿತಪಡಿಸಿ (Confirm Payment)' : 'Confirm Payment'}</span>
-              </button>
-
+          ) : currentView === 'send_money' ? (
+            /* SEND MONEY VIEW */
+            <div className="space-y-6 animate-in fade-in duration-200 max-w-2xl mx-auto py-2">
               <button
                 onClick={() => setCurrentView('dashboard')}
-                className="w-full py-3 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-400 font-bold text-sm"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 text-xs font-bold"
               >
-                {lang === 'kn' ? 'ರದ್ದುಮಾಡಿ (Cancel)' : 'Cancel'}
-              </button>
-            </div>
-          </div>
-
-        </div>
-      )}
-
-      {/* ─────────────────────────────────────────────────────────────
-          SUB-VIEW 5: SUCCESS RECEIPT SCREEN
-         ───────────────────────────────────────────────────────────── */}
-      {currentView === 'success' && transferReceipt && (
-        <div className="space-y-6 max-w-xl mx-auto animate-in zoom-in-95 duration-300">
-          
-          <div className="p-8 rounded-3xl bg-zinc-950 border-2 border-emerald-500/60 shadow-2xl text-center space-y-6">
-            
-            <div className="w-20 h-20 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto ring-8 ring-emerald-500/20">
-              <CheckCircle2 className="w-10 h-10" />
-            </div>
-
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest block">
-                {lang === 'kn' ? 'ಪಾವತಿ ಯಶಸ್ವಿಯಾಗಿದೆ' : 'Payment Completed'}
-              </span>
-              <div className="text-4xl sm:text-5xl font-black text-white">
-                {transferReceipt.formattedAmount}
-              </div>
-              <p className="text-sm font-semibold text-zinc-300">
-                {lang === 'kn' ? 'ಸ್ವೀಕರಿಸಿದವರು:' : 'Sent to:'} <span className="text-white font-bold">{transferReceipt.recipientName}</span> ({transferReceipt.recipientAccount})
-              </p>
-            </div>
-
-            {/* RECEIPT DETAILS */}
-            <div className="p-4 rounded-2xl bg-zinc-900 border border-zinc-800 text-left text-xs space-y-2">
-              <div className="flex justify-between text-zinc-400">
-                <span>Transaction ID:</span>
-                <span className="font-mono text-white font-bold">{transferReceipt.transactionId}</span>
-              </div>
-              <div className="flex justify-between text-zinc-400">
-                <span>Timestamp:</span>
-                <span className="text-white">{transferReceipt.timestamp}</span>
-              </div>
-              <div className="flex justify-between text-zinc-400">
-                <span>New Available Balance:</span>
-                <span className="text-emerald-400 font-bold">₹{transferReceipt.remainingBalance.toLocaleString('en-IN')}</span>
-              </div>
-            </div>
-
-            {/* ACTION BUTTONS */}
-            <div className="space-y-3 pt-2">
-              <button
-                onClick={() => setCurrentView('dashboard')}
-                className="w-full py-4 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base shadow-xl"
-              >
-                {lang === 'kn' ? 'ಮುಗಿದಿದೆ (Done)' : 'Done'}
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Dashboard</span>
               </button>
 
-              <button
-                onClick={() => setCurrentView('transactions')}
-                className="w-full py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-bold text-xs"
-              >
-                {lang === 'kn' ? 'ಇತಿಹಾಸ ನೋಡಿ (View Transactions)' : 'View Transactions'}
-              </button>
-            </div>
+              <div className="p-7 rounded-[28px] bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 shadow-sm space-y-6">
+                <div>
+                  <span className="text-xs font-bold text-[#779AE6] uppercase tracking-widest block">
+                    Step 1: Choose Recipient & Amount
+                  </span>
+                  <h2 className="text-2xl font-black text-[#1E2024] dark:text-white mt-1">
+                    Send Money
+                  </h2>
+                </div>
 
-          </div>
-
-        </div>
-      )}
-
-      {/* ─────────────────────────────────────────────────────────────
-          SUB-VIEW 6: TRANSACTIONS LIST
-         ───────────────────────────────────────────────────────────── */}
-      {currentView === 'transactions' && (
-        <div className="space-y-6 animate-in fade-in duration-200">
-          <button
-            onClick={() => setCurrentView('dashboard')}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-bold text-xs"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Dashboard</span>
-          </button>
-
-          <div className="p-8 rounded-3xl bg-zinc-950 border border-zinc-800 space-y-4">
-            <h2 className="text-xl font-extrabold text-white">Transaction History</h2>
-
-            <div className="divide-y divide-zinc-800">
-              {transactions.map((tx) => (
-                <div key={tx.id} className="py-4 flex items-center justify-between">
-                  <div>
-                    <p className="font-bold text-base text-white">
-                      {lang === 'kn' ? tx.titleKannada : tx.title}
-                    </p>
-                    <p className="text-xs text-zinc-400">{tx.timestamp} &bull; {tx.recipientOrSource}</p>
-                  </div>
-                  <div className={`font-black text-lg ${tx.type === 'credit' ? 'text-emerald-400' : 'text-zinc-200'}`}>
-                    {tx.type === 'credit' ? '+' : '-'}₹{tx.amount.toLocaleString('en-IN')}
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-[#8B929A] uppercase tracking-wider">
+                    Select Beneficiary
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {beneficiaries.map((b) => (
+                      <button
+                        key={b.id}
+                        onClick={() => handleRecipientChange(b)}
+                        className={`p-3.5 rounded-2xl border-2 text-left flex items-center gap-3 transition-all ${
+                          selectedRecipient.id === b.id
+                            ? 'border-[#779AE6] bg-blue-50/80 dark:bg-white/10 shadow-sm'
+                            : 'border-slate-200 dark:border-white/10 bg-[#ECECEC] dark:bg-white/5'
+                        }`}
+                      >
+                        <div className={`w-9 h-9 rounded-full ${b.avatarColor} text-white font-black text-xs flex items-center justify-center shrink-0`}>
+                          {b.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <span className="font-extrabold text-sm text-[#1E2024] dark:text-white block">
+                            {b.name}
+                          </span>
+                          <span className="text-[11px] text-[#8B929A]">{b.maskedAccountNumber}</span>
+                        </div>
+                      </button>
+                    ))}
                   </div>
                 </div>
-              ))}
+
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-[#8B929A] uppercase tracking-wider">
+                    Enter Amount
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-black text-[#8B929A]">₹</span>
+                    <input
+                      type="number"
+                      value={transferAmount || ''}
+                      onChange={(e) => handleAmountChange(Number(e.target.value))}
+                      placeholder="5000"
+                      className="w-full p-4 pl-10 rounded-2xl bg-[#ECECEC] dark:bg-white/5 border-2 border-slate-200 dark:border-white/10 text-[#1E2024] dark:text-white font-black text-2xl outline-none focus:border-[#779AE6]"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleInitiateReview}
+                  className="w-full py-4 rounded-2xl bg-[#779AE6] hover:bg-[#688FE8] text-white font-extrabold text-base shadow-md flex items-center justify-center gap-2 transition-all"
+                >
+                  <span>Review Payment</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-          </div>
+          ) : currentView === 'review' && transferPreview ? (
+            /* REVIEW / LIMIT WARNING VIEW */
+            <div className="max-w-2xl mx-auto py-2">
+              {transferPreview.riskAssessment.isLimitExceeded ? (
+                <TransactionSecurityCheck
+                  preview={transferPreview}
+                  language={lang}
+                  onVerified={handleExecuteTransfer}
+                  onCancel={() => setCurrentView('send_money')}
+                />
+              ) : (
+                <div className="p-8 rounded-[28px] bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 shadow-sm space-y-6 text-center">
+                  <span className="text-xs font-bold text-[#779AE6] uppercase tracking-widest block">
+                    Payment Review
+                  </span>
+                  <div className="text-4xl font-black text-[#1E2024] dark:text-white">
+                    ₹{transferPreview.amount.toLocaleString('en-IN')}
+                  </div>
+                  <p className="text-sm font-semibold text-[#8B929A]">
+                    To: <strong className="text-[#1E2024] dark:text-white">{transferPreview.recipientName}</strong>
+                  </p>
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      onClick={() => setCurrentView('send_money')}
+                      className="w-1/3 py-3.5 rounded-2xl bg-[#ECECEC] dark:bg-white/5 text-xs font-bold"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={handleExecuteTransfer}
+                      className="w-2/3 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm shadow-md flex items-center justify-center gap-2"
+                    >
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Confirm & Send</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : currentView === 'success' && transferReceipt ? (
+            /* SUCCESS VIEW */
+            <div className="max-w-md mx-auto p-8 rounded-[28px] bg-white dark:bg-[#232428] border border-emerald-500/30 shadow-md text-center space-y-6 animate-in zoom-in-95 duration-200">
+              <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-8 h-8" />
+              </div>
+              <div className="space-y-1">
+                <span className="text-xs font-bold text-emerald-500 uppercase tracking-widest block">
+                  Payment Completed
+                </span>
+                <div className="text-3xl font-black text-[#1E2024] dark:text-white">
+                  ₹{transferReceipt.amount || transferAmount}
+                </div>
+                <p className="text-xs text-[#8B929A]">
+                  Sent to <strong>{transferReceipt.recipientName}</strong>
+                </p>
+              </div>
+              <button
+                onClick={() => setCurrentView('dashboard')}
+                className="w-full py-3.5 rounded-2xl bg-[#779AE6] hover:bg-[#688FE8] text-white font-extrabold text-sm shadow-md"
+              >
+                Done
+              </button>
+            </div>
+          ) : (
+            /* TRANSACTIONS STATEMENT VIEW */
+            <div className="max-w-3xl mx-auto space-y-4 py-2">
+              <button
+                onClick={() => setCurrentView('dashboard')}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 text-xs font-bold"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Dashboard</span>
+              </button>
+
+              <div className="p-7 rounded-[28px] bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 shadow-sm space-y-4">
+                <h2 className="text-xl font-black text-[#1E2024] dark:text-white">All Transactions</h2>
+                <div className="divide-y divide-slate-200 dark:divide-white/10">
+                  {transactions.map((tx) => (
+                    <div key={tx.id} className="py-3.5 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div 
+                          style={{ backgroundColor: tx.type === 'credit' ? '#059669' : '#2563EB' }}
+                          className="w-9 h-9 rounded-full text-white font-black text-xs flex items-center justify-center"
+                        >
+                          {tx.title.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-bold text-sm text-[#1E2024] dark:text-white">{tx.title}</p>
+                          <p className="text-xs text-[#8B929A]">{tx.timestamp}</p>
+                        </div>
+                      </div>
+                      <span className="font-black text-sm text-[#1E2024] dark:text-white">
+                        {tx.type === 'credit' ? '+' : '-'}₹{tx.amount.toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
-      )}
+
+      </div>
 
     </div>
   );

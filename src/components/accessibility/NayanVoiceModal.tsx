@@ -111,7 +111,7 @@ export function NayanVoiceModal() {
               <div className="flex items-center gap-2">
                 <h2 className="text-xl font-extrabold text-white">NAYAN Conversational AI</h2>
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                  Sarvam AI Powered
+                  Voice AI Powered
                 </span>
               </div>
               <p className="text-xs text-zinc-400 font-medium">
@@ -190,7 +190,7 @@ export function NayanVoiceModal() {
               {isListening 
                 ? '🎙️ Listening to you now... Speak anything'
                 : isSpeaking 
-                ? '🔊 Nayan is responding with Sarvam AI Voice...'
+                ? '🔊 Nayan is speaking...'
                 : isProcessing 
                 ? '🧠 Nayan AI is thinking & understanding...'
                 : 'Tap microphone to speak'}
@@ -235,7 +235,7 @@ export function NayanVoiceModal() {
                     className="mt-2 text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1 font-semibold"
                   >
                     <Volume2 className="w-3.5 h-3.5" />
-                    <span>Replay Sarvam Voice</span>
+                    <span>Replay Voice</span>
                   </button>
                 )}
               </div>
@@ -247,7 +247,7 @@ export function NayanVoiceModal() {
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" />
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce delay-100" />
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce delay-200" />
-              <span>Nayan AI is processing with Sarvam...</span>
+              <span>Nayan AI is processing...</span>
             </div>
           )}
         </div>
