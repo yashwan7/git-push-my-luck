@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { InteractiveDotGrid } from '@/components/ui/InteractiveDotGrid';
 import { Sparkles, AlertCircle, ArrowLeft, ShieldCheck, Loader2 } from 'lucide-react';
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { signInWithGoogle, signInWithDemo, isAuthenticated, isLoading: authLoading, isSupabaseConfigured } = useAuth();
@@ -246,5 +246,21 @@ export default function LoginPage() {
       </footer>
 
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 -my-6 sm:-my-10 min-h-[calc(100vh-60px)] flex flex-col justify-center items-center overflow-hidden bg-black text-white font-sans">
+          <div className="w-14 h-14 rounded-2xl bg-civic-navy text-white flex items-center justify-center font-black text-2xl tracking-tighter border-2 border-blue-500 shadow-xl animate-pulse">
+            N
+          </div>
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 }
