@@ -185,7 +185,7 @@ function DotComponent({
   );
   const baseMaxOpacity = Math.min(dot.opacity * MAX_OPACITY_MULTIPLIER, 1);
 
-  const minOpacityWithBoost = useTransform(opacityBoost, (boost) =>
+  const minOpacityWithBoost = useTransform(opacityBoost, (boost: number) =>
     Math.min(baseMinOpacity + boost, 1)
   );
 

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AccessibilityProvider } from '@/context/AccessibilityContext';
 import { VoiceProvider } from '@/context/VoiceContext';
+import { AuthProvider } from '@/context/AuthContext';
 import { Navbar } from '@/components/layout/Navbar';
 import { VoiceController } from '@/components/accessibility/VoiceController';
 
@@ -26,15 +27,17 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors">
-        <AccessibilityProvider>
-          <VoiceProvider>
-            <Navbar />
-            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-              {children}
-            </main>
-            <VoiceController />
-          </VoiceProvider>
-        </AccessibilityProvider>
+        <AuthProvider>
+          <AccessibilityProvider>
+            <VoiceProvider>
+              <Navbar />
+              <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+                {children}
+              </main>
+              <VoiceController />
+            </VoiceProvider>
+          </AccessibilityProvider>
+        </AuthProvider>
       </body>
     </html>
   );

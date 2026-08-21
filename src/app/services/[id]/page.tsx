@@ -27,8 +27,8 @@ export default function ServiceAdaptivePage() {
   const rawService = findServiceById(params?.id as string);
   const service = getLocalizedService(profile.language, rawService);
 
-  // Active View Mode selection
-  const [viewMode, setViewMode] = useState<'standard' | 'visual' | 'cognitive' | 'motor' | 'compare'>('compare');
+  // Active View Mode selection (default: cognitive / simplified)
+  const [viewMode, setViewMode] = useState<'standard' | 'visual' | 'cognitive' | 'motor'>('cognitive');
 
   const t = (key: string, fallback?: string) => getTranslation(profile.language, key, fallback);
 
@@ -52,18 +52,8 @@ export default function ServiceAdaptivePage() {
         {/* View Mode Mode Toggles Bar */}
         <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 rounded-2xl bg-[var(--bg-surface)] border-2 border-[var(--border-color)] shadow-sm">
           <button
-            onClick={() => setViewMode('compare')}
-            className={`px-3 py-1.5 rounded-xl font-extrabold text-acc-xs transition-all flex items-center gap-1.5 ${
-              viewMode === 'compare' ? 'bg-civic-navy text-white shadow-md' : 'text-[var(--text-primary)] hover:bg-black/5'
-            }`}
-          >
-            <Layers className="w-4 h-4 text-yellow-400" />
-            <span>{t('compareView', 'Compare (Signature View)')}</span>
-          </button>
-
-          <button
             onClick={() => setViewMode('cognitive')}
-            className={`px-3 py-1.5 rounded-xl font-extrabold text-acc-xs transition-all flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-xl font-extrabold text-acc-xs transition-all flex items-center gap-1.5 ${
               viewMode === 'cognitive' ? 'bg-civic-blue text-white shadow-md' : 'text-[var(--text-primary)] hover:bg-black/5'
             }`}
           >
@@ -73,7 +63,7 @@ export default function ServiceAdaptivePage() {
 
           <button
             onClick={() => setViewMode('visual')}
-            className={`px-3 py-1.5 rounded-xl font-extrabold text-acc-xs transition-all flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-xl font-extrabold text-acc-xs transition-all flex items-center gap-1.5 ${
               viewMode === 'visual' ? 'bg-civic-blue text-white shadow-md' : 'text-[var(--text-primary)] hover:bg-black/5'
             }`}
           >
@@ -83,7 +73,7 @@ export default function ServiceAdaptivePage() {
 
           <button
             onClick={() => setViewMode('motor')}
-            className={`px-3 py-1.5 rounded-xl font-extrabold text-acc-xs transition-all flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-xl font-extrabold text-acc-xs transition-all flex items-center gap-1.5 ${
               viewMode === 'motor' ? 'bg-civic-amber text-white shadow-md' : 'text-[var(--text-primary)] hover:bg-black/5'
             }`}
           >
@@ -93,7 +83,7 @@ export default function ServiceAdaptivePage() {
 
           <button
             onClick={() => setViewMode('standard')}
-            className={`px-3 py-1.5 rounded-xl font-extrabold text-acc-xs transition-all flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-xl font-extrabold text-acc-xs transition-all flex items-center gap-1.5 ${
               viewMode === 'standard' ? 'bg-slate-700 text-white shadow-md' : 'text-[var(--text-secondary)] hover:bg-black/5'
             }`}
           >
@@ -105,9 +95,6 @@ export default function ServiceAdaptivePage() {
 
       {/* Render Active View Component */}
       <div className="animate-in fade-in duration-200">
-        {viewMode === 'compare' && (
-          <CompareSplitView service={service} onComplete={handleComplete} />
-        )}
         {viewMode === 'cognitive' && (
           <CognitiveAdaptiveView service={service} onComplete={handleComplete} />
         )}

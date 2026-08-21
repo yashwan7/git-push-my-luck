@@ -117,7 +117,7 @@ export default function LandingPage() {
             
             {/* Primary Solid Glass CTA */}
             <Link
-              href="/onboarding"
+              href="/login?redirect=/onboarding"
               className="appear appear--btn relative group overflow-hidden inline-flex items-center justify-center h-10 sm:h-11 px-6 rounded-lg font-bold text-slate-950 text-xs sm:text-sm transition-all duration-300 shadow-xl hover:scale-[1.02] focus:ring-4 focus:ring-blue-400"
               style={{
                 background: 'linear-gradient(180deg, #ffffff 0%, #e7e7e7 48%, #cfcfcf 100%)',

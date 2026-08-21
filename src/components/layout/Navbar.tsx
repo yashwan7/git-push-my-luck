@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAccessibility } from '@/context/AccessibilityContext';
+import { useAuth } from '@/context/AuthContext';
 import { getTranslation, LANGUAGE_NAMES } from '@/lib/multilingualEngine';
 import { SupportedLanguage, TextSize, ContrastTheme } from '@/types';
 import { 
@@ -17,14 +18,23 @@ import {
   AlertTriangle,
   Menu,
   X,
-  Check
+  Check,
+  LogIn,
+  LogOut,
+  User as UserIcon
 } from 'lucide-react';
 
 export function Navbar() {
   const pathname = usePathname();
   const { profile, updateProfileKey, activePersonaName, resetProfile } = useAccessibility();
+  const { user, profile: authProfile, isAuthenticated, signOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isQuickPanelOpen, setIsQuickPanelOpen] = useState(false);
+
+  // If on login page, render minimal clean top banner
+  if (pathname === '/login') {
+    return null;
+  }
 
   const t = (key: string, fallback?: string) => getTranslation(profile.language, key, fallback);
 
@@ -87,7 +97,7 @@ export function Navbar() {
             })}
           </nav>
 
-          {/* Accessibility Quick Controls & Emergency Action */}
+          {/* Accessibility Quick Controls, User Auth & Emergency Action */}
           <div className="flex items-center gap-2 sm:gap-3">
 
             {/* Quick Profile Toggle Modal Button */}
@@ -118,6 +128,46 @@ export function Navbar() {
               </select>
               <Languages className="w-3.5 h-3.5 text-[var(--text-secondary)] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
+
+            {/* AUTHENTICATION BUTTON / USER PROFILE */}
+            {isAuthenticated && authProfile ? (
+              <div className="flex items-center gap-2">
+                <div 
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/30 text-acc-xs text-blue-300 font-semibold"
+                  title={authProfile.email}
+                >
+                  {authProfile.avatarUrl ? (
+                    <img 
+                      src={authProfile.avatarUrl} 
+                      alt={authProfile.fullName || 'User'} 
+                      className="w-5 h-5 rounded-full object-cover" 
+                    />
+                  ) : (
+                    <UserIcon className="w-4 h-4 text-blue-400" />
+                  )}
+                  <span className="hidden md:inline max-w-[100px] truncate">
+                    {authProfile.fullName?.split(' ')[0] || 'Account'}
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => signOut()}
+                  className="p-2 rounded-lg border border-[var(--border-color)] hover:bg-rose-500/10 hover:border-rose-500/40 text-slate-300 hover:text-rose-400 text-acc-xs transition-colors"
+                  title="Sign Out"
+                  aria-label="Sign Out"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/20 text-white font-bold text-acc-xs transition-all shadow-sm focus:ring-2 focus:ring-blue-400"
+              >
+                <LogIn className="w-3.5 h-3.5 text-blue-400" />
+                <span>Sign In</span>
+              </Link>
+            )}
 
             {/* Emergency "I Need Help" Button */}
             <Link
