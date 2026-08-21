@@ -847,6 +847,24 @@ export default function ServicesPage() {
                   eta: currentEmergencyCase.eta,
                   distance: currentEmergencyCase.distance,
                 }}
+                alternativeHospitals={currentEmergencyCase.alternatives.map((alt: any) => ({
+                  name: alt.name,
+                  lat: alt.latitude || currentEmergencyCase.lat + 0.015,
+                  lng: alt.longitude || currentEmergencyCase.lng + 0.015,
+                  eta: alt.eta,
+                  distance: alt.distance,
+                }))}
+                onSelectHospital={(selected) => {
+                  setCurrentEmergencyCase((prev) => ({
+                    ...prev,
+                    hospitalName: selected.name,
+                    lat: selected.lat,
+                    lng: selected.lng,
+                    eta: selected.eta || prev.eta,
+                    distance: selected.distance || prev.distance,
+                  }));
+                  speakText(`Route updated to ${selected.name}. Estimated arrival ${selected.eta || '15 min'}.`);
+                }}
               />
 
               {/* Recommended Care Option Card (Dynamic based on selected case) */}
@@ -862,7 +880,7 @@ export default function ServicesPage() {
                 </div>
 
                 {/* Main Best Match Hospital */}
-                <div className="p-3.5 rounded-2xl bg-[#F0FDF4] dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 space-y-1.5">
+                <div className="p-3.5 rounded-2xl bg-[#F0FDF4] dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 space-y-1.5 shadow-xs">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-600 flex items-center justify-center font-bold text-xs">
@@ -890,22 +908,48 @@ export default function ServicesPage() {
                   </div>
                 </div>
 
-                {/* Dynamic Alternative Hospitals List */}
+                {/* Dynamic Alternative Hospitals List (Interactive click-to-route) */}
                 <div className="space-y-1.5 pt-1">
-                  {currentEmergencyCase.alternatives.map((alt, idx) => (
+                  {currentEmergencyCase.alternatives.map((alt: any, idx: number) => (
                     <div 
                       key={idx}
-                      className="p-3 rounded-2xl bg-[#ECECEC]/60 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex justify-between items-center text-xs"
+                      onClick={() => {
+                        const newAltList = [
+                          {
+                            name: currentEmergencyCase.hospitalName,
+                            eta: currentEmergencyCase.eta,
+                            distance: currentEmergencyCase.distance,
+                            status: 'Alternative Option',
+                            latitude: currentEmergencyCase.lat,
+                            longitude: currentEmergencyCase.lng,
+                          },
+                          ...currentEmergencyCase.alternatives.filter((_, i) => i !== idx),
+                        ];
+
+                        setCurrentEmergencyCase((prev) => ({
+                          ...prev,
+                          hospitalName: alt.name,
+                          lat: alt.latitude || prev.lat + 0.012,
+                          lng: alt.longitude || prev.lng + 0.012,
+                          eta: alt.eta,
+                          distance: alt.distance,
+                          specialty: alt.status || 'Emergency Active',
+                          alternatives: newAltList,
+                        }));
+                        speakText(`Route changed to ${alt.name}. ETA ${alt.eta}.`);
+                      }}
+                      className="p-3 rounded-2xl bg-[#ECECEC]/60 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-[#2563EB] hover:bg-blue-50/40 dark:hover:bg-blue-950/20 transition-all cursor-pointer flex justify-between items-center text-xs group"
+                      title="Click to view route on map"
                     >
                       <div>
-                        <span className="font-bold text-[#1E2024] dark:text-white block text-xs">
+                        <span className="font-bold text-[#1E2024] dark:text-white block text-xs group-hover:text-[#2563EB] transition-colors">
                           {alt.name}
                         </span>
                         <span className="text-[10px] text-[#8B929A]">
                           {alt.eta} &bull; {alt.distance} &bull; {alt.status}
                         </span>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-slate-400" />
+                      <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#2563EB] group-hover:translate-x-0.5 transition-transform" />
                     </div>
                   ))}
                 </div>
