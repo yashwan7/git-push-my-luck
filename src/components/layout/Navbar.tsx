@@ -30,6 +30,7 @@ export function Navbar() {
 
   const navLinks = [
     { href: '/', label: t('home', 'Home') },
+    { href: '/banking', label: 'Banking (Demo)' },
     { href: '/dashboard', label: t('services', 'Services') },
     { href: '/audit', label: t('auditService', 'Audit a Service') },
     { href: '/provider', label: t('providerMode', 'Provider Mode') },

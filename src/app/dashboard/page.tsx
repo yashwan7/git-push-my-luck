@@ -55,7 +55,7 @@ export default function DashboardPage() {
             <span>{t('personalGateway', 'NAYAN Personal Digital Gateway')}</span>
           </div>
           <div className="text-acc-xs font-semibold px-3 py-1 rounded-full bg-civic-navy text-white">
-            {t('activeProfile')}: {LANGUAGE_NAMES[profile.language]?.nativeName || LANGUAGE_NAMES[profile.language]?.name} &bull; {profile.textSize.toUpperCase()}
+            {t('activeProfile')}: {LANGUAGE_NAMES[profile?.language || 'en']?.nativeName || LANGUAGE_NAMES[profile?.language || 'en']?.name || 'English'} &bull; {(profile?.textSize || 'normal').toUpperCase()}
           </div>
         </div>
 
@@ -67,9 +67,9 @@ export default function DashboardPage() {
       {/* SECTION 2 — TASK-ORIENTED SHORTCUTS */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {[
-          { label: t('payBill', 'Pay a bill'), href: '/services/banking-billpay', icon: CreditCard, color: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20' },
+          { label: t('payBill', 'Pay a bill'), href: '/services/electricity-bill', icon: CreditCard, color: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20' },
           { label: t('applyScheme', 'Apply for scheme'), href: '/services/government-scholarship', icon: Building2, color: 'bg-blue-500/10 text-blue-700 border-blue-500/20' },
-          { label: t('bookHospital', 'Book hospital'), href: '/services/healthcare-appointment', icon: Stethoscope, color: 'bg-purple-500/10 text-purple-700 border-purple-500/20' },
+          { label: t('bookHospital', 'Book hospital'), href: '/services/hospital-appointment', icon: Stethoscope, color: 'bg-purple-500/10 text-purple-700 border-purple-500/20' },
           { label: t('simplifyText', 'Simplify text'), href: '/simplifier', icon: Sparkles, color: 'bg-amber-500/10 text-amber-700 border-amber-500/20' },
           { label: t('auditServiceShortcut', 'Audit service'), href: '/audit', icon: FileText, color: 'bg-cyan-500/10 text-cyan-700 border-cyan-500/20' },
           { label: t('emergencyHelp', 'Emergency help'), href: '/emergency', icon: HelpCircle, color: 'bg-red-500/10 text-red-700 border-red-500/20' },

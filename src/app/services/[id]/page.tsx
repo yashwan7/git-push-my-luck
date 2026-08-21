@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { MOCK_SERVICES } from '@/lib/servicesData';
+import { MOCK_SERVICES, findServiceById } from '@/lib/servicesData';
 import { useAccessibility } from '@/context/AccessibilityContext';
 import { getTranslation, getLocalizedService } from '@/lib/multilingualEngine';
 import { StandardView } from '@/components/services/StandardView';
@@ -24,8 +24,7 @@ export default function ServiceAdaptivePage() {
   const router = useRouter();
   const { profile } = useAccessibility();
   
-  const serviceId = params.id as string;
-  const rawService = MOCK_SERVICES.find(s => s.id === serviceId) || MOCK_SERVICES[0];
+  const rawService = findServiceById(params?.id as string);
   const service = getLocalizedService(profile.language, rawService);
 
   // Active View Mode selection

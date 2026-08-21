@@ -273,10 +273,85 @@ export const MOCK_SERVICES: ServiceDefinition[] = [
         fieldLabelHindi: 'भुगतान करें',
         fieldType: 'radio',
         options: [
-          { value: 'pay-now', label: 'Pay ₹640 via Nayan Direct Bank Account', labelKannada: '₹640 ಪಾವತಿಸಿ (ನಯನ್ ಬ್ಯಾಂಕ್)', labelHindi: '₹640 का भुगतान करें' }
+          { value: 'pay-upi', label: 'UPI / Direct Bank Pay (Instant)', labelKannada: 'ಯುಪಿಐ / ನೇರ ಬ್ಯಾಂಕ್ ಪಾವತಿ', labelHindi: 'यूपीआई / बैंक' },
+          { value: 'pay-counter', label: 'Generate Offline Assisted Payment Token', labelKannada: 'ಆಫ್‌ಲೈನ್ ಟೋಕನ್ ಪಡೆಯಿರಿ', labelHindi: 'ऑफलाइन टोकन' }
         ],
-        helpText: 'NAYAN will confirm before deducting funds.',
-        audioPrompt: 'Step 3: Your bill amount is 640 rupees. Tap Pay Now to complete.',
+        helpText: 'Digital receipt with BBPS transaction reference generated instantly.',
+        audioPrompt: 'Step 3: Select payment method and confirm bill settlement.',
+      }
+    ]
+  },
+  {
+    id: 'ration-card',
+    title: 'Public Distribution System (Ration & Food Security)',
+    titleKannada: 'ಪಡಿತರ ಚೀಟಿ ಮತ್ತು ಆಹಾರ ಭದ್ರತಾ ಯೋಜನೆ',
+    titleHindi: 'राशन कार्ड एवं खाद्य सुरक्षा सेवा',
+    category: 'government',
+    organization: 'Department of Food, Civil Supplies & Consumer Affairs',
+    description: 'Monthly subsidized grain entitlement quota check, family member inclusion, and digital ration card status.',
+    estimatedTime: '4 minutes',
+    badge: 'Social Security',
+    standardDenseNotice: 'Statutory Notice: All eligible beneficiaries classified under the National Food Security Act (NFSA) Section 3 must furnish linked Aadhaar biometric seedings for monthly grain disbursement.',
+    steps: [
+      {
+        stepNumber: 1,
+        totalSteps: 3,
+        title: 'Select Ration Card Service',
+        titleKannada: 'ನಿಮಗೆ ಬೇಕಾದ ಪಡಿತರ ಸೇವೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ',
+        titleHindi: 'राशन कार्ड सेवा चुनें',
+        description: 'Choose required administrative action regarding your household ration card.',
+        descriptionKannada: 'ನಿಮಗೆ ಯಾವ ಸೇವೆ ಬೇಕು ಎಂಬುದನ್ನು ಆಯ್ಕೆಮಾಡಿ.',
+        descriptionHindi: 'आपको कौन सी सेवा चाहिए?',
+        simplifiedDescription: 'What do you want to do with your ration card?',
+        fieldLabel: 'Service Type',
+        fieldLabelKannada: 'ಸೇವೆಯ ಪ್ರಕಾರ',
+        fieldLabelHindi: 'सेवा',
+        fieldType: 'select',
+        options: [
+          { value: 'quota-check', label: 'Check Monthly Food Grain Quota', labelKannada: 'ಮಾಸಿಕ ಆಹಾರ ಧಾನ್ಯದ ಕೋಟಾ ಪರಿಶೀಲನೆ', labelHindi: 'मासिक राशन कोटा जांचें' },
+          { value: 'add-member', label: 'Add New Family Member to Card', labelKannada: 'ಕುಟುಂಬದ ಹೊಸ ಸದಸ್ಯರನ್ನು ಸೇರಿಸಿ', labelHindi: 'नया सदस्य जोड़ें' },
+          { value: 'card-status', label: 'Download Digital E-Ration Card', labelKannada: 'ಡಿಜಿಟಲ್ ರೇಷನ್ ಕಾರ್ಡ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ', labelHindi: 'डिजिटल राशन कार्ड डाउनलोड करें' }
+        ],
+        helpText: 'Select what you want to check or apply for today.',
+        audioPrompt: 'Step 1: Select the ration card service you need.',
+      },
+      {
+        stepNumber: 2,
+        totalSteps: 3,
+        title: 'Enter Ration Card Number or Aadhaar',
+        titleKannada: 'ಪಡಿತರ ಚೀಟಿ ಸಂಖ್ಯೆ ಅಥವಾ ಆಧಾರ್ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ',
+        titleHindi: 'राशन कार्ड नंबर या आधार नंबर दर्ज करें',
+        description: 'Enter 12-digit Ration Card identifier or Head of Household Aadhaar number.',
+        descriptionKannada: 'ನಿಮ್ಮ 12 ಅಂಕಿಗಳ ರೇಷನ್ ಕಾರ್ಡ್ ನಂಬರ್ ಹಾಕಿ.',
+        descriptionHindi: 'अपना 12 अंकों का राशन कार्ड या आधार नंबर दर्ज करें।',
+        simplifiedDescription: 'Enter your 12-digit Ration Card number.',
+        fieldLabel: 'Ration / Aadhaar Number',
+        fieldLabelKannada: 'ರೇಷನ್ ಕಾರ್ಡ್ ಸಂಖ್ಯೆ',
+        fieldLabelHindi: 'कार्ड नंबर',
+        fieldType: 'text',
+        placeholder: 'e.g. 1234 5678 9012',
+        helpText: 'Found on the front of your yellow/green physical ration card.',
+        audioPrompt: 'Step 2: Enter your 12 digit ration card number.',
+      },
+      {
+        stepNumber: 3,
+        totalSteps: 3,
+        title: 'Confirm & View Allocation',
+        titleKannada: 'ದೃಢೀಕರಿಸಿ ಮತ್ತು ಕೋಟಾ ವೀಕ್ಷಿಸಿ',
+        titleHindi: 'पुष्टि करें और विवरण देखें',
+        description: 'Review household entitlement details and verify active fair price shop allocation.',
+        descriptionKannada: 'ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸಿ ನಿಮ್ಮ ನ್ಯಾಯಬೆಲೆ ಅಂಗಡಿ ಕೋಟಾ ಪಡೆಯಿರಿ.',
+        descriptionHindi: 'विवरण जांचें और कोटा देखें।',
+        simplifiedDescription: 'Confirm and view your monthly food grain entitlement.',
+        fieldLabel: 'Verification',
+        fieldLabelKannada: 'ದೃಢೀಕರಣ',
+        fieldLabelHindi: 'जांचें',
+        fieldType: 'radio',
+        options: [
+          { value: 'view-entitlement', label: 'Fetch Official Monthly Quota & Fair Price Shop', labelKannada: 'ನನ್ನ ತಿಂಗಳ ಪಡಿತರ ಕೋಟಾ ಮತ್ತು ಅಂಗಡಿ ವಿವರ ಪಡೆಯಿರಿ', labelHindi: 'मासिक कोटा देखें' }
+        ],
+        helpText: 'Instantly displays authorized rice, wheat, and pulses quota.',
+        audioPrompt: 'Step 3: Confirm and view your monthly ration allocation.',
       }
     ]
   }
@@ -410,3 +485,30 @@ export const PERSONA_PRESETS: PersonaPreset[] = [
     }
   }
 ];
+
+export function findServiceById(id?: string | string[]): ServiceDefinition {
+  if (!id) return MOCK_SERVICES[0];
+  const rawId = Array.isArray(id) ? id[0] : id;
+  const cleanId = String(rawId || '').toLowerCase().trim();
+
+  // 1. Exact match
+  const exact = MOCK_SERVICES.find(s => s.id.toLowerCase() === cleanId);
+  if (exact) return exact;
+
+  // 2. Alias resolution
+  if (cleanId.includes('scholarship') || cleanId.includes('education') || cleanId.includes('student') || cleanId.includes('scheme')) {
+    return MOCK_SERVICES.find(s => s.id === 'government-scholarship') || MOCK_SERVICES[0];
+  }
+  if (cleanId.includes('hospital') || cleanId.includes('health') || cleanId.includes('doctor') || cleanId.includes('appointment') || cleanId.includes('opd') || cleanId.includes('clinic')) {
+    return MOCK_SERVICES.find(s => s.id === 'hospital-appointment') || MOCK_SERVICES[1];
+  }
+  if (cleanId.includes('bill') || cleanId.includes('electric') || cleanId.includes('power') || cleanId.includes('banking') || cleanId.includes('utility') || cleanId.includes('pay')) {
+    return MOCK_SERVICES.find(s => s.id === 'electricity-bill') || MOCK_SERVICES[2];
+  }
+  if (cleanId.includes('ration') || cleanId.includes('pension') || cleanId.includes('card') || cleanId.includes('food')) {
+    return MOCK_SERVICES.find(s => s.id === 'ration-card') || MOCK_SERVICES[3];
+  }
+
+  return MOCK_SERVICES[0];
+}
+

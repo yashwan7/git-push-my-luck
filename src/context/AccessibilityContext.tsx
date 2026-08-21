@@ -42,7 +42,10 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
       try {
         const saved = localStorage.getItem('nayan_accessibility_profile');
         if (saved) {
-          setProfile(JSON.parse(saved));
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            setProfile(prev => ({ ...DEFAULT_ACCESSIBILITY_PROFILE, ...prev, ...parsed }));
+          }
         }
       } catch (e) {
         console.warn('Failed to parse saved profile:', e);
@@ -54,7 +57,7 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
         if (res.ok) {
           const data = await res.json();
           if (data.success && data.profile) {
-            setProfile(data.profile);
+            setProfile(prev => ({ ...DEFAULT_ACCESSIBILITY_PROFILE, ...prev, ...data.profile }));
             if (data.activePersonaName) {
               setActivePersonaName(data.activePersonaName);
             }
@@ -73,9 +76,9 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
   useEffect(() => {
     if (typeof document !== 'undefined') {
       const root = document.documentElement;
-      root.setAttribute('data-text-size', profile.textSize);
-      root.setAttribute('data-contrast', profile.contrastTheme);
-      root.setAttribute('data-reduced-motion', profile.motionReduction ? 'true' : 'false');
+      root.setAttribute('data-text-size', profile?.textSize || 'normal');
+      root.setAttribute('data-contrast', profile?.contrastTheme || 'standard');
+      root.setAttribute('data-reduced-motion', profile?.motionReduction ? 'true' : 'false');
 
       try {
         localStorage.setItem('nayan_accessibility_profile', JSON.stringify(profile));
