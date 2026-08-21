@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAccessibility } from '@/context/AccessibilityContext';
@@ -10,6 +10,8 @@ import { getTranslation, LANGUAGE_NAMES, getLocalizedService } from '@/lib/multi
 import { MOCK_SERVICES } from '@/lib/servicesData';
 import { ServiceDefinition } from '@/types';
 import { ServiceDetailModal } from '@/components/services/ServiceDetailModal';
+import { GoogleMapEmergency } from '@/components/emergency/GoogleMapEmergency';
+import { ChangeEmergencyModal, EMERGENCY_PRESETS, EmergencyCase } from '@/components/emergency/ChangeEmergencyModal';
 import { 
   Home,
   Clock,
@@ -40,7 +42,17 @@ import {
   ShieldCheck,
   Layers,
   X,
-  AlertCircle
+  AlertCircle,
+  Phone,
+  Navigation,
+  MapPin,
+  Siren,
+  Headphones,
+  Activity,
+  KeyRound,
+  History,
+  Lock,
+  Volume2
 } from 'lucide-react';
 
 export default function ServicesPage() {
@@ -53,7 +65,13 @@ export default function ServicesPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedServiceForModal, setSelectedServiceForModal] = useState<ServiceDefinition | null>(null);
-  const [activeSidebarTab, setActiveSidebarTab] = useState<'home' | 'history' | 'services' | 'wallet' | 'settings'>('services');
+  const [activeSidebarTab, setActiveSidebarTab] = useState<'home' | 'services' | 'activity' | 'access' | 'history' | 'settings'>('services');
+
+  // Emergency Router Interactive Real State
+  const [currentEmergencyCase, setCurrentEmergencyCase] = useState<EmergencyCase>(EMERGENCY_PRESETS[0]);
+  const [isChangeModalOpen, setIsChangeModalOpen] = useState<boolean>(false);
+  const [isEmergencyNavigating, setIsEmergencyNavigating] = useState<boolean>(false);
+  const [emergencyCallStatus, setEmergencyCallStatus] = useState<string | null>(null);
 
   const lang = profile.language;
   const t = (key: string, fallback?: string) => getTranslation(lang, key, fallback);
@@ -79,64 +97,140 @@ export default function ServicesPage() {
     { id: 'healthcare', label: 'Healthcare', icon: Stethoscope },
     { id: 'banking', label: 'Banking & Bills', icon: CreditCard },
     { id: 'education', label: 'Education', icon: GraduationCap },
-    { id: 'emergency', label: 'Emergency', icon: AlertCircle },
+    { id: 'emergency', label: 'Emergency', icon: Siren },
   ];
 
-  // Quick Action Tiles Definition (Banking Dashboard Style)
+  // 🌟 THE 6 PREMIUM ELEVATED ACTION TILES (MATCHING REFERENCE IMAGE 1:1)
   const quickActions = [
     {
       id: 'qa-bill',
       title: 'Pay a Bill',
-      description: 'Electricity, Jio & utilities',
+      description: 'Electricity, Mobile, DTH & more',
       href: '/services/electricity-bill',
       icon: CreditCard,
-      color: '#779AE6',
+      accentBg: 'bg-gradient-to-br from-[#EEF4FF] via-[#F4F8FF] to-[#E0ECFD] dark:from-[#1E2638] dark:to-[#172030]',
+      borderColor: 'border-[#BFDBFE]/60 dark:border-blue-500/20',
+      iconBg: 'bg-[#3B82F6]/15 text-[#2563EB] dark:bg-blue-500/20 dark:text-blue-400',
+      arrowBg: 'bg-white text-[#2563EB] shadow-sm hover:bg-[#2563EB] hover:text-white',
       badge: 'BBPS Demo',
+      sparkleColor: 'text-blue-400',
     },
     {
       id: 'qa-scheme',
       title: 'Apply for Scheme',
-      description: 'Scholarship & grants',
+      description: 'Government schemes & grants',
       href: '/services/government-scholarship',
-      icon: Building2,
-      color: '#4F46E5',
+      icon: FileText,
+      accentBg: 'bg-gradient-to-br from-[#F5F3FF] via-[#FAF8FF] to-[#ECE8FC] dark:from-[#261F3D] dark:to-[#1C172E]',
+      borderColor: 'border-[#DDD6FE]/60 dark:border-indigo-500/20',
+      iconBg: 'bg-[#6366F1]/15 text-[#4F46E5] dark:bg-indigo-500/20 dark:text-indigo-400',
+      arrowBg: 'bg-white text-[#4F46E5] shadow-sm hover:bg-[#4F46E5] hover:text-white',
       badge: '5-Step Guided',
+      sparkleColor: 'text-indigo-400',
     },
     {
       id: 'qa-hospital',
       title: 'Book Hospital',
-      description: 'OPD & doctor appointment',
+      description: 'Find & book appointments',
       href: '/services/hospital-appointment',
       icon: Stethoscope,
-      color: '#059669',
+      accentBg: 'bg-gradient-to-br from-[#FFF1F2] via-[#FFF7F8] to-[#FCE3E6] dark:from-[#381F26] dark:to-[#2B171C]',
+      borderColor: 'border-[#FECDD3]/60 dark:border-rose-500/20',
+      iconBg: 'bg-[#E11D48]/15 text-[#E11D48] dark:bg-rose-500/20 dark:text-rose-400',
+      arrowBg: 'bg-white text-[#E11D48] shadow-sm hover:bg-[#E11D48] hover:text-white',
       badge: 'Voice Assisted',
+      sparkleColor: 'text-rose-400',
     },
     {
       id: 'qa-simplify',
       title: 'Simplify Text',
-      description: 'Make notices easy to read',
+      description: 'Make complex content easy',
       href: '/simplifier',
       icon: Sparkles,
-      color: '#D97706',
+      accentBg: 'bg-gradient-to-br from-[#FFFBEB] via-[#FFFDF5] to-[#FEF3C7] dark:from-[#382F1E] dark:to-[#2A2317]',
+      borderColor: 'border-[#FDE68A]/60 dark:border-amber-500/20',
+      iconBg: 'bg-[#D97706]/15 text-[#D97706] dark:bg-amber-500/20 dark:text-amber-400',
+      arrowBg: 'bg-white text-[#D97706] shadow-sm hover:bg-[#D97706] hover:text-white',
       badge: 'Plain Language',
+      sparkleColor: 'text-amber-400',
     },
     {
       id: 'qa-audit',
       title: 'Audit Service',
-      description: 'Verify accessibility score',
+      description: 'Check accessibility of any service',
       href: '/audit',
-      icon: FileText,
-      color: '#0D9488',
+      icon: ShieldCheck,
+      accentBg: 'bg-gradient-to-br from-[#F0FDF4] via-[#F7FEFA] to-[#DCFCE7] dark:from-[#1E382A] dark:to-[#172B20]',
+      borderColor: 'border-[#BBF7D0]/60 dark:border-emerald-500/20',
+      iconBg: 'bg-[#059669]/15 text-[#059669] dark:bg-emerald-500/20 dark:text-emerald-400',
+      arrowBg: 'bg-white text-[#059669] shadow-sm hover:bg-[#059669] hover:text-white',
       badge: 'WCAG 2.2',
+      sparkleColor: 'text-emerald-400',
     },
     {
       id: 'qa-emergency',
       title: 'Emergency Help',
-      description: 'Instant civic emergency',
+      description: 'Get urgent support instantly',
       href: '/emergency',
-      icon: AlertCircle,
-      color: '#E11D48',
+      icon: Siren,
+      accentBg: 'bg-gradient-to-br from-[#FEF2F2] via-[#FFF8F8] to-[#FEE2E2] dark:from-[#381E1E] dark:to-[#2B1717]',
+      borderColor: 'border-[#FECACA]/60 dark:border-red-500/20',
+      iconBg: 'bg-[#DC2626]/15 text-[#DC2626] dark:bg-red-500/20 dark:text-red-400',
+      arrowBg: 'bg-white text-[#DC2626] shadow-sm hover:bg-[#DC2626] hover:text-white',
       badge: '24x7 Urgent',
+      sparkleColor: 'text-red-400',
+    },
+  ];
+
+  // Recommended 4 Services Carousel
+  const recommendedItems = [
+    {
+      id: 'rec-1',
+      title: 'Post-Matric Scholarship',
+      org: 'Ministry of Education',
+      category: 'Government',
+      time: '6 min',
+      icon: GraduationCap,
+      iconColor: 'bg-emerald-500/10 text-emerald-600',
+      description: 'Financial support for SC/ST/OBC students pursuing higher education.',
+      tags: ['+ Voice', '+ Guided Steps'],
+      serviceId: 'government-scholarship',
+    },
+    {
+      id: 'rec-2',
+      title: 'CityCare Hospital Appointment',
+      org: 'Medical Department',
+      category: 'Healthcare',
+      time: '4 min',
+      icon: Building2,
+      iconColor: 'bg-blue-500/10 text-blue-600',
+      description: 'Book OPD appointments at government hospitals.',
+      tags: ['+ Voice', '+ Easy Booking'],
+      serviceId: 'hospital-appointment',
+    },
+    {
+      id: 'rec-3',
+      title: 'Electricity Bill Payment',
+      org: 'BESCOM Smart',
+      category: 'Banking',
+      time: '3 min',
+      icon: Zap,
+      iconColor: 'bg-indigo-500/10 text-indigo-600',
+      description: 'Pay your electricity bill quickly and securely.',
+      tags: ['Simplified'],
+      serviceId: 'electricity-bill',
+    },
+    {
+      id: 'rec-4',
+      title: 'College Fee Payment',
+      org: 'Education Smart',
+      category: 'Education',
+      time: '5 min',
+      icon: FileText,
+      iconColor: 'bg-amber-500/10 text-amber-600',
+      description: 'Pay your college or university fees online.',
+      tags: ['+ Voice', '+ Multi-language'],
+      serviceId: 'government-scholarship',
     },
   ];
 
@@ -154,17 +248,102 @@ export default function ServicesPage() {
     });
   }, [localizedServices, selectedCategory, searchQuery]);
 
-  // Curated Recommended Services (Top 3-4)
-  const recommendedServices = useMemo(() => {
-    return localizedServices.slice(0, 3);
-  }, [localizedServices]);
-
   const speakText = (text: string) => {
     speak(text);
   };
 
-  const handleServiceClick = (service: ServiceDefinition) => {
-    setSelectedServiceForModal(service);
+  const [locationDenied, setLocationDenied] = useState<boolean>(false);
+
+  // Live Google Places & Routes Nearby Hospitals Fetch
+  useEffect(() => {
+    let isMounted = true;
+    const fetchLiveHospitals = async () => {
+      try {
+        let userLat = 12.9352;
+        let userLng = 77.6245;
+
+        if (typeof window !== 'undefined' && 'geolocation' in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+              userLat = pos.coords.latitude;
+              userLng = pos.coords.longitude;
+              if (isMounted) setLocationDenied(false);
+              executeFetch(userLat, userLng);
+            },
+            (err) => {
+              if (isMounted) setLocationDenied(true);
+              executeFetch(userLat, userLng);
+            },
+            { timeout: 4000 }
+          );
+        } else {
+          executeFetch(userLat, userLng);
+        }
+
+        async function executeFetch(lat: number, lng: number) {
+          const res = await fetch(
+            `/api/emergency/nearby-hospitals?lat=${lat}&lng=${lng}&category=${currentEmergencyCase.id}`
+          );
+          if (res.ok && isMounted) {
+            const data = await res.json();
+            if (data.hospitals && data.hospitals.length > 0) {
+              const best = data.hospitals[0];
+              const rest = data.hospitals.slice(1).map((h: any) => ({
+                name: h.name,
+                eta: `${h.etaMinutes} min`,
+                distance: `${h.distanceKm} km`,
+                status: h.demoAvailability || 'Emergency Active',
+              }));
+
+              setCurrentEmergencyCase((prev) => ({
+                ...prev,
+                hospitalName: best.name,
+                address: best.address,
+                lat: best.latitude,
+                lng: best.longitude,
+                eta: `${best.etaMinutes} min`,
+                distance: `${best.distanceKm} km`,
+                specialty: best.demoAvailability || prev.specialty,
+                alternatives: rest.length > 0 ? rest : prev.alternatives,
+              }));
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Nearby hospital live fetch error:', err);
+      }
+    };
+
+    fetchLiveHospitals();
+    return () => {
+      isMounted = false;
+    };
+  }, [currentEmergencyCase.id]);
+
+  const handleSelectNewEmergency = (selectedCase: EmergencyCase) => {
+    setCurrentEmergencyCase(selectedCase);
+    speakText(`Emergency updated to ${selectedCase.condition}. Re-routing to ${selectedCase.hospitalName}. Estimated arrival ${selectedCase.eta}.`);
+  };
+
+  const handleStartEmergencyNav = () => {
+    setIsEmergencyNavigating(true);
+    speakText(`Navigating to ${currentEmergencyCase.hospitalName}. Estimated arrival ${currentEmergencyCase.eta}.`);
+    
+    // Open in Google Maps
+    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${currentEmergencyCase.lat},${currentEmergencyCase.lng}&travelmode=driving`;
+    window.open(mapsUrl, '_blank');
+
+    setTimeout(() => {
+      setIsEmergencyNavigating(false);
+    }, 3000);
+  };
+
+  const handleCallEmergency = () => {
+    setEmergencyCallStatus('Calling 112 Emergency Dispatch...');
+    speakText(`Connecting to 112 National Emergency Helpline for ${currentEmergencyCase.condition}.`);
+    setTimeout(() => {
+      setEmergencyCallStatus(null);
+    }, 4000);
   };
 
   return (
@@ -181,423 +360,643 @@ export default function ServicesPage() {
         language={lang}
       />
 
+      {/* Change Emergency Situation Modal */}
+      <ChangeEmergencyModal
+        isOpen={isChangeModalOpen}
+        onClose={() => setIsChangeModalOpen(false)}
+        currentCase={currentEmergencyCase}
+        onSelectCase={handleSelectNewEmergency}
+      />
+
       {/* ─────────────────────────────────────────────────────────────
-          MAIN CANVAS CONTAINER (IDENTICAL SHELL AS BANKING)
+          MAIN CANVAS SHELL (MATCHING REFERENCE IMAGE 1:1)
          ───────────────────────────────────────────────────────────── */}
-      <div className="max-w-[1340px] mx-auto bg-[#ECECEC] dark:bg-[#18191D] rounded-[36px] p-3 sm:p-5 md:p-7 flex gap-5 sm:gap-7">
+      <div className="max-w-[1440px] mx-auto bg-[#ECECEC] dark:bg-[#18191D] rounded-[36px] p-3 sm:p-5 md:p-7 flex gap-5 sm:gap-6">
         
         {/* ═══════════════════════════════════════════════════════════
-            LEFT DARK SIDEBAR PILL (CONSISTENT WITH BANKING)
+            LEFT DARK SIDEBAR PILL (EXACT ICONS AS SCREENSHOT)
            ═══════════════════════════════════════════════════════════ */}
-        <aside className="hidden lg:flex flex-col justify-between w-16 py-5 rounded-[28px] bg-[#232428] text-white shrink-0 items-center shadow-md">
+        <aside className="hidden lg:flex flex-col justify-between w-16 py-6 rounded-[28px] bg-[#181920] dark:bg-[#202127] text-white shrink-0 items-center shadow-md">
           
-          {/* Top Navigation Cluster */}
+          {/* Top Cluster */}
           <div className="flex flex-col items-center gap-4">
             <Link
               href="/banking"
-              className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
-                activeSidebarTab === 'home' 
-                  ? 'bg-white text-[#232428] shadow-md scale-105' 
-                  : 'text-slate-400 hover:text-white'
-              }`}
-              title="Banking Dashboard"
+              className="w-10 h-10 rounded-2xl text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+              title="Home Dashboard"
             >
               <Home className="w-5 h-5" />
             </Link>
 
-            <Link
-              href="/services"
-              className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
-                activeSidebarTab === 'services' 
-                  ? 'bg-white text-[#232428] shadow-md scale-105' 
-                  : 'text-slate-400 hover:text-white'
-              }`}
+            {/* Active Services Icon Pill */}
+            <button
+              onClick={() => setActiveSidebarTab('services')}
+              className="w-11 h-11 rounded-2xl bg-[#2563EB] text-white shadow-lg flex items-center justify-center transition-all scale-105"
               title="Services Catalog"
             >
               <Layers className="w-5 h-5" />
-            </Link>
+            </button>
 
             <Link
               href="/audit"
               className="w-10 h-10 rounded-2xl text-slate-400 hover:text-white flex items-center justify-center transition-colors"
-              title="Audit a Service"
+              title="Activity & Audit"
             >
-              <Clock className="w-5 h-5" />
+              <Activity className="w-5 h-5" />
             </Link>
 
             <Link
               href="/provider"
               className="w-10 h-10 rounded-2xl text-slate-400 hover:text-white flex items-center justify-center transition-colors"
-              title="Provider Mode"
+              title="My Access"
             >
-              <Users className="w-5 h-5" />
+              <KeyRound className="w-5 h-5" />
             </Link>
 
             <button
               onClick={() => router.push('/banking')}
               className="w-10 h-10 rounded-2xl text-slate-400 hover:text-white flex items-center justify-center transition-colors"
-              title="Banking Wallet"
+              title="History"
             >
-              <Wallet className="w-5 h-5" />
+              <History className="w-5 h-5" />
+            </button>
+
+            <button
+              onClick={() => router.push('/banking')}
+              className="w-10 h-10 rounded-2xl text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+              title="Settings"
+            >
+              <Settings className="w-5 h-5" />
             </button>
           </div>
 
-          {/* Bottom Navigation Cluster */}
+          {/* Bottom Support */}
           <div className="flex flex-col items-center gap-4">
             <Link
               href="/emergency"
-              className="w-10 h-10 rounded-2xl text-slate-400 hover:text-white flex items-center justify-center transition-colors"
-              title="Emergency Help"
+              className="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors"
+              title="Support"
             >
-              <HelpCircle className="w-5 h-5" />
-            </Link>
-
-            <Link
-              href="/"
-              className="w-10 h-10 rounded-2xl text-slate-400 hover:text-white flex items-center justify-center transition-colors"
-              title="Exit to Portal"
-            >
-              <LogOut className="w-5 h-5" />
+              <Headphones className="w-5 h-5" />
+              <span className="text-[9px] font-bold">Support</span>
             </Link>
           </div>
 
         </aside>
 
         {/* ═══════════════════════════════════════════════════════════
-            MAIN SERVICES CONTENT AREA
+            MAIN 2-COLUMN SPLIT GRID
            ═══════════════════════════════════════════════════════════ */}
-        <div className="flex-1 space-y-6">
+        <div className="flex-1 grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
           
-          {/* TOP APP HEADER BAR (RIGHT ACTION CONTROLS) */}
-          <div className="flex items-center justify-between pb-1">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-[#779AE6] uppercase tracking-wider px-3 py-1 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 shadow-sm flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#F0DC9B]" />
-                <span>NAYAN Digital Services &bull; Active Profile: {activePersonaName || 'Adaptive'}</span>
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2.5 sm:gap-3">
-              <button 
-                onClick={() => speakText(`You are on the NAYAN Services page. There are ${localizedServices.length} digital services available.`)}
-                className="w-10 h-10 rounded-full bg-white dark:bg-[#232428] border border-slate-300 dark:border-white/10 flex items-center justify-center text-[#1E2024] dark:text-white shadow-sm hover:scale-105 transition-transform"
-                aria-label="Audio Summary"
-                title="Speak page summary"
-              >
-                <Bell className="w-4 h-4" />
-              </button>
-
-              <div className="w-10 h-10 rounded-full bg-[#1E2024] text-white font-serif font-bold text-base flex items-center justify-center shadow-sm border border-slate-300 dark:border-white/20">
-                {userInitial}
-              </div>
-            </div>
-          </div>
-
           {/* ═══════════════════════════════════════════════════════════
-              HERO GREETING ROW (DASHBOARD-FIRST)
+              LEFT PRIMARY COLUMN (8 COLS ON XL)
              ═══════════════════════════════════════════════════════════ */}
-          <div className="space-y-1 pt-1">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1E2024] dark:text-white tracking-tight">
-              {greetingTime}, <span className="text-[#8494B6] font-extrabold">{firstName}.</span>
-            </h1>
-            <p className="text-sm sm:text-base font-bold text-[#1E2024] dark:text-white">
-              What would you like to get done today?
-            </p>
-            <p className="text-xs sm:text-sm text-[#8B929A] font-medium">
-              NAYAN helps you discover and complete digital services in the way that works best for you.
-            </p>
-          </div>
+          <div className="xl:col-span-8 space-y-6">
+            
+            {/* HERO GREETING + ADAPTIVE PANEL ROW */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+              
+              {/* Left Greeting */}
+              <div className="md:col-span-7 space-y-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 shadow-xs text-[10px] font-bold text-[#2563EB]">
+                  <Sparkles className="w-3 h-3 text-amber-500" />
+                  <span>NAYAN DIGITAL SERVICES &bull; ACTIVE PROFILE: {activePersonaName ? activePersonaName.toUpperCase() : 'ADAPTIVE'}</span>
+                </div>
 
-          {/* ═══════════════════════════════════════════════════════════
-              NAYAN CONTEXTUAL PERSONALIZATION PANEL
-             ═══════════════════════════════════════════════════════════ */}
-          <div className="p-5 sm:p-6 rounded-[28px] bg-gradient-to-r from-[#779AE6]/15 via-[#8FAEE8]/10 to-transparent border border-[#779AE6]/30 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-start gap-3.5">
-              <div className="w-10 h-10 rounded-2xl bg-[#779AE6] text-white flex items-center justify-center shrink-0 shadow-sm">
-                <Sparkles className="w-5 h-5 text-white" />
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1E2024] dark:text-white tracking-tight leading-none">
+                  {greetingTime}, <span className="text-[#2563EB] font-black">{firstName}.</span>
+                </h1>
+                
+                <div className="space-y-0.5">
+                  <p className="text-sm font-bold text-[#1E2024] dark:text-white">
+                    What would you like to get done today?
+                  </p>
+                  <p className="text-xs text-[#8B929A] font-medium leading-relaxed">
+                    NAYAN helps you discover and complete digital services in the way that works best for you.
+                  </p>
+                </div>
               </div>
-              <div className="space-y-0.5">
-                <span className="text-xs font-bold text-[#779AE6] uppercase tracking-wider block">
-                  ✦ NAYAN Adaptive Intelligence
-                </span>
-                <p className="text-xs sm:text-sm font-semibold text-[#1E2024] dark:text-white">
-                  Based on your active accessibility profile, we&apos;ve prioritized services that are easier to navigate with voice and simplified steps.
+
+              {/* Right: NAYAN Adaptive Intelligence Panel Card */}
+              <div className="md:col-span-5 p-4 sm:p-5 rounded-[26px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-2 relative overflow-hidden">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  <span className="text-xs font-black text-[#1E2024] dark:text-white">
+                    NAYAN Adaptive Intelligence
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#8B929A] leading-relaxed">
+                  Based on your accessibility profile, we prioritize services that are easier to navigate with voice and simplified steps.
                 </p>
+                <button
+                  onClick={() => speakText('Recommended services prioritized for your profile are displayed below.')}
+                  className="text-xs font-black text-[#2563EB] hover:underline flex items-center gap-1 pt-1"
+                >
+                  <span>Explore recommended</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
               </div>
+
             </div>
 
-            <button
-              onClick={() => {
-                setSelectedCategory('all');
-                speakText('Showing all recommended services suited for your profile.');
-              }}
-              className="px-4 py-2.5 rounded-full bg-white dark:bg-[#232428] hover:bg-[#779AE6] hover:text-white text-[#1E2024] dark:text-white font-bold text-xs shadow-sm border border-slate-200 dark:border-white/10 transition-all shrink-0 self-start sm:self-auto flex items-center gap-1.5"
-            >
-              <span>Explore Recommended</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION: QUICK ACTIONS (THE 6 ELEVATED PASTEL ACTION TILES)
+               ═══════════════════════════════════════════════════════════ */}
+            <div className="space-y-3">
+              
+              {/* Header with Title and 'View all actions ->' */}
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-base font-black text-[#1E2024] dark:text-white flex items-center gap-1.5">
+                    <span>Quick Actions</span>
+                    <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
+                  </h3>
+                  <p className="text-xs text-[#8B929A] font-medium">
+                    Popular tasks you can do right away
+                  </p>
+                </div>
 
-          {/* ═══════════════════════════════════════════════════════════
-              QUICK SERVICE ACTIONS ROW (BANKING ACTION TILES)
-             ═══════════════════════════════════════════════════════════ */}
-          <div className="space-y-2.5">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#8B929A]">
-                Quick Actions
-              </span>
-              <span className="text-xs font-semibold text-[#779AE6]">Instant Access</span>
+                <Link
+                  href="/services"
+                  className="text-xs font-bold text-[#2563EB] hover:underline flex items-center gap-1"
+                >
+                  <span>View all actions</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+
+              {/* 6 Action Tiles Grid (1 Row on Desktop, 3x2 on Tablet, 2x3 on Mobile) */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                {quickActions.map((qa) => {
+                  const Icon = qa.icon;
+                  return (
+                    <Link
+                      key={qa.id}
+                      href={qa.href}
+                      className={`group p-4 rounded-[26px] ${qa.accentBg} border ${qa.borderColor} shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between min-h-[175px] relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#2563EB]`}
+                      aria-label={`${qa.title}. ${qa.description}`}
+                    >
+                      {/* Top Row: Floating Squircle Icon + Sparkle */}
+                      <div className="flex justify-between items-start">
+                        <div className={`w-11 h-11 rounded-2xl ${qa.iconBg} flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform`}>
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <Sparkles className={`w-3 h-3 ${qa.sparkleColor} opacity-40 group-hover:opacity-100 transition-opacity`} />
+                      </div>
+
+                      {/* Middle: Title & Description */}
+                      <div className="my-2 space-y-1">
+                        <h4 className="font-black text-sm text-[#1E2024] dark:text-white leading-tight">
+                          {qa.title}
+                        </h4>
+                        <p className="text-[11px] text-[#8B929A] font-medium leading-snug line-clamp-2">
+                          {qa.description}
+                        </p>
+                      </div>
+
+                      {/* Bottom-Right: Circular Arrow Button */}
+                      <div className="flex justify-end pt-1">
+                        <div className={`w-7 h-7 rounded-full ${qa.arrowBg} flex items-center justify-center text-xs font-bold transition-all group-hover:translate-x-0.5`}>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              {quickActions.map((qa) => {
-                const Icon = qa.icon;
+            {/* ═══════════════════════════════════════════════════════════
+                SEARCH BAR (PILL SHAPE WITH MIC ICON)
+               ═══════════════════════════════════════════════════════════ */}
+            <div className="relative">
+              <div className="absolute left-5 top-1/2 -translate-y-1/2 text-[#8B929A] pointer-events-none">
+                <Search className="w-4 h-4" />
+              </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search services, schemes, hospitals, bills, scholarships..."
+                className="w-full p-3.5 pl-12 pr-12 rounded-full bg-white dark:bg-[#232428] border border-slate-200/90 dark:border-white/10 shadow-xs text-xs font-semibold text-[#1E2024] dark:text-white outline-none focus:ring-2 focus:ring-[#2563EB] transition-all"
+              />
+              <button
+                onClick={() => speakText('Voice search active. Speak what you need.')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 text-slate-400 hover:text-[#2563EB]"
+                aria-label="Voice Search"
+                title="Voice Search"
+              >
+                <Mic className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* ═══════════════════════════════════════════════════════════
+                COMPACT CATEGORY FILTER PILLS
+               ═══════════════════════════════════════════════════════════ */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              {categories.map((cat) => {
+                const Icon = cat.icon;
+                const isActive = selectedCategory === cat.id;
+
                 return (
-                  <Link
-                    key={qa.id}
-                    href={qa.href}
-                    className="p-4 rounded-[24px] bg-white dark:bg-[#232428] hover:bg-[#779AE6] hover:text-white border border-slate-200/80 dark:border-white/10 shadow-sm transition-all flex flex-col justify-between min-h-[125px] group"
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className={`px-4 py-2 rounded-full font-bold text-xs transition-all shrink-0 flex items-center gap-1.5 ${
+                      isActive
+                        ? 'bg-[#2563EB] text-white shadow-xs'
+                        : 'bg-white dark:bg-[#232428] text-[#1E2024] dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:border-[#2563EB]'
+                    }`}
                   >
-                    <div className="w-9 h-9 rounded-xl bg-[#ECECEC] dark:bg-white/10 group-hover:bg-white/20 flex items-center justify-center transition-colors" style={{ color: qa.color }}>
-                      <Icon className="w-5 h-5 group-hover:text-white" />
-                    </div>
-
-                    <div className="mt-2 space-y-0.5">
-                      <span className="font-extrabold text-xs sm:text-sm text-[#1E2024] dark:text-white group-hover:text-white block leading-tight">
-                        {qa.title}
-                      </span>
-                      <span className="text-[10px] text-[#8B929A] group-hover:text-white/80 block line-clamp-1">
-                        {qa.description}
-                      </span>
-                    </div>
-                  </Link>
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{cat.label}</span>
+                  </button>
                 );
               })}
             </div>
-          </div>
 
-          {/* ═══════════════════════════════════════════════════════════
-              SEARCH BAR COMPONENT (LARGE ROUNDED DASHBOARD SEARCH)
-             ═══════════════════════════════════════════════════════════ */}
-          <div className="relative">
-            <div className="absolute left-5 top-1/2 -translate-y-1/2 text-[#8B929A] pointer-events-none">
-              <Search className="w-5 h-5" />
-            </div>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search services, schemes, hospitals, bills, scholarships..."
-              className="w-full p-4 pl-14 pr-12 rounded-full bg-white dark:bg-[#232428] border border-slate-200/90 dark:border-white/10 shadow-sm text-xs sm:text-sm font-semibold text-[#1E2024] dark:text-white outline-none focus:ring-2 focus:ring-[#779AE6] transition-all"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 text-slate-400"
-                aria-label="Clear search"
-              >
-                <X className="w-4 h-4" />
-              </button>
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION: RECOMMENDED FOR YOU (4 HORIZONTAL CARDS)
+               ═══════════════════════════════════════════════════════════ */}
+            {!searchQuery && selectedCategory === 'all' && (
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-black text-base text-[#1E2024] dark:text-white">
+                    Recommended for you
+                  </h3>
+                  <button 
+                    onClick={() => speakText('Displaying recommended scholarships, hospital booking, and utility bills.')}
+                    className="text-xs font-bold text-[#2563EB] hover:underline"
+                  >
+                    View all &rarr;
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                  {recommendedItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => {
+                          const s = localizedServices.find(x => x.id === item.serviceId) || localizedServices[0];
+                          setSelectedServiceForModal(s);
+                        }}
+                        className="p-4 rounded-[24px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-xs hover:border-[#2563EB] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between space-y-3 group"
+                      >
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-start">
+                            <span className="text-[9px] font-bold text-[#2563EB] px-2 py-0.5 rounded-full bg-blue-50 dark:bg-white/10 border border-blue-100 dark:border-white/10">
+                              {item.category}
+                            </span>
+                            <span className="text-[10px] text-[#8B929A] flex items-center gap-1 font-medium">
+                              <Clock className="w-3 h-3" />
+                              <span>{item.time}</span>
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2.5">
+                            <div className={`w-8 h-8 rounded-xl ${item.iconColor} flex items-center justify-center shrink-0`}>
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <h4 className="font-black text-xs text-[#1E2024] dark:text-white leading-tight group-hover:text-[#2563EB] transition-colors">
+                                {item.title}
+                              </h4>
+                              <span className="text-[10px] text-[#8B929A] block font-medium">
+                                {item.org}
+                              </span>
+                            </div>
+                          </div>
+
+                          <p className="text-[11px] text-[#8B929A] line-clamp-2 leading-relaxed">
+                            {item.description}
+                          </p>
+                        </div>
+
+                        <div className="pt-2 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+                          <div className="flex items-center gap-1 flex-wrap">
+                            {item.tags.map((t, idx) => (
+                              <span key={idx} className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded">
+                                {t}
+                              </span>
+                            ))}
+                          </div>
+                          <ChevronRight className="w-3.5 h-3.5 text-[#2563EB] group-hover:translate-x-0.5 transition-transform" />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             )}
-          </div>
 
-          {/* ═══════════════════════════════════════════════════════════
-              COMPACT CATEGORY FILTER PILLS
-             ═══════════════════════════════════════════════════════════ */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            {categories.map((cat) => {
-              const Icon = cat.icon;
-              const isActive = selectedCategory === cat.id;
-
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-4 py-2.5 rounded-full font-bold text-xs transition-all shrink-0 flex items-center gap-2 ${
-                    isActive
-                      ? 'bg-[#779AE6] text-white shadow-sm'
-                      : 'bg-white dark:bg-[#232428] text-[#1E2024] dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:border-[#779AE6]'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{cat.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* ═══════════════════════════════════════════════════════════
-              SECTION: RECOMMENDED FOR YOU (3 CARDS)
-             ═══════════════════════════════════════════════════════════ */}
-          {!searchQuery && selectedCategory === 'all' && (
-            <div className="space-y-3 pt-1">
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION: ALL SERVICES (24 ITEMS)
+               ═══════════════════════════════════════════════════════════ */}
+            <div className="space-y-3.5 pt-1">
+              
               <div className="flex justify-between items-center">
-                <h3 className="font-extrabold text-base text-[#1E2024] dark:text-white">
-                  Recommended for you
+                <h3 className="font-black text-base text-[#1E2024] dark:text-white">
+                  All Services (24)
                 </h3>
-                <span className="text-xs font-semibold text-[#779AE6]">
-                  Personalized for your profile
+                <span className="text-xs text-[#8B929A] font-bold">
+                  Sort: Most Relevant ▾
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {recommendedServices.map((service, idx) => (
+              {/* 4-column / 2-column Grid of Services */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                {filteredServices.map((service) => (
                   <div
-                    key={`rec-${service.id}`}
-                    onClick={() => handleServiceClick(service)}
-                    className="p-5 rounded-[26px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm hover:border-[#779AE6] transition-all cursor-pointer flex flex-col justify-between space-y-4 group"
+                    key={service.id}
+                    onClick={() => setSelectedServiceForModal(service)}
+                    className="p-4 rounded-[24px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-xs hover:border-[#2563EB] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between space-y-3 group"
                   >
                     <div className="space-y-2">
                       <div className="flex justify-between items-start">
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#779AE6]/10 text-[#779AE6] border border-[#779AE6]/20">
-                          {service.badge || 'Recommended'}
+                        <span className="text-[9px] font-bold text-[#2563EB] px-2 py-0.5 rounded-full bg-blue-50 dark:bg-white/10 border border-blue-100 dark:border-white/10">
+                          {service.badge || service.category}
                         </span>
-                        <span className="text-[11px] font-medium text-[#8B929A]">
-                          {service.estimatedTime}
+                        <span className="text-[10px] text-[#8B929A] flex items-center gap-1 font-medium">
+                          <Clock className="w-3 h-3" />
+                          <span>{service.estimatedTime}</span>
                         </span>
                       </div>
 
-                      <h4 className="font-bold text-sm text-[#1E2024] dark:text-white group-hover:text-[#779AE6] transition-colors leading-tight">
+                      <h4 className="font-black text-xs text-[#1E2024] dark:text-white group-hover:text-[#2563EB] transition-colors leading-tight">
                         {service.title}
                       </h4>
 
-                      <p className="text-xs text-[#8B929A] line-clamp-2 leading-relaxed">
+                      <p className="text-[10px] font-bold text-[#8B929A]">
+                        {service.organization}
+                      </p>
+
+                      <p className="text-[11px] text-[#8B929A] line-clamp-2 leading-relaxed">
                         {service.description}
                       </p>
                     </div>
 
-                    <div className="pt-2 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-xs">
-                      <span className="text-[10px] font-semibold text-[#059669] flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" />
-                        <span>Voice · Guided</span>
-                      </span>
-
-                      <span className="text-xs font-bold text-[#779AE6] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                        <span>View service</span>
+                    <div className="pt-2 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-[10px] font-bold text-[#2563EB]">
+                      <span className="text-[#059669]">Voice Supported</span>
+                      <span className="flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+                        <span>View</span>
                         <ArrowRight className="w-3 h-3" />
                       </span>
                     </div>
                   </div>
                 ))}
               </div>
+
             </div>
-          )}
+
+          </div>
 
           {/* ═══════════════════════════════════════════════════════════
-              MAIN SERVICES SECTION & 2-COLUMN GRID (BANKING SYSTEM)
+              RIGHT SECONDARY COLUMN (4 COLS ON XL) — EMERGENCY AI ROUTER
              ═══════════════════════════════════════════════════════════ */}
-          <div className="space-y-4 pt-2">
+          <div className="xl:col-span-4 space-y-4">
             
-            <div className="flex justify-between items-baseline">
-              <div>
-                <h2 className="text-xl font-black text-[#1E2024] dark:text-white tracking-tight">
-                  Services
-                </h2>
-                <p className="text-xs text-[#8B929A] font-medium">
-                  Everything you need, organized around the way you use digital services.
+            {/* Top Search / Notification Bar matching screenshot */}
+            <div className="flex items-center justify-end gap-2.5 pb-1">
+              <button 
+                onClick={() => speakText('Emergency AI Router is active with live Google Maps data and hospital routing.')}
+                className="w-9 h-9 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 flex items-center justify-center text-[#1E2024] dark:text-white shadow-xs relative"
+                aria-label="Alerts"
+              >
+                <Bell className="w-4 h-4" />
+                <span className="w-2 h-2 rounded-full bg-red-500 absolute top-2 right-2 ring-2 ring-white" />
+              </button>
+
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 shadow-xs text-xs text-[#8B929A]">
+                <Search className="w-3.5 h-3.5" />
+                <input 
+                  type="text" 
+                  placeholder="Search me..." 
+                  className="bg-transparent outline-none w-20 text-xs font-medium text-[#1E2024] dark:text-white"
+                />
+              </div>
+
+              <div className="w-9 h-9 rounded-full bg-[#1E2024] text-white font-serif font-bold text-sm flex items-center justify-center shadow-xs">
+                {userInitial}
+              </div>
+            </div>
+
+            {/* 🚨 THE EMERGENCY AI ROUTER CARD (REAL GOOGLE MAPS + INTERACTIVE CHANGE) */}
+            <div className="p-5 rounded-[28px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
+              
+              {/* Header */}
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-500 font-bold text-base">🚨</span>
+                    <h3 className="font-black text-base text-[#1E2024] dark:text-white">
+                      Emergency AI Router
+                    </h3>
+                  </div>
+                  <p className="text-xs text-[#8B929A] font-medium mt-0.5">
+                    Fast care navigation when every minute matters.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-200">
+                    LIVE
+                  </span>
+                  <button 
+                    onClick={() => setIsChangeModalOpen(true)}
+                    className="text-slate-400 hover:text-slate-600"
+                    title="Change Emergency Option"
+                  >
+                    <MoreVertical className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* High Priority Prompt Box with FULLY FUNCTIONAL "Change" BUTTON */}
+              <div className="p-3.5 rounded-2xl bg-red-50/70 dark:bg-red-950/20 border border-red-200/80 dark:border-red-900/30 space-y-1">
+                <div className="flex justify-between items-center text-[10px] font-bold">
+                  <span className="text-red-600 dark:text-red-400 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-ping" />
+                    {currentEmergencyCase.priority}
+                  </span>
+                  
+                  {/* FUNCTIONAL CHANGE BUTTON */}
+                  <button 
+                    onClick={() => setIsChangeModalOpen(true)}
+                    className="text-slate-600 dark:text-slate-300 hover:text-[#2563EB] font-extrabold underline cursor-pointer transition-colors"
+                  >
+                    Change
+                  </button>
+                </div>
+
+                <p className="text-xs font-bold text-[#1E2024] dark:text-white">
+                  &ldquo;{currentEmergencyCase.query}&rdquo;
                 </p>
               </div>
 
-              <span className="text-xs font-mono font-bold text-[#8B929A]">
-                {filteredServices.length} services available
-              </span>
-            </div>
+              {/* REAL GOOGLE MAPS ROUTE COMPONENT */}
+              <GoogleMapEmergency
+                hospital={{
+                  name: currentEmergencyCase.hospitalName,
+                  lat: currentEmergencyCase.lat,
+                  lng: currentEmergencyCase.lng,
+                  address: currentEmergencyCase.address,
+                  eta: currentEmergencyCase.eta,
+                  distance: currentEmergencyCase.distance,
+                }}
+              />
 
-            {filteredServices.length === 0 ? (
-              /* EMPTY STATE (FENCO STYLE) */
-              <div className="p-10 rounded-[32px] bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 shadow-sm text-center space-y-4">
-                <div className="w-14 h-14 rounded-full bg-[#779AE6]/15 text-[#779AE6] flex items-center justify-center mx-auto">
-                  <Search className="w-7 h-7" />
+              {/* Recommended Care Option Card (Dynamic based on selected case) */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-bold text-[#1E2024] dark:text-white">Recommended Care Option</span>
+                  <button 
+                    onClick={() => speakText(`${currentEmergencyCase.hospitalName} is the closest specialized hospital for ${currentEmergencyCase.condition} with ${currentEmergencyCase.specialty}.`)}
+                    className="text-[11px] font-bold text-[#2563EB] hover:underline"
+                  >
+                    Why this?
+                  </button>
                 </div>
-                <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-[#1E2024] dark:text-white">
-                    No services found
-                  </h3>
-                  <p className="text-xs text-[#8B929A] max-w-sm mx-auto">
-                    Try searching with different keywords like &quot;scholarship&quot;, &quot;hospital&quot;, &quot;electricity&quot; or ask NAYAN to help you.
+
+                {/* Main Best Match Hospital */}
+                <div className="p-3.5 rounded-2xl bg-[#F0FDF4] dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 space-y-1.5">
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-600 flex items-center justify-center font-bold text-xs">
+                        🏥
+                      </div>
+                      <div>
+                        <h4 className="font-black text-xs text-[#1E2024] dark:text-white">
+                          {currentEmergencyCase.hospitalName}
+                        </h4>
+                        <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 block">
+                          {currentEmergencyCase.specialty}
+                        </span>
+                      </div>
+                    </div>
+
+                    <span className="text-[9px] font-black text-emerald-700 bg-emerald-100 dark:bg-emerald-900 px-2 py-0.5 rounded-full">
+                      Best Match &rarr;
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-3 text-[10px] text-[#8B929A] font-bold pt-1">
+                    <span>⏱ {currentEmergencyCase.eta}</span>
+                    <span>&bull; {currentEmergencyCase.distance}</span>
+                    <span className="text-emerald-600 dark:text-emerald-400">&bull; Open 24x7</span>
+                  </div>
+                </div>
+
+                {/* Dynamic Alternative Hospitals List */}
+                <div className="space-y-1.5 pt-1">
+                  {currentEmergencyCase.alternatives.map((alt, idx) => (
+                    <div 
+                      key={idx}
+                      className="p-3 rounded-2xl bg-[#ECECEC]/60 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex justify-between items-center text-xs"
+                    >
+                      <div>
+                        <span className="font-bold text-[#1E2024] dark:text-white block text-xs">
+                          {alt.name}
+                        </span>
+                        <span className="text-[10px] text-[#8B929A]">
+                          {alt.eta} &bull; {alt.distance} &bull; {alt.status}
+                        </span>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-400" />
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-2 pt-2">
+                <button
+                  onClick={handleStartEmergencyNav}
+                  className="w-full py-3.5 rounded-2xl bg-[#2563EB] hover:bg-blue-600 text-white font-extrabold text-xs shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  <Navigation className="w-4 h-4" />
+                  <span>{isEmergencyNavigating ? 'Opening Google Maps...' : 'Start Navigation (Live GPS)'}</span>
+                </button>
+
+                <button
+                  onClick={handleCallEmergency}
+                  className="w-full py-3.5 rounded-2xl bg-white dark:bg-[#1E2024] border border-slate-200 dark:border-white/10 hover:bg-red-50 hover:text-red-600 text-[#1E2024] dark:text-white font-extrabold text-xs shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  <Phone className="w-4 h-4 text-red-500" />
+                  <span>{emergencyCallStatus || 'Call Emergency Services (112)'}</span>
+                </button>
+
+                {locationDenied && (
+                  <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[10px] font-bold text-amber-800 dark:text-amber-300 flex items-center justify-between">
+                    <span>Location access needed. Using current regional area (Bengaluru).</span>
+                  </div>
+                )}
+
+                <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 text-[9px] text-[#8B929A] leading-tight space-y-1">
+                  <p className="font-bold text-slate-700 dark:text-slate-300">
+                    &bull; NAYAN provides care-navigation assistance. It does not diagnose medical conditions.
+                  </p>
+                  <p>
+                    Demo / simulated availability. For life-threatening emergencies, immediately call emergency dispatch (112).
                   </p>
                 </div>
-                <div className="flex justify-center gap-3 pt-2">
-                  <button
-                    onClick={() => {
-                      setSearchQuery('');
-                      setSelectedCategory('all');
-                    }}
-                    className="px-4 py-2 rounded-xl bg-[#ECECEC] dark:bg-white/10 font-bold text-xs hover:opacity-80"
-                  >
-                    Clear Search
-                  </button>
-                  <button
-                    onClick={() => speakText('I can help you find scholarships, hospital appointments, or utility bills.')}
-                    className="px-4 py-2 rounded-xl bg-[#779AE6] text-white font-bold text-xs hover:bg-[#688FE8] shadow-sm flex items-center gap-1.5"
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Ask NAYAN</span>
-                  </button>
-                </div>
               </div>
-            ) : (
-              /* 2-COLUMN SERVICE CARDS GRID */
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {filteredServices.map((service) => (
-                  <div
-                    key={service.id}
-                    onClick={() => handleServiceClick(service)}
-                    className="p-6 sm:p-7 rounded-[28px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm hover:border-[#779AE6] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between space-y-5 group"
-                  >
-                    {/* Top Metadata & Category */}
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full bg-[#ECECEC] dark:bg-white/10 text-[#779AE6] border border-slate-200 dark:border-white/10">
-                          {service.badge || service.category}
-                        </span>
-                        <span className="text-xs font-semibold text-[#8B929A] flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5" />
-                          <span>{service.estimatedTime}</span>
-                        </span>
-                      </div>
 
-                      {/* Title & Organization */}
-                      <div>
-                        <h3 className="text-lg font-black text-[#1E2024] dark:text-white group-hover:text-[#779AE6] transition-colors tracking-tight">
-                          {service.title}
-                        </h3>
-                        <span className="text-xs font-bold text-[#8B929A] block mt-0.5">
-                          {service.organization}
-                        </span>
-                      </div>
-
-                      {/* Short Description */}
-                      <p className="text-xs text-[#8B929A] leading-relaxed line-clamp-2">
-                        {service.description}
-                      </p>
-                    </div>
-
-                    {/* Footer: Accessibility Pills & Action CTA */}
-                    <div className="pt-3 border-t border-slate-100 dark:border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-[#8B929A]">
-                        <span className="px-2 py-0.5 rounded-md bg-[#ECECEC] dark:bg-white/5 text-[#059669]">
-                          🎙 Voice supported
-                        </span>
-                        <span className="px-2 py-0.5 rounded-md bg-[#ECECEC] dark:bg-white/5 text-[#4F46E5]">
-                          👁 Simplified steps
-                        </span>
-                      </div>
-
-                      <span className="font-extrabold text-xs text-[#779AE6] flex items-center gap-1 group-hover:translate-x-1 transition-transform self-end sm:self-auto">
-                        <span>View service</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            </div>
 
           </div>
 
         </div>
 
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════
+          FLOATING NAYAN VOICE AI BAR (AS PICTURED IN SCREENSHOT)
+         ═══════════════════════════════════════════════════════════ */}
+      <div className="fixed bottom-4 right-4 sm:right-6 z-40 flex items-center gap-1.5 p-1.5 rounded-2xl bg-[#181920] border-2 border-blue-500/40 text-white shadow-2xl backdrop-blur-md">
+        <button
+          onClick={() => speakText('Nayan Voice AI is listening. How can I help you?')}
+          className="px-3.5 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-600 font-black text-xs flex items-center gap-2 transition-all"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+          <span>Nayan Voice AI</span>
+        </button>
+
+        <button
+          onClick={() => speakText('Listening for your command...')}
+          className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
+          title="Voice Mic"
+        >
+          <Mic className="w-4 h-4" />
+        </button>
+
+        <button
+          onClick={() => speakText('Reading aloud active screen information.')}
+          className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
+          title="Audio Playback"
+        >
+          <Volume2 className="w-4 h-4" />
+        </button>
+
+        <button
+          onClick={() => speakText('ಕನ್ನಡ ಭಾಷೆಯಲ್ಲಿ ಸಹಾಯ ಲಭ್ಯವಿದೆ.')}
+          className="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[11px] font-bold text-blue-300"
+          title="Kannada"
+        >
+          ಕನ್ನಡ
+        </button>
+
+        <button
+          onClick={() => speakText('हिंदी भाषा में सहायता उपलब्ध है।')}
+          className="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[11px] font-bold text-amber-300"
+          title="Hindi"
+        >
+          हिंदी
+        </button>
       </div>
 
     </div>
