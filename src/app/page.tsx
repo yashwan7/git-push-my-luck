@@ -134,15 +134,6 @@ export default function LandingPage() {
               />
             </Link>
 
-            {/* Banking Demo CTA */}
-            <Link
-              href="/banking"
-              className="appear appear--side relative group overflow-hidden inline-flex items-center justify-center h-10 sm:h-11 px-6 rounded-lg font-extrabold text-blue-300 text-xs sm:text-sm border border-blue-500/50 bg-blue-950/40 backdrop-blur-xl transition-all duration-300 hover:border-blue-400 hover:bg-blue-900/60"
-              style={{ animationDelay: '0.92s' }}
-            >
-              <span>Banking Demo (Golden Story) &rarr;</span>
-            </Link>
-
             {/* Frosted Ghost Glass CTA */}
             <Link
               href="/dashboard"
