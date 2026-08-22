@@ -534,39 +534,45 @@ export default function ServicesPage() {
                 </Link>
               </div>
 
-              {/* 6 Action Tiles Grid (1 Row on Desktop, 3x2 on Tablet, 2x3 on Mobile) */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {/* 6 Prominent Big Action Cards (3 in a row on desktop) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                 {quickActions.map((qa) => {
                   const Icon = qa.icon;
                   return (
                     <Link
                       key={qa.id}
                       href={qa.href}
-                      className={`group p-4 rounded-[26px] ${qa.accentBg} border ${qa.borderColor} shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between min-h-[175px] relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#2563EB]`}
+                      className={`group p-5 sm:p-6 rounded-[28px] ${qa.accentBg} border ${qa.borderColor} shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between min-h-[190px] sm:min-h-[205px] relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#2563EB]`}
                       aria-label={`${qa.title}. ${qa.description}`}
                     >
-                      {/* Top Row: Floating Squircle Icon + Sparkle */}
+                      {/* Top Row: Floating Squircle Icon + Sparkle Badge */}
                       <div className="flex justify-between items-start">
-                        <div className={`w-11 h-11 rounded-2xl ${qa.iconBg} flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform`}>
-                          <Icon className="w-5 h-5" />
+                        <div className={`w-13 h-13 rounded-2xl ${qa.iconBg} flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform`}>
+                          <Icon className="w-6 h-6" />
                         </div>
-                        <Sparkles className={`w-3 h-3 ${qa.sparkleColor} opacity-40 group-hover:opacity-100 transition-opacity`} />
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/70 dark:bg-black/40 border border-white/40 text-[10px] font-extrabold text-slate-700 dark:text-slate-200 shadow-2xs">
+                          <Sparkles className={`w-3 h-3 ${qa.sparkleColor}`} />
+                          <span>{qa.badge}</span>
+                        </div>
                       </div>
 
                       {/* Middle: Title & Description */}
-                      <div className="my-2 space-y-1">
-                        <h4 className="font-black text-sm text-[#1E2024] dark:text-white leading-tight">
+                      <div className="my-3 space-y-1.5">
+                        <h4 className="font-black text-base sm:text-lg text-[#1E2024] dark:text-white leading-tight">
                           {qa.title}
                         </h4>
-                        <p className="text-[11px] text-[#8B929A] font-medium leading-snug line-clamp-2">
+                        <p className="text-xs sm:text-sm text-[#8B929A] dark:text-slate-300 font-medium leading-relaxed">
                           {qa.description}
                         </p>
                       </div>
 
                       {/* Bottom-Right: Circular Arrow Button */}
-                      <div className="flex justify-end pt-1">
-                        <div className={`w-7 h-7 rounded-full ${qa.arrowBg} flex items-center justify-center text-xs font-bold transition-all group-hover:translate-x-0.5`}>
-                          <ArrowRight className="w-3.5 h-3.5" />
+                      <div className="flex items-center justify-between pt-2 border-t border-black/5 dark:border-white/5">
+                        <span className="text-[11px] font-bold text-[#1E2024]/70 dark:text-white/70 group-hover:text-[#2563EB] transition-colors">
+                          Start Action →
+                        </span>
+                        <div className={`w-8 h-8 rounded-full ${qa.arrowBg} flex items-center justify-center text-xs font-bold transition-all group-hover:scale-110 shadow-xs`}>
+                          <ArrowRight className="w-4 h-4" />
                         </div>
                       </div>
                     </Link>
