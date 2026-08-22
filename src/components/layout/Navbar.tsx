@@ -28,6 +28,8 @@ import {
 
 import { ThemeSelector } from '@/components/ui/ThemeSelector';
 import { TransactionLimitSettingsModal } from '@/components/banking/TransactionLimitSettingsModal';
+import { DocumentAssistModal } from '@/components/anukool/DocumentAssistModal';
+import { Camera } from 'lucide-react';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -36,6 +38,7 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isQuickPanelOpen, setIsQuickPanelOpen] = useState(false);
   const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
+  const [isDocumentAssistOpen, setIsDocumentAssistOpen] = useState(false);
   const [userLimit, setUserLimit] = useState(5000);
 
   useEffect(() => {
@@ -120,6 +123,16 @@ export function Navbar() {
 
           {/* Clean Right Controls (Theme, Profile, Language, User) */}
           <div className="flex items-center gap-2 sm:gap-2.5">
+
+            {/* Flagship: Document Snap-to-Form Trigger */}
+            <button
+              onClick={() => setIsDocumentAssistOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 text-xs font-bold transition-all shadow-2xs"
+              title="Snap Document to Auto-Fill (Anukool)"
+            >
+              <Camera className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span className="hidden sm:inline">Document Assist</span>
+            </button>
 
             {/* Compact Minimal Theme Selector */}
             <div className="hidden sm:block">
@@ -386,6 +399,12 @@ export function Navbar() {
         currentLimit={userLimit}
         onSaveLimit={handleSaveUserLimit}
         language={profile.language}
+      />
+
+      {/* Flagship: Document Snap-to-Form Intelligence Modal */}
+      <DocumentAssistModal
+        isOpen={isDocumentAssistOpen}
+        onClose={() => setIsDocumentAssistOpen(false)}
       />
     </header>
   );

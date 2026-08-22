@@ -17,6 +17,29 @@ export async function POST(req: NextRequest) {
     let replyText = '';
     let action: ChatAction = { type: 'none' };
 
+    // 0. Document Snap-to-Form / OCR intent
+    if (
+      lower.includes('snap') ||
+      lower.includes('scan') ||
+      lower.includes('document') ||
+      lower.includes('ocr') ||
+      lower.includes('auto fill') ||
+      lower.includes('autofill') ||
+      lower.includes('read my details') ||
+      lower.includes('fill form') ||
+      lower.includes('दस्तावेज़') ||
+      lower.includes('ದಾಖಲೆ')
+    ) {
+      if (language === 'hi') {
+        replyText = 'मैंने ANUKOOL दस्तावेज़ सहायक खोल दिया है। आप अपने आधार, राशन कार्ड या अंकतालिका की तस्वीर ले सकते हैं — फॉर्म अपने आप भर जाएगा।';
+      } else if (language === 'kn') {
+        replyText = 'ನಾನು ANUKOOL ದಾಖಲೆ ಸಹಾಯವನ್ನು ತೆರೆದಿದ್ದೇನೆ. ನಿಮ್ಮ ಆಧಾರ್ ಅಥವಾ ಅಂಕಪಟ್ಟಿಯ ಫೋಟೋ ತೆಗೆಯಿರಿ — ಅರ್ಜಿ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಭರ್ತಿಯಾಗುತ್ತದೆ.';
+      } else {
+        replyText = 'Opening ANUKOOL Document Assist. Snap or upload your ID, Marksheet, or Ration Card, and your form will be auto-filled intelligently.';
+      }
+      action = { type: 'navigate', target: '/services/government-scholarship' };
+    }
+
     // 1. Emergency intent
     if (
       lower.includes('help') ||

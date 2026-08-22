@@ -15,12 +15,12 @@ import {
   Hand, 
   FileText, 
   ArrowLeft,
-  Sparkles,
   Camera,
-  CheckCircle2
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
-import { SnapToFormModal } from '@/components/documents/SnapToFormModal';
-import { ExtractedDocumentData } from '@/lib/ocr/documentExtractor';
+import { DocumentAssistModal } from '@/components/anukool/DocumentAssistModal';
+import { FormFieldTarget } from '@/lib/anukool-document/types';
 
 export default function ServiceAdaptivePage() {
   const params = useParams();
@@ -32,8 +32,8 @@ export default function ServiceAdaptivePage() {
 
   // Active View Mode selection (default: cognitive / simplified)
   const [viewMode, setViewMode] = useState<'standard' | 'visual' | 'cognitive' | 'motor'>('cognitive');
-  const [isSnapModalOpen, setIsSnapModalOpen] = useState(false);
-  const [autoFilledName, setAutoFilledName] = useState<string | null>(null);
+  const [isDocumentAssistOpen, setIsDocumentAssistOpen] = useState(false);
+  const [autoFilledSummary, setAutoFilledSummary] = useState<string | null>(null);
 
   const t = (key: string, fallback?: string) => getTranslation(profile.language, key, fallback);
 
@@ -41,34 +41,46 @@ export default function ServiceAdaptivePage() {
     router.push('/services');
   };
 
-  const handleAutoFill = (data: ExtractedDocumentData) => {
-    setAutoFilledName(data.fields.fullName || 'Verified ID');
+  const handleAutoFillComplete = (filledData: Record<string, string>) => {
+    const name = filledData.fullName || 'Verified Applicant';
+    setAutoFilledSummary(`Auto-filled ${Object.keys(filledData).length} fields for ${name}`);
   };
+
+  // Convert service steps into form targets for semantic mapping
+  const formTargets: FormFieldTarget[] = service?.steps.map((step) => ({
+    id: `step-${step.stepNumber}`,
+    name: step.fieldLabel.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+    label: step.fieldLabel,
+    type: step.fieldType,
+    placeholder: step.placeholder,
+  })) || [];
 
   return (
     <div className="min-h-screen bg-[#ECECEC] dark:bg-[#121316] text-[#1E2024] dark:text-[#EAECEF] p-2 sm:p-4 md:p-6 font-sans transition-colors">
       
       <div className="max-w-[1340px] mx-auto bg-[#ECECEC] dark:bg-[#18191D] rounded-[36px] p-4 sm:p-7 space-y-6">
         
-        {/* Back Button, Snap-to-Form & View Modes Bar */}
+        {/* Back Button, Anukool Snap-to-Form & View Modes Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push('/services')}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 text-xs font-bold text-[#1E2024] dark:text-white shadow-sm hover:scale-105 transition-transform w-fit"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 text-xs font-bold text-[#1E2024] dark:text-white shadow-sm hover:scale-105 transition-transform w-fit cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>{t('backToServices', 'Back to Services')}</span>
             </button>
 
-            {/* Snap to Auto-Fill Button */}
+            {/* Flagship Feature: Anukool Document Snap-to-Form Intelligence */}
             <button
-              onClick={() => setIsSnapModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#1E3A2F] text-white border border-emerald-500/30 text-xs font-extrabold shadow-sm hover:bg-[#2A5243] transition-all hover:scale-105"
+              onClick={() => setIsDocumentAssistOpen(true)}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#134233] hover:bg-[#1a5542] text-white border border-emerald-500/40 text-xs font-extrabold shadow-md transition-all hover:scale-105 cursor-pointer"
             >
               <Camera className="w-4 h-4 text-emerald-400" />
-              <span>Snap ID to Auto-Fill</span>
-              {autoFilledName && (
+              <span>Snap Document to Auto-Fill</span>
+              {autoFilledSummary ? (
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              ) : (
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               )}
             </button>
@@ -78,7 +90,7 @@ export default function ServiceAdaptivePage() {
           <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 shadow-sm">
             <button
               onClick={() => setViewMode('cognitive')}
-              className={`px-4 py-2 rounded-full font-extrabold text-xs transition-all flex items-center gap-1.5 ${
+              className={`px-4 py-2 rounded-full font-extrabold text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
                 viewMode === 'cognitive' ? 'bg-[#779AE6] text-white shadow-sm' : 'text-[#1E2024] dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10'
               }`}
             >
@@ -88,7 +100,7 @@ export default function ServiceAdaptivePage() {
 
             <button
               onClick={() => setViewMode('visual')}
-              className={`px-4 py-2 rounded-full font-extrabold text-xs transition-all flex items-center gap-1.5 ${
+              className={`px-4 py-2 rounded-full font-extrabold text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
                 viewMode === 'visual' ? 'bg-[#779AE6] text-white shadow-sm' : 'text-[#1E2024] dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10'
               }`}
             >
@@ -98,7 +110,7 @@ export default function ServiceAdaptivePage() {
 
             <button
               onClick={() => setViewMode('motor')}
-              className={`px-4 py-2 rounded-full font-extrabold text-xs transition-all flex items-center gap-1.5 ${
+              className={`px-4 py-2 rounded-full font-extrabold text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
                 viewMode === 'motor' ? 'bg-[#D97706] text-white shadow-sm' : 'text-[#1E2024] dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10'
               }`}
             >
@@ -108,7 +120,7 @@ export default function ServiceAdaptivePage() {
 
             <button
               onClick={() => setViewMode('standard')}
-              className={`px-4 py-2 rounded-full font-extrabold text-xs transition-all flex items-center gap-1.5 ${
+              className={`px-4 py-2 rounded-full font-extrabold text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
                 viewMode === 'standard' ? 'bg-[#232428] text-white shadow-sm' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10'
               }`}
             >
@@ -118,28 +130,47 @@ export default function ServiceAdaptivePage() {
           </div>
         </div>
 
-        {/* Render Active View Component */}
-        <div className="animate-in fade-in duration-200">
-          {viewMode === 'cognitive' && (
-            <CognitiveAdaptiveView service={service} onComplete={handleComplete} />
+        {/* Auto-filled Banner Alert if triggered */}
+        {autoFilledSummary && (
+          <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/40 text-emerald-900 dark:text-emerald-200 text-xs font-bold flex items-center justify-between shadow-xs">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span>{autoFilledSummary}</span>
+            </div>
+            <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold">
+              Anukool Adapted
+            </span>
+          </div>
+        )}
+
+        {/* Dynamic Multi-Modal Adaptive Views */}
+        <div className="transition-all">
+          {viewMode === 'standard' && (
+            <StandardView service={service} onComplete={handleComplete} />
           )}
+
           {viewMode === 'visual' && (
             <VisualAdaptiveView service={service} onComplete={handleComplete} />
           )}
+
+          {viewMode === 'cognitive' && (
+            <CognitiveAdaptiveView service={service} onComplete={handleComplete} />
+          )}
+
           {viewMode === 'motor' && (
             <MotorAdaptiveView service={service} onComplete={handleComplete} />
-          )}
-          {viewMode === 'standard' && (
-            <StandardView service={service} onComplete={handleComplete} />
           )}
         </div>
 
       </div>
 
-      <SnapToFormModal
-        isOpen={isSnapModalOpen}
-        onClose={() => setIsSnapModalOpen(false)}
-        onAutoFill={handleAutoFill}
+      {/* Flagship Document Snap-to-Form Modal */}
+      <DocumentAssistModal
+        isOpen={isDocumentAssistOpen}
+        onClose={() => setIsDocumentAssistOpen(false)}
+        targetFormTitle={service.title}
+        targetFields={formTargets}
+        onAutoFillComplete={handleAutoFillComplete}
       />
 
     </div>
