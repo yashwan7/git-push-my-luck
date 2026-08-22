@@ -232,6 +232,17 @@ export default function LandingPage() {
               </p>
             </div>
 
+            {/* ── 🗣️ FLOATING CARD 4 (Bottom-Right): Hindi Language Card ── */}
+            <div className="absolute bottom-2 sm:bottom-3 -right-1 sm:-right-3 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[210px] space-y-1 animate-in fade-in slide-in-from-right-2 duration-300">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                <span className="text-[11px] font-black text-slate-900 dark:text-white">हिंदी (Hindi)</span>
+              </div>
+              <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium leading-snug">
+                &ldquo;{t('voicePromptHindi', 'आपको क्या सहायता चाहिए?')}&rdquo;
+              </p>
+            </div>
+
           </div>
 
         </section>
