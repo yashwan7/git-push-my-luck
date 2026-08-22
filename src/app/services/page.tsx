@@ -652,14 +652,13 @@ export default function ServicesPage() {
                 </div>
               </div>
 
-              {/* Right Side: Senior Citizen Illustration Photo */}
-              <div className="relative w-full md:w-64 sm:h-56 h-48 shrink-0 rounded-2xl overflow-hidden flex items-center justify-center">
+              {/* Right Side: Senior Citizen Photo (1:1 Matching User Screenshot) */}
+              <div className="relative w-full md:w-72 lg:w-80 h-52 sm:h-60 shrink-0 rounded-[26px] overflow-hidden shadow-sm border border-slate-200/80 dark:border-white/10 bg-slate-100 dark:bg-zinc-800">
                 <img
                   src="/images/senior-hero.jpg"
-                  alt="Senior citizen using smartphone with ANUKOOL"
-                  className="w-full h-full object-cover object-center rounded-2xl shadow-inner"
+                  alt="Senior citizen using smartphone with ANUKOOL digital assistance"
+                  className="w-full h-full object-cover object-center hover:scale-102 transition-transform duration-300"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-transparent dark:from-[#232428] opacity-60 hidden md:block" />
               </div>
 
             </div>
