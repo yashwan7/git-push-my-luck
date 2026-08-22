@@ -555,17 +555,12 @@ export default function ServicesPage() {
         </aside>
 
         {/* ═══════════════════════════════════════════════════════════
-            MAIN 2-COLUMN SPLIT GRID
+            MAIN FULL-WIDTH EXPANSIVE CONTENT CONTAINER
            ═══════════════════════════════════════════════════════════ */}
-        <div className="flex-1 grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
-          
-          {/* ═══════════════════════════════════════════════════════════
-              LEFT PRIMARY COLUMN (8 COLS ON XL)
-             ═══════════════════════════════════════════════════════════ */}
-          <div className="xl:col-span-8 space-y-6">
+        <div className="flex-1 space-y-6 max-w-[1400px]">
             
-            {/* UNIFIED HERO GREETING BANNER CARD WITH PHOTO */}
-            <div className="relative rounded-[32px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          {/* UNIFIED HERO GREETING BANNER CARD WITH PHOTO */}
+          <div className="relative rounded-[32px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
               
               {/* Left Content Area */}
               <div className="flex-1 space-y-4 max-w-xl z-10">
@@ -831,8 +826,8 @@ export default function ServicesPage() {
                 </span>
               </div>
 
-              {/* 4-column / 2-column Grid of Services */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+              {/* 4-column Grid of Services */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
                 {filteredServices.map((service) => (
                   <div
                     key={service.id}
@@ -878,247 +873,7 @@ export default function ServicesPage() {
 
           </div>
 
-          {/* ═══════════════════════════════════════════════════════════
-              RIGHT SECONDARY COLUMN (4 COLS ON XL) — EMERGENCY AI ROUTER
-             ═══════════════════════════════════════════════════════════ */}
-          <div className="xl:col-span-4 space-y-4">
-            
-            {/* Top Search / Notification Bar matching screenshot */}
-            <div className="flex items-center justify-end gap-2.5 pb-1">
-              <button 
-                onClick={() => speakText('Emergency AI Router is active with live Google Maps data and hospital routing.')}
-                className="w-9 h-9 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 flex items-center justify-center text-[#1E2024] dark:text-white shadow-xs relative"
-                aria-label="Alerts"
-              >
-                <Bell className="w-4 h-4" />
-                <span className="w-2 h-2 rounded-full bg-red-500 absolute top-2 right-2 ring-2 ring-white" />
-              </button>
-
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 shadow-xs text-xs text-[#8B929A]">
-                <Search className="w-3.5 h-3.5" />
-                <input 
-                  type="text" 
-                  placeholder={t('search_placeholder', 'Search me...').slice(0, 10) + '...'} 
-                  className="bg-transparent outline-none w-20 text-xs font-medium text-[#1E2024] dark:text-white"
-                />
-              </div>
-
-              <div className="w-9 h-9 rounded-full bg-[#1E2024] text-white font-serif font-bold text-sm flex items-center justify-center shadow-xs">
-                {userInitial}
-              </div>
-            </div>
-
-            {/* 🚨 THE EMERGENCY AI ROUTER CARD (REAL GOOGLE MAPS + INTERACTIVE CHANGE) */}
-            <div className="p-5 rounded-[28px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
-              
-              {/* Header */}
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-red-500 font-bold text-base">🚨</span>
-                    <h3 className="font-black text-base text-[#1E2024] dark:text-white">
-                      {t('emergency_router', 'Emergency AI Router')}
-                    </h3>
-                  </div>
-                  <p className="text-xs text-[#8B929A] font-medium mt-0.5">
-                    {t('emergency_sub', 'Fast care navigation when every minute matters.')}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-red-50 text-red-600 border border-red-200">
-                    LIVE
-                  </span>
-                  <button 
-                    onClick={() => setIsChangeModalOpen(true)}
-                    className="text-slate-400 hover:text-slate-600"
-                    title="Change Emergency Option"
-                  >
-                    <MoreVertical className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              {/* High Priority Prompt Box with FULLY FUNCTIONAL "Change" BUTTON */}
-              <div className="p-3.5 rounded-2xl bg-red-50/70 dark:bg-red-950/20 border border-red-200/80 dark:border-red-900/30 space-y-1">
-                <div className="flex justify-between items-center text-[10px] font-bold">
-                  <span className="text-red-600 dark:text-red-400 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-ping" />
-                    {currentEmergencyCase.priority}
-                  </span>
-                  
-                  {/* FUNCTIONAL CHANGE BUTTON */}
-                  <button 
-                    onClick={() => setIsChangeModalOpen(true)}
-                    className="text-slate-600 dark:text-slate-300 hover:text-[#2563EB] font-extrabold underline cursor-pointer transition-colors"
-                  >
-                    Change
-                  </button>
-                </div>
-
-                <p className="text-xs font-bold text-[#1E2024] dark:text-white">
-                  &ldquo;{currentEmergencyCase.query}&rdquo;
-                </p>
-              </div>
-
-              {/* REAL GOOGLE MAPS ROUTE COMPONENT */}
-              <GoogleMapEmergency
-                hospital={{
-                  name: currentEmergencyCase.hospitalName,
-                  lat: currentEmergencyCase.lat,
-                  lng: currentEmergencyCase.lng,
-                  address: currentEmergencyCase.address,
-                  eta: currentEmergencyCase.eta,
-                  distance: currentEmergencyCase.distance,
-                }}
-                alternativeHospitals={currentEmergencyCase.alternatives.map((alt: any) => ({
-                  name: alt.name,
-                  lat: alt.latitude || currentEmergencyCase.lat + 0.015,
-                  lng: alt.longitude || currentEmergencyCase.lng + 0.015,
-                  eta: alt.eta,
-                  distance: alt.distance,
-                }))}
-                onSelectHospital={(selected) => {
-                  setCurrentEmergencyCase((prev) => ({
-                    ...prev,
-                    hospitalName: selected.name,
-                    lat: selected.lat,
-                    lng: selected.lng,
-                    eta: selected.eta || prev.eta,
-                    distance: selected.distance || prev.distance,
-                  }));
-                  speakText(`Route updated to ${selected.name}. Estimated arrival ${selected.eta || '15 min'}.`);
-                }}
-              />
-
-              {/* Recommended Care Option Card (Dynamic based on selected case) */}
-              <div className="space-y-2">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="font-extrabold text-[#1E2024] dark:text-white">Recommended Care Option</span>
-                  <button 
-                    onClick={() => speakText(`${currentEmergencyCase.hospitalName} is the closest specialized hospital for ${currentEmergencyCase.condition} with ${currentEmergencyCase.specialty}.`)}
-                    className="text-[11px] font-bold text-[#1E3A2F] dark:text-emerald-400 hover:underline"
-                  >
-                    Why this?
-                  </button>
-                </div>
-
-                {/* Main Best Match Hospital matching reference screenshot */}
-                <div className="p-3.5 rounded-2xl bg-[#F0FDF4] dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40 space-y-2 shadow-xs">
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-black text-sm border border-emerald-300/40">
-                        🏥
-                      </div>
-                      <div>
-                        <h4 className="font-extrabold text-xs text-[#1E2024] dark:text-white leading-tight">
-                          {currentEmergencyCase.hospitalName}
-                        </h4>
-                        <span className="text-[10px] font-bold text-[#15803D] dark:text-emerald-400 block pt-0.5">
-                          {currentEmergencyCase.specialty} &bull; 24x7
-                        </span>
-                        <span className="text-[10px] text-[#64748B] dark:text-slate-400 block font-medium">
-                          Simulated Availability: 12 beds
-                        </span>
-                      </div>
-                    </div>
-
-                    <span className="text-[9px] font-black text-emerald-800 dark:text-emerald-300 bg-emerald-200/70 dark:bg-emerald-900/80 px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
-                      RECOMMENDED
-                    </span>
-                  </div>
-                </div>
-
-                {/* Dynamic Alternative Hospitals List (Interactive click-to-route) */}
-                <div className="space-y-1.5 pt-1">
-                  {currentEmergencyCase.alternatives.map((alt: any, idx: number) => (
-                    <div 
-                      key={idx}
-                      onClick={() => {
-                        const newAltList = [
-                          {
-                            name: currentEmergencyCase.hospitalName,
-                            eta: currentEmergencyCase.eta,
-                            distance: currentEmergencyCase.distance,
-                            status: 'Alternative Option',
-                            latitude: currentEmergencyCase.lat,
-                            longitude: currentEmergencyCase.lng,
-                          },
-                          ...currentEmergencyCase.alternatives.filter((_, i) => i !== idx),
-                        ];
-
-                        setCurrentEmergencyCase((prev) => ({
-                          ...prev,
-                          hospitalName: alt.name,
-                          lat: alt.latitude || prev.lat + 0.012,
-                          lng: alt.longitude || prev.lng + 0.012,
-                          eta: alt.eta,
-                          distance: alt.distance,
-                          specialty: alt.status || 'Emergency Active',
-                          alternatives: newAltList,
-                        }));
-                        speakText(`Route changed to ${alt.name}. ETA ${alt.eta}.`);
-                      }}
-                      className="p-3 rounded-2xl bg-[#ECECEC]/60 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:border-[#2563EB] hover:bg-blue-50/40 dark:hover:bg-blue-950/20 transition-all cursor-pointer flex justify-between items-center text-xs group"
-                      title="Click to view route on map"
-                    >
-                      <div>
-                        <span className="font-bold text-[#1E2024] dark:text-white block text-xs group-hover:text-[#2563EB] transition-colors">
-                          {alt.name}
-                        </span>
-                        <span className="text-[10px] text-[#8B929A]">
-                          {alt.eta} &bull; {alt.distance} &bull; {alt.status}
-                        </span>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#2563EB] group-hover:translate-x-0.5 transition-transform" />
-                    </div>
-                  ))}
-                </div>
-
-              </div>
-
-              {/* Action Buttons */}
-              <div className="space-y-2 pt-2">
-                <button
-                  onClick={handleStartEmergencyNav}
-                  className="w-full py-3.5 rounded-2xl bg-[#2563EB] hover:bg-blue-600 text-white font-extrabold text-xs shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
-                >
-                  <Navigation className="w-4 h-4" />
-                  <span>{isEmergencyNavigating ? 'Opening Google Maps...' : 'Start Navigation (Live GPS)'}</span>
-                </button>
-
-                <button
-                  onClick={handleCallEmergency}
-                  className="w-full py-3.5 rounded-2xl bg-white dark:bg-[#1E2024] border border-slate-200 dark:border-white/10 hover:bg-red-50 hover:text-red-600 text-[#1E2024] dark:text-white font-extrabold text-xs shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
-                >
-                  <Phone className="w-4 h-4 text-red-500" />
-                  <span>{emergencyCallStatus || 'Call Emergency Services (112)'}</span>
-                </button>
-
-                {locationDenied && (
-                  <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[10px] font-bold text-amber-800 dark:text-amber-300 flex items-center justify-between">
-                    <span>Location access needed. Using current regional area (Bengaluru).</span>
-                  </div>
-                )}
-
-                <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 text-[9px] text-[#8B929A] leading-tight space-y-1">
-                  <p className="font-bold text-slate-700 dark:text-slate-300">
-                    &bull; ANUKOOL provides care-navigation assistance. It does not diagnose medical conditions.
-                  </p>
-                  <p>
-                    Demo / simulated availability. For life-threatening emergencies, immediately call emergency dispatch (112).
-                  </p>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
         </div>
-
-      </div>
 
       {/* ═══════════════════════════════════════════════════════════
           FLOATING ANUKOOL VOICE AI BAR (AS PICTURED IN SCREENSHOT)
