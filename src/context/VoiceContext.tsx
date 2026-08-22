@@ -51,7 +51,7 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
     {
       id: 'welcome-msg',
       role: 'nayan',
-      text: "Hi! I'm Nayan. I'm here to help you navigate digital services in the way that works best for you. What would you like to do today?",
+      text: "Hi! I'm Anukool. I'm here to help you navigate digital services in the way that works best for you. What would you like to do today?",
       timestamp: new Date(),
     },
   ]);
@@ -272,7 +272,7 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
       {
         id: 'welcome-msg',
         role: 'nayan',
-        text: "Hi! I'm Nayan. I'm here to help you navigate digital services in the way that works best for you. What would you like to do today?",
+        text: "Hi! I'm Anukool. I'm here to help you navigate digital services in the way that works best for you. What would you like to do today?",
         timestamp: new Date(),
       },
     ]);

@@ -312,7 +312,7 @@ export default function AdaptiveBankingPage() {
         isOpen={isReceiveModalOpen}
         onClose={() => setIsReceiveModalOpen(false)}
         onSimulateReceive={handleSimulateReceive}
-        userUpiId={`${userDisplayName.toLowerCase().replace(/\s+/g, '')}@nayan`}
+        userUpiId={`${userDisplayName.toLowerCase().replace(/\s+/g, '')}@anukool`}
         userName={userDisplayName}
       />
 

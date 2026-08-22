@@ -58,7 +58,7 @@ import {
 export default function ServicesPage() {
   const router = useRouter();
   const { profile, activePersonaName } = useAccessibility();
-  const { speak, isSpeaking } = useVoice();
+  const { speak, isSpeaking, setIsAssistantModalOpen, startListening } = useVoice();
   const { user, profile: authProfile } = useAuth();
 
   // State Management
@@ -1009,21 +1009,25 @@ export default function ServicesPage() {
       {/* ═══════════════════════════════════════════════════════════
           FLOATING ANUKOOL VOICE AI BAR (AS PICTURED IN SCREENSHOT)
          ═══════════════════════════════════════════════════════════ */}
-      <div className="fixed bottom-4 right-4 sm:right-6 z-40 flex items-center gap-1.5 p-1.5 rounded-2xl bg-[#181920] border-2 border-blue-500/40 text-white shadow-2xl backdrop-blur-md">
+      <div className="fixed bottom-4 right-4 sm:right-6 z-40 flex items-center gap-1.5 p-1.5 rounded-2xl bg-[#181920] border-2 border-emerald-500/40 text-white shadow-2xl backdrop-blur-md">
         <button
-          onClick={() => speakText('Anukool Voice AI is listening. How can I help you?')}
-          className="px-3.5 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-600 font-black text-xs flex items-center gap-2 transition-all"
+          onClick={() => setIsAssistantModalOpen(true)}
+          className="px-3.5 py-2 rounded-xl bg-[#1E3A2F] hover:bg-[#2D5A47] text-white font-black text-xs flex items-center gap-2 transition-all shadow-md"
+          title="Open ANUKOOL Voice AI Assistant"
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+          <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin-slow" />
           <span>Anukool Voice AI</span>
         </button>
 
         <button
-          onClick={() => speakText('Listening for your command...')}
+          onClick={() => {
+            setIsAssistantModalOpen(true);
+            startListening();
+          }}
           className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
           title="Voice Mic"
         >
-          <Mic className="w-4 h-4" />
+          <Mic className="w-4 h-4 text-emerald-400" />
         </button>
 
         <button

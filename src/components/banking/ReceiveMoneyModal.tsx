@@ -15,7 +15,7 @@ export function ReceiveMoneyModal({
   isOpen,
   onClose,
   onSimulateReceive,
-  userUpiId = 'yashwanth@nayan',
+  userUpiId = 'yashwanth@anukool',
   userName = 'Yashwanth Gowda',
 }: ReceiveMoneyModalProps) {
   const [copied, setCopied] = useState(false);
