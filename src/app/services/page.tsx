@@ -10,6 +10,7 @@ import { getTranslation, LANGUAGE_NAMES, getLocalizedService } from '@/lib/multi
 import { MOCK_SERVICES } from '@/lib/servicesData';
 import { ServiceDefinition } from '@/types';
 import { ServiceDetailModal } from '@/components/services/ServiceDetailModal';
+import { DocumentAssistModal } from '@/components/anukool/DocumentAssistModal';
 import { GoogleMapEmergency } from '@/components/emergency/GoogleMapEmergency';
 import { ChangeEmergencyModal, EMERGENCY_PRESETS, EmergencyCase } from '@/components/emergency/ChangeEmergencyModal';
 import { 
@@ -23,6 +24,7 @@ import {
   Bell,
   Search,
   ChevronRight,
+  Camera,
   MoreVertical,
   ArrowLeft,
   CheckCircle2,
@@ -72,6 +74,7 @@ export default function ServicesPage() {
   const [isChangeModalOpen, setIsChangeModalOpen] = useState<boolean>(false);
   const [isEmergencyNavigating, setIsEmergencyNavigating] = useState<boolean>(false);
   const [emergencyCallStatus, setEmergencyCallStatus] = useState<string | null>(null);
+  const [isDocAssistModalOpen, setIsDocAssistModalOpen] = useState<boolean>(false);
 
   const lang = profile.language;
 
@@ -470,6 +473,12 @@ export default function ServicesPage() {
         language={lang}
       />
 
+      {/* Document Snap-to-Form Assist Modal */}
+      <DocumentAssistModal
+        isOpen={isDocAssistModalOpen}
+        onClose={() => setIsDocAssistModalOpen(false)}
+      />
+
       {/* Change Emergency Situation Modal */}
       <ChangeEmergencyModal
         isOpen={isChangeModalOpen}
@@ -484,7 +493,7 @@ export default function ServicesPage() {
       <div className="w-full bg-white dark:bg-[#18191D] rounded-[36px] p-4 sm:p-6 md:p-7 flex gap-5 sm:gap-6 shadow-sm border border-slate-200/80 dark:border-white/10">
         
         {/* ═══════════════════════════════════════════════════════════
-            LEFT DARK SIDEBAR PILL (CLEAN: HOME, SERVICES, BANKING, SUPPORT)
+            LEFT DARK SIDEBAR PILL (CLEAN: HOME, SERVICES, BANKING, DOC ASSIST, SUPPORT)
            ═══════════════════════════════════════════════════════════ */}
         <aside className="hidden lg:flex flex-col justify-between w-16 py-6 rounded-[28px] bg-[#1A3328] dark:bg-[#13241D] text-white shrink-0 items-center shadow-lg border border-emerald-900/30">
           
@@ -515,6 +524,16 @@ export default function ServicesPage() {
             >
               <Wallet className="w-5 h-5" />
             </Link>
+
+            {/* Dedicated Document Assist Slot */}
+            <button
+              onClick={() => setIsDocAssistModalOpen(true)}
+              className="w-10 h-10 rounded-2xl text-emerald-300 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all cursor-pointer relative group"
+              title="Document Snap-to-Form Assist"
+            >
+              <Camera className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 absolute top-1.5 right-1.5 ring-2 ring-[#1A3328]" />
+            </button>
           </div>
 
           {/* Bottom Support / Emergency */}
