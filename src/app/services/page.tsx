@@ -13,6 +13,7 @@ import { ServiceDetailModal } from '@/components/services/ServiceDetailModal';
 import { DocumentAssistModal } from '@/components/anukool/DocumentAssistModal';
 import { GoogleMapEmergency } from '@/components/emergency/GoogleMapEmergency';
 import { ChangeEmergencyModal, EMERGENCY_PRESETS, EmergencyCase } from '@/components/emergency/ChangeEmergencyModal';
+import { DigitalSafetySection } from '@/components/safety/DigitalSafetySection';
 import { 
   Home,
   Clock,
@@ -526,6 +527,15 @@ export default function ServicesPage() {
               <Wallet className="w-5 h-5 text-emerald-300" />
             </Link>
 
+            {/* 🛡️ Digital Safety Hub Link (Trusted Circle & Scam Simulation) */}
+            <Link
+              href="/safety"
+              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all cursor-pointer"
+              title="Digital Safety & Trusted Circle"
+            >
+              <ShieldCheck className="w-5 h-5 text-emerald-300" />
+            </Link>
+
             {/* 📷 Dedicated Document Assist Slot (Smoothly shifts down when Banking expands) */}
             <button
               onClick={() => {
@@ -686,6 +696,11 @@ export default function ServicesPage() {
               </div>
 
             </div>
+
+            {/* ═══════════════════════════════════════════════════════════
+                SECTION: DIGITAL SAFETY INTELLIGENCE (SCAM TRAINING & TRUSTED CIRCLE)
+               ═══════════════════════════════════════════════════════════ */}
+            <DigitalSafetySection language={lang} className="py-2" />
 
             {/* ═══════════════════════════════════════════════════════════
                 SEARCH BAR (PILL SHAPE WITH MIC ICON)

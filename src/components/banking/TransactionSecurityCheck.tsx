@@ -12,8 +12,10 @@ import {
   Info, 
   Fingerprint, 
   KeyRound,
-  Loader2
+  Loader2,
+  HeartHandshake
 } from 'lucide-react';
+import { AskTrustedCircleModal } from '@/components/safety/AskTrustedCircleModal';
 
 interface TransactionSecurityCheckProps {
   preview: TransferPreview;
@@ -29,6 +31,7 @@ export function TransactionSecurityCheck({
   onCancel,
 }: TransactionSecurityCheckProps) {
   const [authStep, setAuthStep] = useState<'review' | 'authenticate' | 'authenticating'>('review');
+  const [isAskTrustedModalOpen, setIsAskTrustedModalOpen] = useState(false);
 
   const { amount, recipientName, recipientAccount, riskAssessment } = preview;
   const { configuredLimit, isLimitExceeded, exceededBy } = riskAssessment;
@@ -138,23 +141,52 @@ export function TransactionSecurityCheck({
             </div>
           </div>
 
-          {/* Action Buttons */}
+          {/* Action Buttons with Trusted Circle Escalation */}
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <button
               onClick={onCancel}
-              className="w-full sm:w-1/3 py-4 rounded-2xl bg-[var(--bg-surface-secondary)] hover:opacity-80 border border-[var(--border-color)] text-[var(--text-secondary)] font-extrabold text-sm transition-all"
+              className="w-full sm:w-1/4 py-3.5 rounded-2xl bg-[var(--bg-surface-secondary)] hover:opacity-80 border border-[var(--border-color)] text-[var(--text-secondary)] font-extrabold text-xs transition-all cursor-pointer"
             >
-              {language === 'kn' ? 'ರದ್ದುಮಾಡಿ (Cancel)' : language === 'hi' ? 'रद्द करें' : 'Cancel Transaction'}
+              {language === 'kn' ? 'ರದ್ದುಮಾಡಿ (Cancel)' : language === 'hi' ? 'रद्द करें' : 'Cancel'}
+            </button>
+
+            <button
+              onClick={() => setIsAskTrustedModalOpen(true)}
+              className="w-full sm:w-2/4 py-3.5 rounded-2xl bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 font-extrabold text-xs sm:text-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+            >
+              <HeartHandshake className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span>{language === 'kn' ? 'ಆಪ್ತರ ಸಲಹೆ ಕೇಳಿ' : language === 'hi' ? 'विश्वसनीय व्यक्ति से पूछें' : 'Ask Someone I Trust'}</span>
             </button>
 
             <button
               onClick={handleStartAuth}
-              className="w-full sm:w-2/3 py-4 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-sm sm:text-base shadow-xl flex items-center justify-center gap-2 transition-all focus:ring-4 focus:ring-amber-400"
+              className="w-full sm:w-1/4 py-3.5 rounded-2xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all focus:ring-4 focus:ring-amber-400 cursor-pointer"
             >
-              <ShieldCheck className="w-5 h-5" />
-              <span>{language === 'kn' ? 'ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಮುಂದುವರಿಯಿರಿ' : language === 'hi' ? 'सत्यापित करें और आगे बढ़ें' : 'Verify & Continue'}</span>
+              <ShieldCheck className="w-4 h-4" />
+              <span>{language === 'kn' ? 'ಸ್ವತಃ ಮುಂದುವರಿಯಿರಿ' : language === 'hi' ? 'सत्यापित करें' : 'Review Myself'}</span>
             </button>
           </div>
+
+          {/* Trusted Circle Assistance Modal */}
+          <AskTrustedCircleModal
+            isOpen={isAskTrustedModalOpen}
+            onClose={() => setIsAskTrustedModalOpen(false)}
+            context={{
+              transactionType: 'High-Value Payment Transfer',
+              amount: amount,
+              recipientName: recipientName,
+              detectedWarning: `Amount (₹${amount.toLocaleString('en-IN')}) exceeds your configured safety limit (₹${configuredLimit.toLocaleString('en-IN')})`,
+            }}
+            onResolution={(action) => {
+              setIsAskTrustedModalOpen(false);
+              if (action === 'approved') {
+                handleStartAuth();
+              } else if (action === 'rejected') {
+                onCancel();
+              }
+            }}
+            language={language}
+          />
 
         </div>
       )}
