@@ -111,12 +111,12 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#ECEEF1] dark:bg-[#0A0B0E] py-4 sm:py-8 md:py-12 px-3 sm:px-6 flex justify-center items-center font-sans">
+    <div className="min-h-screen bg-[#ECEEF1] dark:bg-[#0A0B0E] py-2 sm:py-4 md:py-6 px-2 sm:px-4 md:px-6 flex justify-center font-sans">
       
       {/* ─────────────────────────────────────────────────────────────
-          MAIN CANVAS CONTAINER (CLEAN, ELEVATED & NON-MESSY)
+          MAIN CANVAS CONTAINER (TAKING FULL IMMERSIVE VIEWPORT SPACE)
          ───────────────────────────────────────────────────────────── */}
-      <div className="w-full max-w-[1120px] bg-white dark:bg-[#13151B] rounded-[32px] sm:rounded-[38px] border border-slate-200/80 dark:border-white/10 shadow-sm p-6 sm:p-10 md:p-12 space-y-10 sm:space-y-12 transition-colors">
+      <div className="w-full max-w-[1440px] bg-white dark:bg-[#13151B] rounded-[28px] sm:rounded-[36px] border border-slate-200/80 dark:border-white/10 shadow-sm p-6 sm:p-10 md:p-14 space-y-12 sm:space-y-14 transition-colors min-h-[calc(100vh-1.5rem)] flex flex-col justify-between">
 
         {/* ═══════════════════════════════════════════════════════════
             TOP HEADER
