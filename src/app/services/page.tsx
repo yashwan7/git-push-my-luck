@@ -517,64 +517,14 @@ export default function ServicesPage() {
               <Layers className="w-5 h-5 text-emerald-300" />
             </Link>
 
-            {/* 🏦 Banking Main Icon Button */}
-            <button
-              onClick={() => setIsBankingSubmenuOpen(!isBankingSubmenuOpen)}
-              className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all cursor-pointer relative ${
-                isBankingSubmenuOpen 
-                  ? 'bg-[#2D5A47] text-white shadow-md ring-2 ring-emerald-400/40 scale-105' 
-                  : 'text-emerald-200/60 hover:text-white hover:bg-white/10'
-              }`}
-              title={isBankingSubmenuOpen ? "Collapse Banking Sub-features" : "Expand Banking Sub-features"}
+            {/* 🏦 Banking Main Icon Button (Direct Navigation to /banking Dashboard) */}
+            <Link
+              href="/banking"
+              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all cursor-pointer"
+              title="Inclusive Banking Dashboard"
             >
               <Wallet className="w-5 h-5 text-emerald-300" />
-              {isBankingSubmenuOpen && (
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 absolute top-1.5 right-1.5 ring-2 ring-[#1A3328]" />
-              )}
-            </button>
-
-            {/* 🔽 IN-SIDEBAR VERTICAL EXPANSION: 4 Attached Sub-Features (Rolled down directly under Bank Logo) */}
-            <div className={`flex flex-col items-center gap-2 overflow-hidden transition-all duration-300 ease-in-out ${
-              isBankingSubmenuOpen ? 'max-h-60 opacity-100 py-1' : 'max-h-0 opacity-0 py-0 pointer-events-none'
-            }`}>
-              
-              {/* 1. Send Money */}
-              <Link
-                href="/banking"
-                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-[#2563EB] text-emerald-200 hover:text-white flex items-center justify-center transition-all shadow-xs group"
-                title="Send Money (UPI Transfer)"
-              >
-                <Send className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
-              </Link>
-
-              {/* 2. Receive QR Code */}
-              <Link
-                href="/banking"
-                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-[#059669] text-emerald-200 hover:text-white flex items-center justify-center transition-all shadow-xs group"
-                title="Receive / Show QR Code"
-              >
-                <QrCode className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
-              </Link>
-
-              {/* 3. Pay Bills */}
-              <Link
-                href="/services/electricity-bill"
-                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-[#D97706] text-emerald-200 hover:text-white flex items-center justify-center transition-all shadow-xs group"
-                title="Pay Electricity & Utility Bills"
-              >
-                <Receipt className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
-              </Link>
-
-              {/* 4. Passbook / History */}
-              <Link
-                href="/banking"
-                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-[#7C3AED] text-emerald-200 hover:text-white flex items-center justify-center transition-all shadow-xs group"
-                title="Passbook & Recent Transactions"
-              >
-                <History className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
-              </Link>
-
-            </div>
+            </Link>
 
             {/* 📷 Dedicated Document Assist Slot (Smoothly shifts down when Banking expands) */}
             <button

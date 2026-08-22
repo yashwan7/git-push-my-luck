@@ -922,46 +922,116 @@ export default function AdaptiveBankingPage() {
               {/* ═══════════════════════════════════════════════════════════
                   QUICK INTERACTIVE ACTIONS BAR
                  ═══════════════════════════════════════════════════════════ */}
-              <div className="p-5 rounded-[28px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-3">
+              {/* ═══════════════════════════════════════════════════════════
+                  QUICK INTERACTIVE ACTIONS BAR (BIGGER ELEVATED FLASH CARDS)
+                 ═══════════════════════════════════════════════════════════ */}
+              <div className="p-6 sm:p-7 rounded-[32px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#8B929A]">
-                    Interactive Actions
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-black uppercase tracking-wider text-[#1E2024] dark:text-white">
+                      Interactive Actions
+                    </span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  </div>
+                  <span className="text-xs text-[#2563EB] dark:text-blue-400 font-bold bg-blue-50 dark:bg-blue-950/50 px-3 py-1 rounded-full border border-blue-200/50 dark:border-blue-800/50">
+                    Demo Settlement Active
                   </span>
-                  <span className="text-xs text-[#779AE6] font-bold">Demo Settlement Active</span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  
+                  {/* 1. Send Money */}
                   <button
                     onClick={() => setCurrentView('send_money')}
-                    className="p-3.5 rounded-2xl bg-[#ECECEC] dark:bg-white/5 hover:bg-[#779AE6] hover:text-white border border-transparent font-bold text-xs flex items-center gap-2.5 transition-all group"
+                    className="p-5 rounded-[24px] bg-gradient-to-br from-blue-50/90 to-blue-100/50 dark:from-blue-950/40 dark:to-[#172033] hover:from-blue-100 hover:to-blue-200/60 dark:hover:from-blue-900/50 dark:hover:to-blue-800/40 border border-blue-200/70 dark:border-blue-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
                   >
-                    <Send className="w-4 h-4 text-[#779AE6] group-hover:text-white" />
-                    <span>Send Money</span>
+                    <div className="flex justify-between items-start">
+                      <div className="w-11 h-11 rounded-2xl bg-[#2563EB] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                        <Send className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-blue-700 dark:text-blue-300">
+                        Fast UPI
+                      </span>
+                    </div>
+                    <div>
+                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                        Send Money
+                      </div>
+                      <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                        Transfer to beneficiaries
+                      </div>
+                    </div>
                   </button>
 
+                  {/* 2. Receive QR */}
                   <button
                     onClick={() => setIsReceiveModalOpen(true)}
-                    className="p-3.5 rounded-2xl bg-[#ECECEC] dark:bg-white/5 hover:bg-emerald-600 hover:text-white border border-transparent font-bold text-xs flex items-center gap-2.5 transition-all group"
+                    className="p-5 rounded-[24px] bg-gradient-to-br from-emerald-50/90 to-emerald-100/50 dark:from-emerald-950/40 dark:to-[#112920] hover:from-emerald-100 hover:to-emerald-200/60 dark:hover:from-emerald-900/50 dark:hover:to-emerald-800/40 border border-emerald-200/70 dark:border-emerald-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
                   >
-                    <QrCode className="w-4 h-4 text-emerald-500 group-hover:text-white" />
-                    <span>Receive QR</span>
+                    <div className="flex justify-between items-start">
+                      <div className="w-11 h-11 rounded-2xl bg-[#059669] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                        <QrCode className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-emerald-700 dark:text-emerald-300">
+                        Scan & Pay
+                      </span>
+                    </div>
+                    <div>
+                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                        Receive QR
+                      </div>
+                      <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                        Show personal UPI QR
+                      </div>
+                    </div>
                   </button>
 
+                  {/* 3. Pay Bills */}
                   <button
                     onClick={() => setIsBillModalOpen(true)}
-                    className="p-3.5 rounded-2xl bg-[#ECECEC] dark:bg-white/5 hover:bg-[#F0DC9B] hover:text-[#1E2024] border border-transparent font-bold text-xs flex items-center gap-2.5 transition-all group"
+                    className="p-5 rounded-[24px] bg-gradient-to-br from-amber-50/90 to-amber-100/50 dark:from-amber-950/40 dark:to-[#2B2314] hover:from-amber-100 hover:to-amber-200/60 dark:hover:from-amber-900/50 dark:hover:to-amber-800/40 border border-amber-200/70 dark:border-amber-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
                   >
-                    <Receipt className="w-4 h-4 text-amber-500 group-hover:text-[#1E2024]" />
-                    <span>Pay Bills</span>
+                    <div className="flex justify-between items-start">
+                      <div className="w-11 h-11 rounded-2xl bg-[#D97706] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                        <Receipt className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-amber-700 dark:text-amber-300">
+                        BBPS Direct
+                      </span>
+                    </div>
+                    <div>
+                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                        Pay Bills
+                      </div>
+                      <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                        Electricity, Mobile, DTH
+                      </div>
+                    </div>
                   </button>
 
+                  {/* 4. Card Controls */}
                   <button
                     onClick={() => setIsCardModalOpen(true)}
-                    className="p-3.5 rounded-2xl bg-[#ECECEC] dark:bg-white/5 hover:bg-[#8FAEE8] hover:text-[#1E2024] border border-transparent font-bold text-xs flex items-center gap-2.5 transition-all group"
+                    className="p-5 rounded-[24px] bg-gradient-to-br from-purple-50/90 to-purple-100/50 dark:from-purple-950/40 dark:to-[#221B2F] hover:from-purple-100 hover:to-purple-200/60 dark:hover:from-purple-900/50 dark:hover:to-purple-800/40 border border-purple-200/70 dark:border-purple-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
                   >
-                    <CreditCard className="w-4 h-4 text-[#779AE6] group-hover:text-[#1E2024]" />
-                    <span>Card Controls</span>
+                    <div className="flex justify-between items-start">
+                      <div className="w-11 h-11 rounded-2xl bg-[#7C3AED] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                        <CreditCard className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-purple-700 dark:text-purple-300">
+                        RuPay Safe
+                      </span>
+                    </div>
+                    <div>
+                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                        Card Controls
+                      </div>
+                      <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                        Limits & Freeze card
+                      </div>
+                    </div>
                   </button>
+
                 </div>
               </div>
 
