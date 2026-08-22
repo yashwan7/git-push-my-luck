@@ -550,184 +550,183 @@ export default function AdaptiveBankingPage() {
               </div>
 
               {/* ═══════════════════════════════════════════════════════════
-                  MIDDLE 3 CARDS ROW: BALANCE STATS + CARD + ANALYTICS
+                  1. TOP LINEUP: INTERACTIVE ACTIONS FLASH CARDS
                  ═══════════════════════════════════════════════════════════ */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                
-                {/* 1. BALANCE STATISTICS CARD */}
-                <div className="p-6 rounded-[28px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col justify-between min-h-[220px]">
-                  <div>
-                    <span className="text-xs font-bold text-[#71767B] dark:text-slate-400 block">
-                      Balance Statistics
+              <div className="p-6 sm:p-7 rounded-[32px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-black uppercase tracking-wider text-[#1E2024] dark:text-white">
+                      Interactive Actions
                     </span>
-                    <div className="flex items-baseline gap-2 mt-2">
-                      <div className="text-3xl sm:text-4xl font-black text-[#1E2024] dark:text-white tracking-tight">
-                        {isBalanceHidden ? '₹••,•••.••' : `₹${account.availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
-                      </div>
-                      <span className="text-xs font-medium text-[#8B929A]">Total amount</span>
-                      <button
-                        onClick={() => setIsBalanceHidden(!isBalanceHidden)}
-                        className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white"
-                        aria-label="Toggle balance visibility"
-                      >
-                        {isBalanceHidden ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-                      </button>
-                    </div>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                   </div>
+                  <span className="text-xs text-[#2563EB] dark:text-blue-400 font-bold bg-blue-50 dark:bg-blue-950/50 px-3 py-1 rounded-full border border-blue-200/50 dark:border-blue-800/50">
+                    Demo Settlement Active
+                  </span>
+                </div>
 
-                  {/* Sparkline wave + 5 rounded bar pillars */}
-                  <div className="flex items-end justify-between pt-3">
-                    {/* Left: Sparkline + 14% */}
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <svg className="w-14 h-6 text-[#779AE6]" viewBox="0 0 60 25" fill="none">
-                          <path d="M 2 20 Q 15 5, 30 18 T 58 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                        </svg>
-                        <div className="w-6 h-6 rounded-full border border-slate-300 dark:border-white/20 flex items-center justify-center text-[10px] font-bold text-[#1E2024] dark:text-white">
-                          ↑
-                        </div>
-                        <span className="text-xs font-bold text-[#1E2024] dark:text-white">
-                          14%
-                        </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  
+                  {/* 1. Send Money */}
+                  <button
+                    onClick={() => setCurrentView('send_money')}
+                    className="p-5 rounded-[24px] bg-gradient-to-br from-blue-50/90 to-blue-100/50 dark:from-blue-950/40 dark:to-[#172033] hover:from-blue-100 hover:to-blue-200/60 dark:hover:from-blue-900/50 dark:hover:to-blue-800/40 border border-blue-200/70 dark:border-blue-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="w-11 h-11 rounded-2xl bg-[#2563EB] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                        <Send className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] text-[#8B929A] block leading-tight">
-                        Always see your earning updates
+                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-blue-700 dark:text-blue-300">
+                        Fast UPI
                       </span>
                     </div>
-
-                    {/* Right: 5 Monthly Bar Pillars (Nov, Dec, Jan, Feb, Mar) */}
-                    <div className="flex items-end gap-1.5 pb-0.5">
-                      {[
-                        { m: 'Nov', h: 'h-3.5' },
-                        { m: 'Dec', h: 'h-2' },
-                        { m: 'Jan', h: 'h-6' },
-                        { m: 'Feb', h: 'h-5' },
-                        { m: 'Mar', h: 'h-7' },
-                      ].map((bar, idx) => (
-                        <div key={idx} className="flex flex-col items-center gap-1">
-                          <div className={`w-3 ${bar.h} rounded-full bg-[#779AE6]`} />
-                          <span className="text-[9px] font-bold text-[#8B929A]">{bar.m}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* 2. THE BANK OF ANYTHING DIGITAL CARD (SOFT SKY-BLUE THEME) */}
-                <div className="p-6 rounded-[28px] bg-gradient-to-br from-[#779AE6] to-[#8FAEE8] text-white shadow-sm flex flex-col justify-between min-h-[220px] relative overflow-hidden">
-                  
-                  {/* Sheen effect */}
-                  <div className="absolute top-0 right-0 w-44 h-44 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-
-                  <div className="flex justify-between items-start z-10">
-                    <span className="text-[12px] font-bold tracking-wider text-white/90 uppercase">
-                      Debit Card
-                    </span>
-                  </div>
-
-                  {/* Golden Chip */}
-                  <div className="my-1 z-10">
-                    <div className="w-10 h-7 rounded-md bg-[#F4D068] border border-yellow-300 shadow-inner grid grid-cols-2 gap-0.5 p-1">
-                      <div className="border-r border-b border-amber-600/30" />
-                      <div className="border-b border-amber-600/30" />
-                      <div className="border-r border-amber-600/30" />
-                      <div />
-                    </div>
-                  </div>
-
-                  {/* Card Number */}
-                  <div className="z-10 font-mono text-lg sm:text-xl font-bold tracking-widest text-white drop-shadow-sm">
-                    ••••  ••••  ••••  2734
-                  </div>
-
-                  {/* Expiry, Name & Dual-Circle Logo */}
-                  <div className="flex justify-between items-end z-10 pt-1">
                     <div>
-                      <div className="flex gap-4 text-[9px] text-white/80 font-mono mb-1">
-                        <span>3/18</span>
-                        <span>3/28</span>
+                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                        Send Money
                       </div>
-                      <span className="text-xs font-bold text-white">{userDisplayName}</span>
+                      <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                        Transfer to beneficiaries
+                      </div>
                     </div>
+                  </button>
 
-                    {/* Dual circle logo (MasterCard style) */}
-                    <div className="flex -space-x-2.5">
-                      <div className="w-6 h-6 rounded-full bg-[#EB5757]" />
-                      <div className="w-6 h-6 rounded-full bg-[#F2C94C]/90" />
+                  {/* 2. Receive QR */}
+                  <button
+                    onClick={() => setIsReceiveModalOpen(true)}
+                    className="p-5 rounded-[24px] bg-gradient-to-br from-emerald-50/90 to-emerald-100/50 dark:from-emerald-950/40 dark:to-[#112920] hover:from-emerald-100 hover:to-emerald-200/60 dark:hover:from-emerald-900/50 dark:hover:to-emerald-800/40 border border-emerald-200/70 dark:border-emerald-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="w-11 h-11 rounded-2xl bg-[#059669] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                        <QrCode className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-emerald-700 dark:text-emerald-300">
+                        Scan & Pay
+                      </span>
                     </div>
-                  </div>
+                    <div>
+                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                        Receive QR
+                      </div>
+                      <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                        Show personal UPI QR
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* 3. Pay Bills */}
+                  <button
+                    onClick={() => setIsBillModalOpen(true)}
+                    className="p-5 rounded-[24px] bg-gradient-to-br from-amber-50/90 to-amber-100/50 dark:from-amber-950/40 dark:to-[#2B2314] hover:from-amber-100 hover:to-amber-200/60 dark:hover:from-amber-900/50 dark:hover:to-amber-800/40 border border-amber-200/70 dark:border-amber-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="w-11 h-11 rounded-2xl bg-[#D97706] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                        <Receipt className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-amber-700 dark:text-amber-300">
+                        BBPS Direct
+                      </span>
+                    </div>
+                    <div>
+                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                        Pay Bills
+                      </div>
+                      <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                        Electricity, Mobile, DTH
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* 4. Card Controls */}
+                  <button
+                    onClick={() => setIsCardModalOpen(true)}
+                    className="p-5 rounded-[24px] bg-gradient-to-br from-purple-50/90 to-purple-100/50 dark:from-purple-950/40 dark:to-[#221B2F] hover:from-purple-100 hover:to-purple-200/60 dark:hover:from-purple-900/50 dark:hover:to-purple-800/40 border border-purple-200/70 dark:border-purple-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="w-11 h-11 rounded-2xl bg-[#7C3AED] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                        <CreditCard className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-purple-700 dark:text-purple-300">
+                        RuPay Safe
+                      </span>
+                    </div>
+                    <div>
+                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                        Card Controls
+                      </div>
+                      <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                        Limits & Freeze card
+                      </div>
+                    </div>
+                  </button>
+
                 </div>
+              </div>
 
-                {/* 3. ANALYTICS CARD (RADIAL GAUGE 90% DONE) */}
-                <div className="p-6 rounded-[28px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col justify-between min-h-[220px]">
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-bold text-[#71767B] dark:text-slate-400">
-                      Analytics
-                    </span>
-                    <button 
-                      onClick={() => setIsLimitModalOpen(true)}
-                      className="text-slate-400 hover:text-slate-700 dark:hover:text-white"
+              {/* ═══════════════════════════════════════════════════════════
+                  2. BELOW THAT: SPATIAL BALANCE STATISTICS STATUS CARD
+                 ═══════════════════════════════════════════════════════════ */}
+              <div className="p-6 sm:p-7 rounded-[32px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                  <span className="text-xs font-bold text-[#71767B] dark:text-slate-400 block uppercase tracking-wider">
+                    Balance Statistics
+                  </span>
+                  <div className="flex items-baseline gap-3 mt-2">
+                    <div className="text-3xl sm:text-4xl md:text-5xl font-black text-[#1E2024] dark:text-white tracking-tight">
+                      {isBalanceHidden ? '₹••,•••.••' : `₹${account.availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
+                    </div>
+                    <span className="text-xs font-semibold text-[#8B929A]">Total available</span>
+                    <button
+                      onClick={() => setIsBalanceHidden(!isBalanceHidden)}
+                      className="p-1.5 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+                      aria-label="Toggle balance visibility"
                     >
-                      <MoreVertical className="w-4 h-4" />
+                      {isBalanceHidden ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                     </button>
                   </div>
-
-                  {/* Legend row */}
-                  <div className="flex items-center justify-between text-[11px] font-bold">
-                    <span className="text-[#779AE6]">● Done</span>
-                    <span className="text-[#F2C94C]">● In progres</span>
-                    <span className="text-[#EB5757]">● To do</span>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/20 text-[11px] font-bold text-emerald-700 dark:text-emerald-300">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      Account Status: Active & Protected
+                    </span>
                   </div>
-
-                  {/* Semi-circle Gauge Meter (Exact Reference) */}
-                  <div className="flex flex-col items-center justify-center pt-2">
-                    <div className="relative w-36 h-20 overflow-hidden flex items-end justify-center">
-                      <svg className="w-36 h-36 -rotate-90 transform" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="#ECECEC" strokeWidth="10" />
-                        <circle 
-                          cx="50" 
-                          cy="50" 
-                          r="40" 
-                          fill="none" 
-                          stroke="#779AE6" 
-                          strokeWidth="10" 
-                          strokeDasharray="251.2" 
-                          strokeDashoffset="75"
-                          strokeLinecap="round"
-                        />
-                        <circle 
-                          cx="50" 
-                          cy="50" 
-                          r="40" 
-                          fill="none" 
-                          stroke="#F2C94C" 
-                          strokeWidth="10" 
-                          strokeDasharray="251.2" 
-                          strokeDashoffset="210"
-                          strokeLinecap="round"
-                        />
-                        <circle 
-                          cx="50" 
-                          cy="50" 
-                          r="40" 
-                          fill="none" 
-                          stroke="#EB5757" 
-                          strokeWidth="10" 
-                          strokeDasharray="251.2" 
-                          strokeDashoffset="235"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                      <div className="absolute bottom-1 text-center">
-                        <div className="text-2xl font-black text-[#1E2024] dark:text-white leading-none">90%</div>
-                        <span className="text-[10px] font-bold text-[#8B929A]">Done</span>
-                      </div>
-                    </div>
-                  </div>
-
                 </div>
 
+                {/* Right side: Sparkline wave + 5 rounded bar pillars */}
+                <div className="flex items-center gap-6 sm:gap-8 pt-2 md:pt-0">
+                  {/* Growth Indicator */}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-16 h-7 text-[#2563EB]" viewBox="0 0 60 25" fill="none">
+                        <path d="M 2 20 Q 15 5, 30 18 T 58 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                      </svg>
+                      <div className="w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-700 flex items-center justify-center text-xs font-black text-emerald-600 dark:text-emerald-400 shadow-2xs">
+                        ↑
+                      </div>
+                      <span className="text-sm font-black text-[#1E2024] dark:text-white">
+                        14%
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-[#8B929A] block leading-tight font-medium">
+                      Always see your earning updates
+                    </span>
+                  </div>
+
+                  {/* Monthly Bar Pillars */}
+                  <div className="flex items-end gap-2 pb-0.5 border-l border-slate-200 dark:border-white/10 pl-6">
+                    {[
+                      { m: 'Nov', h: 'h-4' },
+                      { m: 'Dec', h: 'h-3' },
+                      { m: 'Jan', h: 'h-8' },
+                      { m: 'Feb', h: 'h-6' },
+                      { m: 'Mar', h: 'h-10', active: true },
+                    ].map((bar, idx) => (
+                      <div key={idx} className="flex flex-col items-center gap-1">
+                        <div className={`w-3.5 ${bar.h} rounded-full ${bar.active ? 'bg-[#2563EB] shadow-xs' : 'bg-slate-200 dark:bg-white/20'}`} />
+                        <span className="text-[9px] font-bold text-[#8B929A]">{bar.m}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* ═══════════════════════════════════════════════════════════
@@ -917,122 +916,6 @@ export default function AdaptiveBankingPage() {
 
                 </div>
 
-              </div>
-
-              {/* ═══════════════════════════════════════════════════════════
-                  QUICK INTERACTIVE ACTIONS BAR
-                 ═══════════════════════════════════════════════════════════ */}
-              {/* ═══════════════════════════════════════════════════════════
-                  QUICK INTERACTIVE ACTIONS BAR (BIGGER ELEVATED FLASH CARDS)
-                 ═══════════════════════════════════════════════════════════ */}
-              <div className="p-6 sm:p-7 rounded-[32px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-black uppercase tracking-wider text-[#1E2024] dark:text-white">
-                      Interactive Actions
-                    </span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  </div>
-                  <span className="text-xs text-[#2563EB] dark:text-blue-400 font-bold bg-blue-50 dark:bg-blue-950/50 px-3 py-1 rounded-full border border-blue-200/50 dark:border-blue-800/50">
-                    Demo Settlement Active
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  
-                  {/* 1. Send Money */}
-                  <button
-                    onClick={() => setCurrentView('send_money')}
-                    className="p-5 rounded-[24px] bg-gradient-to-br from-blue-50/90 to-blue-100/50 dark:from-blue-950/40 dark:to-[#172033] hover:from-blue-100 hover:to-blue-200/60 dark:hover:from-blue-900/50 dark:hover:to-blue-800/40 border border-blue-200/70 dark:border-blue-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="w-11 h-11 rounded-2xl bg-[#2563EB] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                        <Send className="w-5 h-5" />
-                      </div>
-                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-blue-700 dark:text-blue-300">
-                        Fast UPI
-                      </span>
-                    </div>
-                    <div>
-                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
-                        Send Money
-                      </div>
-                      <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                        Transfer to beneficiaries
-                      </div>
-                    </div>
-                  </button>
-
-                  {/* 2. Receive QR */}
-                  <button
-                    onClick={() => setIsReceiveModalOpen(true)}
-                    className="p-5 rounded-[24px] bg-gradient-to-br from-emerald-50/90 to-emerald-100/50 dark:from-emerald-950/40 dark:to-[#112920] hover:from-emerald-100 hover:to-emerald-200/60 dark:hover:from-emerald-900/50 dark:hover:to-emerald-800/40 border border-emerald-200/70 dark:border-emerald-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="w-11 h-11 rounded-2xl bg-[#059669] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                        <QrCode className="w-5 h-5" />
-                      </div>
-                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-emerald-700 dark:text-emerald-300">
-                        Scan & Pay
-                      </span>
-                    </div>
-                    <div>
-                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
-                        Receive QR
-                      </div>
-                      <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                        Show personal UPI QR
-                      </div>
-                    </div>
-                  </button>
-
-                  {/* 3. Pay Bills */}
-                  <button
-                    onClick={() => setIsBillModalOpen(true)}
-                    className="p-5 rounded-[24px] bg-gradient-to-br from-amber-50/90 to-amber-100/50 dark:from-amber-950/40 dark:to-[#2B2314] hover:from-amber-100 hover:to-amber-200/60 dark:hover:from-amber-900/50 dark:hover:to-amber-800/40 border border-amber-200/70 dark:border-amber-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="w-11 h-11 rounded-2xl bg-[#D97706] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                        <Receipt className="w-5 h-5" />
-                      </div>
-                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-amber-700 dark:text-amber-300">
-                        BBPS Direct
-                      </span>
-                    </div>
-                    <div>
-                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
-                        Pay Bills
-                      </div>
-                      <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                        Electricity, Mobile, DTH
-                      </div>
-                    </div>
-                  </button>
-
-                  {/* 4. Card Controls */}
-                  <button
-                    onClick={() => setIsCardModalOpen(true)}
-                    className="p-5 rounded-[24px] bg-gradient-to-br from-purple-50/90 to-purple-100/50 dark:from-purple-950/40 dark:to-[#221B2F] hover:from-purple-100 hover:to-purple-200/60 dark:hover:from-purple-900/50 dark:hover:to-purple-800/40 border border-purple-200/70 dark:border-purple-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="w-11 h-11 rounded-2xl bg-[#7C3AED] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                        <CreditCard className="w-5 h-5" />
-                      </div>
-                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-purple-700 dark:text-purple-300">
-                        RuPay Safe
-                      </span>
-                    </div>
-                    <div>
-                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
-                        Card Controls
-                      </div>
-                      <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                        Limits & Freeze card
-                      </div>
-                    </div>
-                  </button>
-
-                </div>
               </div>
 
               {/* ANUKOOL CONVERSATIONAL ASSISTANT */}
