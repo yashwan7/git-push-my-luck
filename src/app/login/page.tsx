@@ -84,10 +84,10 @@ function LoginContent() {
         <Link 
           href="/"
           className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-800/60 border border-white/20 text-zinc-300 text-xs font-bold transition-all backdrop-blur-md focus:ring-2 focus:ring-blue-400"
-          aria-label="Back to NAYAN homepage"
+          aria-label="Back to ANUKOOL homepage"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to NAYAN</span>
+          <span>Back to ANUKOOL</span>
         </Link>
 
         <div className="flex items-center gap-2 text-xs font-semibold text-zinc-300">
@@ -113,10 +113,10 @@ function LoginContent() {
           aria-labelledby="login-heading"
         >
           
-          {/* NAYAN "N" Logo Mark */}
+          {/* ANUKOOL "A" Logo Mark */}
           <div className="flex justify-center">
             <div className="w-14 h-14 rounded-2xl bg-civic-navy text-white flex items-center justify-center font-black text-2xl tracking-tighter border-2 border-blue-500 shadow-xl ring-4 ring-blue-500/20">
-              N
+              A
             </div>
           </div>
 
@@ -126,7 +126,7 @@ function LoginContent() {
               Welcome back
             </h1>
             <p className="text-xs sm:text-sm text-zinc-300 font-normal leading-relaxed max-w-sm mx-auto">
-              Sign in with your Google account to access your personalized NAYAN accessibility profile.
+              Sign in with your Google account to access your personalized ANUKOOL accessibility profile.
             </p>
           </div>
 
@@ -203,7 +203,7 @@ function LoginContent() {
 
       {/* Minimal Footer */}
       <footer className="relative z-20 py-4 px-6 text-center text-xs text-zinc-400">
-        NAYAN &bull; Universal Digital Accessibility & Inclusion Infrastructure
+        ANUKOOL &bull; Universal Digital Accessibility & Inclusion Infrastructure
       </footer>
 
     </div>
@@ -216,7 +216,7 @@ export default function LoginPage() {
       fallback={
         <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 -my-6 sm:-my-10 min-h-[calc(100vh-60px)] flex flex-col justify-center items-center overflow-hidden bg-black text-white font-sans">
           <div className="w-14 h-14 rounded-2xl bg-civic-navy text-white flex items-center justify-center font-black text-2xl tracking-tighter border-2 border-blue-500 shadow-xl animate-pulse">
-            N
+            A
           </div>
         </div>
       }

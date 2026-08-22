@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { usePathname } from 'next/navigation';
 import { useVoice } from '@/context/VoiceContext';
 import { useAccessibility } from '@/context/AccessibilityContext';
 import { getTranslation, LANGUAGE_NAMES } from '@/lib/multilingualEngine';
@@ -8,6 +9,7 @@ import { NayanVoiceModal } from './NayanVoiceModal';
 import { Mic, MicOff, Volume2, VolumeX, Sparkles } from 'lucide-react';
 
 export function VoiceController() {
+  const pathname = usePathname();
   const {
     isListening,
     isSpeaking,
@@ -21,6 +23,11 @@ export function VoiceController() {
 
   const { profile, updateProfileKey } = useAccessibility();
   const t = (key: string, fallback?: string) => getTranslation(profile.language, key, fallback);
+
+  // Hide floating voice bar on the main page (Home `/`) and login page
+  if (pathname === '/' || pathname === '/login') {
+    return null;
+  }
 
   return (
     <>

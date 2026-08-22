@@ -84,7 +84,7 @@ export function Navbar() {
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-civic-blue rounded-md px-2 py-1">
               <div className="w-10 h-10 rounded-lg bg-civic-navy text-white flex items-center justify-center font-bold text-acc-xl tracking-tighter border border-civic-blue shadow-sm">
-                N
+                A
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-acc-xl tracking-tight text-[var(--text-primary)] flex items-center gap-2">

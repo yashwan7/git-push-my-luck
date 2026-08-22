@@ -7,7 +7,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { VoiceController } from '@/components/accessibility/VoiceController';
 
 export const metadata: Metadata = {
-  title: 'NAYAN — Adaptive Digital Accessibility & Inclusion Platform',
+  title: 'ANUKOOL — Adaptive Digital Accessibility & Inclusion Platform',
   description: 'Technology should adapt to people. People should not have to adapt to technology. One service. Every ability. Every language. Every interaction style.',
 };
 

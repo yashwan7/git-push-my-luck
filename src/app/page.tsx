@@ -109,7 +109,7 @@ export default function LandingPage() {
             className="text-xs sm:text-sm md:text-base text-slate-300 max-w-xl font-normal leading-relaxed appear appear--soft"
             style={{ animationDelay: '0.7s' }}
           >
-            NAYAN adapts digital experiences around the person — not the other way around. Same service. Different experience.
+            ANUKOOL adapts digital experiences around the person — not the other way around. Same service. Different experience.
           </p>
 
           {/* Liquid Metal & Glass Action Buttons */}
@@ -126,7 +126,7 @@ export default function LandingPage() {
               }}
             >
               <span className="relative z-10 flex items-center gap-2">
-                <span>Continue with NAYAN Profile</span>
+                <span>Continue with ANUKOOL Profile</span>
                 <ArrowRight className="w-4 h-4 text-slate-900 group-hover:translate-x-1 transition-transform" />
               </span>
               <div 

@@ -461,7 +461,7 @@ export default function ServicesPage() {
               <div className="md:col-span-7 space-y-2">
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 shadow-xs text-[10px] font-bold text-[#2563EB]">
                   <Sparkles className="w-3 h-3 text-amber-500" />
-                  <span>NAYAN DIGITAL SERVICES &bull; ACTIVE PROFILE: {activePersonaName ? activePersonaName.toUpperCase() : 'ADAPTIVE'}</span>
+                  <span>ANUKOOL DIGITAL SERVICES &bull; ACTIVE PROFILE: {activePersonaName ? activePersonaName.toUpperCase() : 'ADAPTIVE'}</span>
                 </div>
 
                 <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1E2024] dark:text-white tracking-tight leading-none">
@@ -473,17 +473,17 @@ export default function ServicesPage() {
                     What would you like to get done today?
                   </p>
                   <p className="text-xs text-[#8B929A] font-medium leading-relaxed">
-                    NAYAN helps you discover and complete digital services in the way that works best for you.
+                    ANUKOOL helps you discover and complete digital services in the way that works best for you.
                   </p>
                 </div>
               </div>
 
-              {/* Right: NAYAN Adaptive Intelligence Panel Card */}
+              {/* Right: ANUKOOL Adaptive Intelligence Panel Card */}
               <div className="md:col-span-5 p-4 sm:p-5 rounded-[26px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-2 relative overflow-hidden">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-amber-500" />
                   <span className="text-xs font-black text-[#1E2024] dark:text-white">
-                    NAYAN Adaptive Intelligence
+                    ANUKOOL Adaptive Intelligence
                   </span>
                 </div>
                 <p className="text-[11px] text-[#8B929A] leading-relaxed">
@@ -982,7 +982,7 @@ export default function ServicesPage() {
 
                 <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 text-[9px] text-[#8B929A] leading-tight space-y-1">
                   <p className="font-bold text-slate-700 dark:text-slate-300">
-                    &bull; NAYAN provides care-navigation assistance. It does not diagnose medical conditions.
+                    &bull; ANUKOOL provides care-navigation assistance. It does not diagnose medical conditions.
                   </p>
                   <p>
                     Demo / simulated availability. For life-threatening emergencies, immediately call emergency dispatch (112).
@@ -999,15 +999,15 @@ export default function ServicesPage() {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════
-          FLOATING NAYAN VOICE AI BAR (AS PICTURED IN SCREENSHOT)
+          FLOATING ANUKOOL VOICE AI BAR (AS PICTURED IN SCREENSHOT)
          ═══════════════════════════════════════════════════════════ */}
       <div className="fixed bottom-4 right-4 sm:right-6 z-40 flex items-center gap-1.5 p-1.5 rounded-2xl bg-[#181920] border-2 border-blue-500/40 text-white shadow-2xl backdrop-blur-md">
         <button
-          onClick={() => speakText('Nayan Voice AI is listening. How can I help you?')}
+          onClick={() => speakText('Anukool Voice AI is listening. How can I help you?')}
           className="px-3.5 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-600 font-black text-xs flex items-center gap-2 transition-all"
         >
           <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-          <span>Nayan Voice AI</span>
+          <span>Anukool Voice AI</span>
         </button>
 
         <button
