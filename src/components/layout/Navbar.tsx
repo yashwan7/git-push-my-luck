@@ -92,8 +92,8 @@ export function Navbar() {
               title="Active Accessibility Profile (Click to change)"
             >
               <Sliders className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>
-                {activePersonaName ? activePersonaName : t('activeProfile', 'Active Profile')}
+              <span className="max-w-[80px] sm:max-w-none truncate">
+                {activePersonaName ? activePersonaName : t('activeProfile', 'Profile')}
               </span>
             </button>
 

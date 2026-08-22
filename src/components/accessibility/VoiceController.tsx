@@ -32,7 +32,7 @@ export function VoiceController() {
   return (
     <>
       <div 
-        className="fixed bottom-4 right-4 sm:right-6 z-40 flex flex-col items-end gap-2"
+        className="fixed bottom-20 lg:bottom-4 right-4 sm:right-6 z-40 flex flex-col items-end gap-2"
         aria-label="ANUKOOL Multimodal Voice Interaction Assistant"
       >
         {/* Active Transcript / Feedback Tooltip */}

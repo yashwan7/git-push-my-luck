@@ -59,7 +59,7 @@ export default function SafetyHubPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#121316] text-[#1E2024] dark:text-white p-4 sm:p-6 lg:p-8 font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#121316] text-[#1E2024] dark:text-white p-3 sm:p-6 lg:p-8 font-sans pb-24 lg:pb-8">
       <div className="max-w-6xl mx-auto space-y-8">
         
         {/* Top Breadcrumb & Navigation */}

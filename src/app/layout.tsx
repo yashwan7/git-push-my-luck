@@ -4,6 +4,7 @@ import { AccessibilityProvider } from '@/context/AccessibilityContext';
 import { VoiceProvider } from '@/context/VoiceContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { Navbar } from '@/components/layout/Navbar';
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { VoiceController } from '@/components/accessibility/VoiceController';
 
 export const metadata: Metadata = {
@@ -60,6 +61,7 @@ export default function RootLayout({
                 {children}
               </main>
               <VoiceController />
+              <MobileBottomNav />
             </VoiceProvider>
           </AccessibilityProvider>
         </AuthProvider>

@@ -492,7 +492,7 @@ export default function ServicesPage() {
       {/* ─────────────────────────────────────────────────────────────
           MAIN CANVAS SHELL (MATCHING REFERENCE IMAGE 1:1)
          ───────────────────────────────────────────────────────────── */}
-      <div className="w-full bg-white dark:bg-[#18191D] rounded-[36px] p-4 sm:p-6 md:p-7 flex gap-5 sm:gap-6 shadow-sm border border-slate-200/80 dark:border-white/10">
+      <div className="w-full bg-white dark:bg-[#18191D] rounded-[28px] sm:rounded-[36px] p-3 sm:p-6 md:p-7 pb-24 lg:pb-7 flex gap-5 sm:gap-6 shadow-sm border border-slate-200/80 dark:border-white/10">
         
         {/* ═══════════════════════════════════════════════════════════
             LEFT DARK SIDEBAR PILL (CLEAN: HOME, SERVICES, BANKING, DOC ASSIST, SUPPORT)

@@ -343,7 +343,7 @@ export default function AdaptiveBankingPage() {
       {/* ─────────────────────────────────────────────────────────────
           MAIN FENCO DASHBOARD CANVAS CONTAINER
          ───────────────────────────────────────────────────────────── */}
-      <div className="max-w-[1340px] mx-auto bg-[#ECECEC] dark:bg-[#18191D] rounded-[36px] p-3 sm:p-5 md:p-7 flex gap-5 sm:gap-7">
+      <div className="max-w-[1340px] mx-auto bg-[#ECECEC] dark:bg-[#18191D] rounded-[28px] sm:rounded-[36px] p-3 sm:p-5 md:p-7 pb-24 lg:pb-7 flex gap-5 sm:gap-7">
         
         {/* ═══════════════════════════════════════════════════════════
             LEFT DARK SIDEBAR PILL (UNIFIED ANUKOOL SIDEBAR)

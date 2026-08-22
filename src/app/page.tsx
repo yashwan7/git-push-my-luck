@@ -192,53 +192,53 @@ export default function LandingPage() {
             </div>
 
             {/* ── 🗣️ FLOATING CARD 1 (Top-Right): Kannada Language Card ── */}
-            <div className="absolute top-2 sm:top-3 -right-1 sm:-right-3 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[210px] space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="absolute top-1 sm:top-3 -right-1 sm:-right-3 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[150px] sm:max-w-[210px] space-y-0.5 sm:space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-[11px] font-black text-slate-900 dark:text-white">ಕನ್ನಡ (Kannada)</span>
+                <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-emerald-500" />
+                <span className="text-[10px] sm:text-[11px] font-black text-slate-900 dark:text-white">ಕನ್ನಡ (Kannada)</span>
               </div>
-              <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium leading-snug">
+              <p className="text-[9.5px] sm:text-[11px] text-slate-600 dark:text-slate-300 font-medium leading-tight">
                 &ldquo;{t('voicePrompt', 'ನಿಮಗೆ ಏನು ಸಹಾಯ ಬೇಕು?')}&rdquo;
               </p>
             </div>
 
             {/* ── 🎙️ FLOATING CARD 2 (Middle-Left): Saathi Voice Guide ── */}
-            <div className="absolute top-1/2 -translate-y-1/2 -left-2 sm:-left-4 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[220px] space-y-1 animate-in fade-in slide-in-from-left-2 duration-300">
+            <div className="absolute top-1/2 -translate-y-1/2 -left-1 sm:-left-4 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[160px] sm:max-w-[220px] space-y-0.5 sm:space-y-1 animate-in fade-in slide-in-from-left-2 duration-300">
               <div className="flex items-center gap-1.5">
-                <div className="w-5 h-5 rounded-full bg-[#134233] text-white flex items-center justify-center">
-                  <Mic className="w-3 h-3" />
+                <div className="w-4.5 sm:w-5 h-4.5 sm:h-5 rounded-full bg-[#134233] text-white flex items-center justify-center">
+                  <Mic className="w-2.5 sm:w-3 h-2.5 sm:h-3" />
                 </div>
-                <span className="text-[11px] font-black text-slate-900 dark:text-white">
+                <span className="text-[10px] sm:text-[11px] font-black text-slate-900 dark:text-white">
                   {t('voiceGuide', 'Saathi Voice Guide')}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium leading-snug">
+              <p className="text-[9.5px] sm:text-[11px] text-slate-600 dark:text-slate-300 font-medium leading-tight">
                 &ldquo;{t('voiceGuideMsg', "I'll guide you through this step.")}&rdquo;
               </p>
             </div>
 
             {/* ── 📄 FLOATING CARD 3 (Bottom-Left): Document Snap-to-Form ── */}
-            <div className="absolute bottom-2 sm:bottom-3 -left-1 sm:-left-2 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[230px] space-y-1 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="absolute bottom-1 sm:bottom-3 -left-1 sm:-left-2 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[160px] sm:max-w-[230px] space-y-0.5 sm:space-y-1 animate-in fade-in slide-in-from-bottom-2 duration-300">
               <div className="flex items-center gap-1.5">
-                <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center">
-                  <Camera className="w-3 h-3" />
+                <div className="w-4.5 sm:w-5 h-4.5 sm:h-5 rounded-full bg-blue-600 text-white flex items-center justify-center">
+                  <Camera className="w-2.5 sm:w-3 h-2.5 sm:h-3" />
                 </div>
-                <span className="text-[11px] font-black text-slate-900 dark:text-white">
+                <span className="text-[10px] sm:text-[11px] font-black text-slate-900 dark:text-white">
                   {t('docDetected', 'Document detected')}
                 </span>
               </div>
-              <p className="text-[10px] text-slate-600 dark:text-slate-300 font-medium leading-snug">
+              <p className="text-[9px] sm:text-[10px] text-slate-600 dark:text-slate-300 font-medium leading-tight">
                 {t('docDetectedMsg', 'Name, date of birth and address found')}
               </p>
             </div>
 
             {/* ── 🗣️ FLOATING CARD 4 (Bottom-Right): Hindi Language Card ── */}
-            <div className="absolute bottom-2 sm:bottom-3 -right-1 sm:-right-3 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[210px] space-y-1 animate-in fade-in slide-in-from-right-2 duration-300">
+            <div className="absolute bottom-1 sm:bottom-3 -right-1 sm:-right-3 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[150px] sm:max-w-[210px] space-y-0.5 sm:space-y-1 animate-in fade-in slide-in-from-right-2 duration-300">
               <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
-                <span className="text-[11px] font-black text-slate-900 dark:text-white">हिंदी (Hindi)</span>
+                <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-amber-500" />
+                <span className="text-[10px] sm:text-[11px] font-black text-slate-900 dark:text-white">हिंदी (Hindi)</span>
               </div>
-              <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium leading-snug">
+              <p className="text-[9.5px] sm:text-[11px] text-slate-600 dark:text-slate-300 font-medium leading-tight">
                 &ldquo;{t('voicePromptHindi', 'आपको क्या सहायता चाहिए?')}&rdquo;
               </p>
             </div>
