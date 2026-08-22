@@ -464,89 +464,20 @@ export default function AdaptiveBankingPage() {
             MAIN DASHBOARD CONTENT AREA
            ═══════════════════════════════════════════════════════════ */}
         <div className="flex-1 space-y-6">
-          
-          {/* TOP APP HEADER BAR */}
-          <div className="flex items-center justify-end pb-1">
-
-            {/* Right: Notification + Search + Avatar */}
-            <div className="flex items-center gap-2.5 sm:gap-3">
-              {/* Notification Bell */}
-              <button 
-                onClick={() => speakCurrentStep(`You have 1 pending bill from BESCOM of ₹1,240.`)}
-                className="w-10 h-10 rounded-full bg-white dark:bg-[#232428] border border-slate-300 dark:border-white/10 flex items-center justify-center text-[#1E2024] dark:text-white shadow-sm hover:scale-105 transition-transform"
-                aria-label="Notifications"
-              >
-                <Bell className="w-4 h-4" />
-              </button>
-
-              {/* Search Capsule */}
-              <div className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-full bg-white dark:bg-[#232428] border border-slate-300 dark:border-white/10 shadow-sm text-xs text-[#8B929A]">
-                <Search className="w-3.5 h-3.5 text-[#8B929A]" />
-                <input 
-                  type="text" 
-                  placeholder="Search me..." 
-                  className="bg-transparent outline-none w-24 md:w-32 text-xs text-[#1E2024] dark:text-white font-medium" 
-                />
-              </div>
-
-              {/* Profile Avatar Initial Circle */}
-              <div className="w-10 h-10 rounded-full bg-[#1E2024] text-white font-serif font-bold text-base flex items-center justify-center shadow-sm border border-slate-300 dark:border-white/20">
-                {userInitial}
-              </div>
-            </div>
-
-          </div>
 
           {currentView === 'dashboard' ? (
             <div className="space-y-5 sm:space-y-6 animate-in fade-in duration-200">
               
               {/* ═══════════════════════════════════════════════════════════
-                  GREETING + PEOPLE AVATAR CAPSULE ROW
+                  GREETING TITLE
                  ═══════════════════════════════════════════════════════════ */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                
-                {/* Left: Hello, Alif Reza */}
-                <div>
-                  <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1E2024] dark:text-white tracking-tight">
-                    Hello, <span className="text-[#8494B6] font-extrabold">{userDisplayName}</span>
-                  </h1>
-                  <p className="text-xs sm:text-sm text-[#8B929A] font-medium mt-0.5">
-                    View and control your finances here!
-                  </p>
-                </div>
-
-                {/* Right: People Initial Circular Avatars Capsule */}
-                <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 shadow-sm self-start md:self-auto overflow-x-auto">
-                  <div className="flex items-center gap-2">
-                    {beneficiaries.map((b) => {
-                      const letter = b.name.charAt(0).toUpperCase();
-                      return (
-                        <button
-                          key={b.id}
-                          onClick={() => handleQuickSendTo(b, 2000)}
-                          title={`Send money to ${b.name}`}
-                          className="group relative focus:outline-none focus:ring-2 focus:ring-[#779AE6] rounded-full shrink-0"
-                        >
-                          <div 
-                            style={{ backgroundColor: b.colorHex || '#4F46E5' }}
-                            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full text-white font-black text-xs sm:text-sm flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform ring-2 ring-white dark:ring-[#232428]"
-                          >
-                            {letter}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  <button
-                    onClick={() => setCurrentView('send_money')}
-                    className="w-8 h-8 rounded-full bg-[#ECECEC] dark:bg-white/10 hover:bg-[#779AE6] hover:text-white text-[#1E2024] dark:text-white flex items-center justify-center transition-colors shrink-0"
-                    title="Send money"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-
+              <div className="pt-1">
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1E2024] dark:text-white tracking-tight">
+                  Hello, <span className="text-[#8494B6] font-extrabold">{userDisplayName}</span>
+                </h1>
+                <p className="text-xs sm:text-sm text-[#8B929A] font-medium mt-0.5">
+                  View and control your finances here!
+                </p>
               </div>
 
               {/* ═══════════════════════════════════════════════════════════
