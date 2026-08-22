@@ -9,16 +9,13 @@ import {
   Mic, 
   Hand, 
   LayoutGrid, 
-  Sliders, 
   Accessibility, 
   ArrowRight, 
   Lock, 
-  Check,
-  Type,
-  Maximize2
+  Check
 } from 'lucide-react';
 import { useAccessibility } from '@/context/AccessibilityContext';
-import { LANGUAGE_NAMES } from '@/lib/multilingualEngine';
+import { LANGUAGE_NAMES, getTranslation } from '@/lib/multilingualEngine';
 import { SupportedLanguage } from '@/types';
 
 export default function OnboardingPage() {
@@ -26,14 +23,13 @@ export default function OnboardingPage() {
   const { profile, updateProfileKey } = useAccessibility();
 
   // Local state aligned with screenshot
-  const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguage>(profile.language || 'kn');
   const [interactionMode, setInteractionMode] = useState<'touch' | 'voice' | 'both'>('touch');
   const [interfaceStyle, setInterfaceStyle] = useState<'standard' | 'simplified' | 'large'>('simplified');
   const [motorAssistance, setMotorAssistance] = useState<boolean>(profile.motionReduction || false);
 
+  const t = (key: string, fallback?: string) => getTranslation(profile.language, key, fallback);
+
   const handleContinue = () => {
-    // Apply changes to global accessibility profile
-    updateProfileKey('language', selectedLanguage);
     updateProfileKey('motionReduction', motorAssistance);
     
     if (interfaceStyle === 'simplified') {
@@ -49,7 +45,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0E1015] text-[#1E2024] dark:text-white transition-colors">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0E1015] text-[#1E2024] dark:text-white transition-colors font-sans">
       
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-8 sm:space-y-10">
         
@@ -63,10 +59,10 @@ export default function OnboardingPage() {
             </div>
             <div>
               <span className="font-extrabold text-xl tracking-tight text-[#1E2024] dark:text-white block leading-tight">
-                Anukool
+                {t('appName', 'Anukool')}
               </span>
               <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block -mt-0.5">
-                Adaptive Access Layer
+                {t('digitalInclusionLayer', 'Adaptive Access Layer')}
               </span>
             </div>
           </Link>
@@ -75,8 +71,8 @@ export default function OnboardingPage() {
           <div className="flex items-center gap-2">
             <Globe className="w-4 h-4 text-slate-500" />
             <select
-              value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value as SupportedLanguage)}
+              value={profile.language}
+              onChange={(e) => updateProfileKey('language', e.target.value as SupportedLanguage)}
               className="appearance-none px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#18191D] text-xs font-bold text-slate-800 dark:text-white cursor-pointer focus:ring-2 focus:ring-emerald-500"
             >
               {Object.entries(LANGUAGE_NAMES).map(([code, lang]) => (
@@ -96,10 +92,10 @@ export default function OnboardingPage() {
           {/* Headline */}
           <div className="space-y-1 text-left">
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#1E2024] dark:text-white">
-              How would you like to use Anukool?
+              {t('onboardingTitle', 'How would you like to use Anukool?')}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              We&apos;ll adapt the experience to what works best for you.
+              {t('onboardingSubtitle', "We'll adapt the experience to what works best for you.")}
             </p>
           </div>
 
@@ -111,17 +107,17 @@ export default function OnboardingPage() {
               </div>
               <div>
                 <span className="font-extrabold text-xs text-[#1E2024] dark:text-white block">
-                  Language
+                  {t('language', 'Language')}
                 </span>
                 <span className="text-[11px] text-slate-500">
-                  Choose your preferred language.
+                  {t('selectLanguage', 'Choose your preferred language.')}
                 </span>
               </div>
             </div>
 
             <select
-              value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value as SupportedLanguage)}
+              value={profile.language}
+              onChange={(e) => updateProfileKey('language', e.target.value as SupportedLanguage)}
               className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-xs font-bold text-slate-800 dark:text-white cursor-pointer"
             >
               {Object.entries(LANGUAGE_NAMES).map(([code, lang]) => (
@@ -140,10 +136,10 @@ export default function OnboardingPage() {
               </div>
               <div>
                 <span className="font-extrabold text-xs text-[#1E2024] dark:text-white block">
-                  Interaction Mode
+                  {t('interactionMode', 'Interaction Mode')}
                 </span>
                 <span className="text-[11px] text-slate-500">
-                  How would you like to interact?
+                  {t('interactionModeSub', 'How would you like to interact?')}
                 </span>
               </div>
             </div>
@@ -165,7 +161,9 @@ export default function OnboardingPage() {
                   </span>
                 )}
                 <Hand className="w-6 h-6 text-slate-700 dark:text-slate-200 mb-2" />
-                <span className="font-bold text-xs text-[#1E2024] dark:text-white">Touch</span>
+                <span className="font-bold text-xs text-[#1E2024] dark:text-white">
+                  {t('touch', 'Touch')}
+                </span>
               </button>
 
               {/* Voice Card */}
@@ -183,7 +181,9 @@ export default function OnboardingPage() {
                   </span>
                 )}
                 <Mic className="w-6 h-6 text-slate-700 dark:text-slate-200 mb-2" />
-                <span className="font-bold text-xs text-[#1E2024] dark:text-white">Voice</span>
+                <span className="font-bold text-xs text-[#1E2024] dark:text-white">
+                  {t('voiceOnly', 'Voice')}
+                </span>
               </button>
 
               {/* Voice + Touch Card */}
@@ -204,7 +204,9 @@ export default function OnboardingPage() {
                   <Hand className="w-5 h-5 text-slate-700 dark:text-slate-200" />
                   <Mic className="w-5 h-5 text-slate-700 dark:text-slate-200" />
                 </div>
-                <span className="font-bold text-xs text-[#1E2024] dark:text-white">Voice + Touch</span>
+                <span className="font-bold text-xs text-[#1E2024] dark:text-white">
+                  {t('voiceAndTouch', 'Voice + Touch')}
+                </span>
               </button>
 
             </div>
@@ -218,10 +220,10 @@ export default function OnboardingPage() {
               </div>
               <div>
                 <span className="font-extrabold text-xs text-[#1E2024] dark:text-white block">
-                  Interface Style
+                  {t('interfaceStyle', 'Interface Style')}
                 </span>
                 <span className="text-[11px] text-slate-500">
-                  Choose how the interface appears.
+                  {t('interfaceStyleSub', 'Choose how the interface appears.')}
                 </span>
               </div>
             </div>
@@ -245,7 +247,9 @@ export default function OnboardingPage() {
                 <div className="w-6 h-6 border-2 border-slate-700 dark:border-slate-200 rounded-md mb-2 flex items-center justify-center">
                   <div className="w-3 h-3 bg-slate-700 dark:bg-slate-200 rounded-xs" />
                 </div>
-                <span className="font-bold text-xs text-[#1E2024] dark:text-white">Standard</span>
+                <span className="font-bold text-xs text-[#1E2024] dark:text-white">
+                  {t('standard', 'Standard')}
+                </span>
               </button>
 
               {/* Simplified Card */}
@@ -268,7 +272,9 @@ export default function OnboardingPage() {
                   <div className="bg-slate-700 dark:bg-slate-200 rounded-xs" />
                   <div className="bg-slate-700 dark:bg-slate-200 rounded-xs" />
                 </div>
-                <span className="font-bold text-xs text-[#1E2024] dark:text-white">Simplified</span>
+                <span className="font-bold text-xs text-[#1E2024] dark:text-white">
+                  {t('simplified', 'Simplified')}
+                </span>
               </button>
 
               {/* Large Controls Card */}
@@ -286,7 +292,9 @@ export default function OnboardingPage() {
                   </span>
                 )}
                 <span className="text-xl font-bold font-serif mb-1 text-slate-700 dark:text-slate-200">Aa</span>
-                <span className="font-bold text-xs text-[#1E2024] dark:text-white">Large Controls</span>
+                <span className="font-bold text-xs text-[#1E2024] dark:text-white">
+                  {t('largeControls', 'Large Controls')}
+                </span>
               </button>
 
             </div>
@@ -300,10 +308,10 @@ export default function OnboardingPage() {
               </div>
               <div>
                 <span className="font-extrabold text-xs text-[#1E2024] dark:text-white block">
-                  Accessibility Support
+                  {t('accessibilitySupport', 'Accessibility Support')}
                 </span>
                 <span className="text-[11px] text-slate-500">
-                  Additional assistance for you.
+                  {t('accessibilitySupportSub', 'Additional assistance for you.')}
                 </span>
               </div>
             </div>
@@ -311,10 +319,10 @@ export default function OnboardingPage() {
             <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#18191D] border border-slate-200 dark:border-white/10 shadow-xs flex items-center justify-between">
               <div>
                 <span className="font-extrabold text-xs text-[#1E2024] dark:text-white block">
-                  Motor Assistance
+                  {t('motorAssistance', 'Motor Assistance')}
                 </span>
                 <span className="text-[11px] text-slate-500 max-w-md block pt-0.5">
-                  Helps with steady selection and reduced accidental actions.
+                  {t('motorAssistanceSub', 'Helps with steady selection and reduced accidental actions.')}
                 </span>
               </div>
 
@@ -340,13 +348,13 @@ export default function OnboardingPage() {
               onClick={handleContinue}
               className="w-full py-3.5 rounded-2xl bg-[#1E3A2F] hover:bg-[#25493B] text-white font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01]"
             >
-              <span>Continue</span>
+              <span>{t('continue', 'Continue')}</span>
               <ArrowRight className="w-4 h-4 text-emerald-400" />
             </button>
 
             <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
               <Lock className="w-3.5 h-3.5" />
-              <span>Your preferences can be changed anytime.</span>
+              <span>{t('preferencesAnytime', 'Your preferences can be changed anytime.')}</span>
             </div>
           </div>
 

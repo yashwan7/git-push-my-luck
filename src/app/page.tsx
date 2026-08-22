@@ -16,17 +16,21 @@ import {
   Receipt, 
   History,
   Camera,
-  CheckCircle2
+  Globe
 } from 'lucide-react';
 import { useAccessibility } from '@/context/AccessibilityContext';
 import { SnapToFormModal } from '@/components/documents/SnapToFormModal';
 import { ExtractedDocumentData } from '@/lib/ocr/documentExtractor';
+import { getTranslation, LANGUAGE_NAMES } from '@/lib/multilingualEngine';
+import { SupportedLanguage } from '@/types';
 
 export default function LandingPage() {
   const router = useRouter();
-  const { themeMode, resolvedTheme, setThemeMode } = useAccessibility();
+  const { profile, resolvedTheme, setThemeMode, updateProfileKey } = useAccessibility();
   const [isSnapModalOpen, setIsSnapModalOpen] = useState(false);
   const [autoFillSuccess, setAutoFillSuccess] = useState<string | null>(null);
+
+  const t = (key: string, fallback?: string) => getTranslation(profile.language, key, fallback);
 
   const handleAutoFill = (data: ExtractedDocumentData) => {
     setAutoFillSuccess(`Successfully extracted ${data.fields.fullName || 'ID details'}!`);
@@ -40,7 +44,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0E1015] text-[#1E2024] dark:text-white transition-colors">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0E1015] text-[#1E2024] dark:text-white transition-colors font-sans">
       
       {/* ─────────────────────────────────────────────────────────────
           PAGE CONTAINER (MATCHING REFERENCE SCREENSHOT 1:1)
@@ -57,15 +61,31 @@ export default function LandingPage() {
             </div>
             <div>
               <span className="font-extrabold text-xl tracking-tight text-[#1E2024] dark:text-white block leading-tight">
-                Anukool
+                {t('appName', 'Anukool')}
               </span>
               <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block -mt-0.5">
-                Adaptive Access Layer
+                {t('digitalInclusionLayer', 'Adaptive Access Layer')}
               </span>
             </div>
           </Link>
 
           <div className="flex items-center gap-3">
+            {/* Language Quick Dropdown */}
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#18191D] text-xs font-bold shadow-xs">
+              <Globe className="w-3.5 h-3.5 text-slate-500" />
+              <select
+                value={profile.language}
+                onChange={(e) => updateProfileKey('language', e.target.value as SupportedLanguage)}
+                className="appearance-none bg-transparent text-slate-800 dark:text-white cursor-pointer pr-1 focus:outline-none"
+              >
+                {Object.entries(LANGUAGE_NAMES).map(([code, lang]) => (
+                  <option key={code} value={code} className="bg-white dark:bg-zinc-900 text-slate-900 dark:text-white">
+                    {lang.nativeName} ({lang.name})
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <button
               onClick={handleToggleTheme}
               className="p-2 rounded-xl border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-slate-300 transition-colors"
@@ -78,7 +98,7 @@ export default function LandingPage() {
               href="/onboarding"
               className="px-5 py-2 rounded-xl bg-[#1E3A2F] hover:bg-[#25493B] text-white font-extrabold text-xs shadow-md transition-all hover:scale-[1.02]"
             >
-              Get Started
+              {t('getStarted', 'Get Started')}
             </Link>
           </div>
         </header>
@@ -93,12 +113,11 @@ export default function LandingPage() {
             
             <div className="space-y-3">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#1E2024] dark:text-white leading-[1.1]">
-                Digital services,<br />
-                adapted to <span className="text-emerald-600 dark:text-emerald-400">you.</span>
+                {t('landingTitleMain', 'Digital services, adapted to you.')}
               </h1>
               
               <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-xl font-normal leading-relaxed pt-2">
-                Anukool adapts the way digital services look, sound and work — based on your needs, abilities and preferences.
+                {t('landingSubtitle', 'Anukool adapts the way digital services look, sound and work — based on your needs, abilities and preferences.')}
               </p>
             </div>
 
@@ -108,7 +127,7 @@ export default function LandingPage() {
                 href="/onboarding"
                 className="px-6 py-3 rounded-2xl bg-[#1E3A2F] hover:bg-[#25493B] text-white font-extrabold text-sm shadow-lg flex items-center gap-2 transition-all hover:scale-105"
               >
-                <span>Get Started</span>
+                <span>{t('getStarted', 'Get Started')}</span>
                 <ArrowRight className="w-4 h-4 text-emerald-400" />
               </Link>
 
@@ -116,7 +135,7 @@ export default function LandingPage() {
                 href="/services"
                 className="px-6 py-3 rounded-2xl bg-white dark:bg-[#18191D] border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 text-[#1E2024] dark:text-white font-extrabold text-sm shadow-xs transition-all"
               >
-                Learn More
+                {t('learnMore', 'Learn More')}
               </Link>
 
               {/* Secret Weapon Button: Snap-to-Form Auto-Fill */}
@@ -125,14 +144,14 @@ export default function LandingPage() {
                 className="px-5 py-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-500/50 text-emerald-800 dark:text-emerald-300 font-extrabold text-xs shadow-xs hover:bg-emerald-100 flex items-center gap-2 transition-all"
               >
                 <Camera className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Snap ID to Auto-Fill (OCR)</span>
+                <span>{t('snapIdOcr', 'Snap ID to Auto-Fill (OCR)')}</span>
               </button>
             </div>
 
             {/* Tagline */}
             <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400 pt-2">
               <Users className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span>Empowering independence. Preserving autonomy.</span>
+              <span>{t('empoweringTagline', 'Empowering independence. Preserving autonomy.')}</span>
             </div>
 
           </div>
@@ -149,10 +168,10 @@ export default function LandingPage() {
               
               <div className="absolute bottom-4 left-4 right-4 p-3 rounded-2xl bg-white/90 dark:bg-black/80 backdrop-blur-md border border-white/20 text-xs flex items-center justify-between">
                 <span className="font-extrabold text-[#1E2024] dark:text-white">
-                  Senior Citizen Adaptive Mode Active
+                  {t('seniorModeActive', 'Senior Citizen Adaptive Mode Active')}
                 </span>
                 <span className="text-[10px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded-full">
-                  Live Preview
+                  {t('livePreview', 'Live Preview')}
                 </span>
               </div>
             </div>
@@ -167,10 +186,10 @@ export default function LandingPage() {
           
           <div className="space-y-2">
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#1E2024] dark:text-white">
-              Same service. Different experience.
+              {t('sameServiceDiffExp', 'Same service. Different experience.')}
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Transforming complex multi-column interfaces into human-first intuitive actions.
+              {t('sameServiceSub', 'Transforming complex multi-column interfaces into human-first intuitive actions.')}
             </p>
           </div>
 
@@ -192,7 +211,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <span className="text-xs font-bold text-slate-500 block text-center pt-2">
-                Traditional Interface
+                {t('traditionalInterface', 'Traditional Interface')}
               </span>
             </div>
 
@@ -212,7 +231,9 @@ export default function LandingPage() {
                   className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 hover:border-emerald-500 transition-colors flex flex-col items-center justify-center text-center group cursor-pointer"
                 >
                   <Wallet className="w-5 h-5 text-emerald-600 group-hover:scale-110 transition-transform mb-1" />
-                  <span className="font-extrabold text-xs text-[#1E2024] dark:text-white">Check Balance</span>
+                  <span className="font-extrabold text-xs text-[#1E2024] dark:text-white">
+                    {t('checkBalance', 'Check Balance')}
+                  </span>
                 </button>
 
                 <button
@@ -220,7 +241,9 @@ export default function LandingPage() {
                   className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 hover:border-emerald-500 transition-colors flex flex-col items-center justify-center text-center group cursor-pointer"
                 >
                   <Send className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform mb-1" />
-                  <span className="font-extrabold text-xs text-[#1E2024] dark:text-white">Send Money</span>
+                  <span className="font-extrabold text-xs text-[#1E2024] dark:text-white">
+                    {t('sendMoney', 'Send Money')}
+                  </span>
                 </button>
 
                 <button
@@ -228,7 +251,9 @@ export default function LandingPage() {
                   className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 hover:border-emerald-500 transition-colors flex flex-col items-center justify-center text-center group cursor-pointer"
                 >
                   <Receipt className="w-5 h-5 text-amber-600 group-hover:scale-110 transition-transform mb-1" />
-                  <span className="font-extrabold text-xs text-[#1E2024] dark:text-white">Pay Bills</span>
+                  <span className="font-extrabold text-xs text-[#1E2024] dark:text-white">
+                    {t('payBills', 'Pay Bills')}
+                  </span>
                 </button>
 
                 <button
@@ -236,13 +261,15 @@ export default function LandingPage() {
                   className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 hover:border-emerald-500 transition-colors flex flex-col items-center justify-center text-center group cursor-pointer"
                 >
                   <History className="w-5 h-5 text-purple-600 group-hover:scale-110 transition-transform mb-1" />
-                  <span className="font-extrabold text-xs text-[#1E2024] dark:text-white">Transactions</span>
+                  <span className="font-extrabold text-xs text-[#1E2024] dark:text-white">
+                    {t('transactions', 'Transactions')}
+                  </span>
                 </button>
 
               </div>
 
               <span className="text-xs font-bold text-[#1E3A2F] dark:text-emerald-400 block text-center pt-2">
-                Anukool Adapted Interface
+                {t('anukoolAdaptedInterface', 'Anukool Adapted Interface')}
               </span>
             </div>
 
@@ -256,7 +283,7 @@ export default function LandingPage() {
         <footer className="flex justify-center pb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-semibold text-slate-600 dark:text-slate-300">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Privacy first. You&apos;re always in control.</span>
+            <span>{t('privacyControl', "Privacy first. You're always in control.")}</span>
           </div>
         </footer>
 
