@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 interface ChatAction {
   type: 'navigate' | 'profile' | 'emergency' | 'none';
   target?: string;
+  label?: string;
   key?: string;
   value?: any;
 }
@@ -35,13 +36,13 @@ export async function POST(req: NextRequest) {
       } else if (language === 'kn') {
         replyText = 'ನಾನು ANUKOOL ದಾಖಲೆ ಸಹಾಯವನ್ನು ತೆರೆದಿದ್ದೇನೆ. ನಿಮ್ಮ ಆಧಾರ್ ಅಥವಾ ಅಂಕಪಟ್ಟಿಯ ಫೋಟೋ ತೆಗೆಯಿರಿ — ಅರ್ಜಿ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಭರ್ತಿಯಾಗುತ್ತದೆ.';
       } else {
-        replyText = 'Opening ANUKOOL Document Assist. Snap or upload your ID, Marksheet, or Ration Card, and your form will be auto-filled intelligently.';
+        replyText = 'Opened ANUKOOL Document Assist. Snap or upload your ID, Marksheet, or Ration Card, and your form will be auto-filled intelligently.';
       }
-      action = { type: 'navigate', target: '/services/government-scholarship' };
+      action = { type: 'navigate', target: '/services/government-scholarship', label: 'Open Document Assist' };
     }
 
     // 1. Emergency intent
-    if (
+    else if (
       lower.includes('help') ||
       lower.includes('emergency') ||
       lower.includes('ambulance') ||
@@ -61,9 +62,9 @@ export async function POST(req: NextRequest) {
       } else if (language === 'kn') {
         replyText = 'ನಾನು ತಕ್ಷಣ ತುರ್ತು ಸಹಾಯ ಪರದೆಯನ್ನು ತೆರೆದಿದ್ದೇನೆ. ನೀವು 112 ಗೆ ಕರೆ ಮಾಡಬಹುದು ಅಥವಾ ಅಪೋಲೋ ಆಸ್ಪತ್ರೆಗೆ ಲೈವ್ ರೂಟ್ ನೋಡಬಹುದು.';
       } else {
-        replyText = 'I have opened the Emergency Assistance screen. You can call 112 or follow the live fastest route to Apollo Hospital.';
+        replyText = 'Opened the Emergency Assistance screen. You can call 112 or follow the live fastest route to Apollo Hospital.';
       }
-      action = { type: 'navigate', target: '/emergency' };
+      action = { type: 'navigate', target: '/emergency', label: 'Open Emergency Assist' };
     }
 
     // 2. Pension / Ration Card / Monthly Dudu intent (e.g. "Nage pension Dudu Baku", "pension apply", "duddu beku")
@@ -82,13 +83,13 @@ export async function POST(req: NextRequest) {
       lower.includes('ದುಡ್ಡು')
     ) {
       if (language === 'hi' || lower.includes('pension nikalna')) {
-        replyText = 'ज़रूर! मैं आपको राशन कार्ड और वरिष्ठ नागरिक मासिक पेंशन सेवा पर ले जा रही हूँ। चरण 1: अपना आधार नंबर दर्ज करें या "Snap ID to Auto-Fill" पर क्लिक करें। चरण 2: अपना बैंक खाता सत्यापित करें।';
+        replyText = 'ज़रूर! राशन कार्ड और वरिष्ठ नागरिक मासिक पेंशन सेवा खोल दी गई है। चरण 1: अपना आधार नंबर दर्ज करें या "Snap ID to Auto-Fill" पर क्लिक करें। चरण 2: अपना बैंक खाता सत्यापित करें।';
       } else if (language === 'kn' || lower.includes('baku') || lower.includes('beku') || lower.includes('dudu') || lower.includes('duddu') || lower.includes('nage')) {
-        replyText = 'ಖಂಡಿತ! ನಾನು ನಿಮ್ಮನ್ನು ರೇಷನ್ ಕಾರ್ಡ್ ಮತ್ತು ಮಾಸಿಕ ಪಿಂಚಣಿ ಸೇವೆಗೆ ಕರೆದೊಯ್ಯುತ್ತಿದ್ದೇನೆ. ಹಂತ 1: ನಿಮ್ಮ ಆಧಾರ್ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ ಅಥವಾ "Snap ID to Auto-Fill" ಕ್ಲಿಕ್ ಮಾಡಿ. ಹಂತ 2: ನಿಮ್ಮ ಬ್ಯಾಂಕ್ ಖಾತೆಯನ್ನು ದೃಢೀಕರಿಸಿ.';
+        replyText = 'ಖಂಡಿತ! ರೇಷನ್ ಕಾರ್ಡ್ ಮತ್ತು ಮಾಸಿಕ ಪಿಂಚಣಿ ಸೇವೆ ತೆರೆಯಲಾಗಿದೆ. ಹಂತ 1: ನಿಮ್ಮ ಆಧಾರ್ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ ಅಥವಾ "Snap ID to Auto-Fill" ಕ್ಲಿಕ್ ಮಾಡಿ. ಹಂತ 2: ನಿಮ್ಮ ಬ್ಯಾಂಕ್ ಖಾತೆಯನ್ನು ದೃಢೀಕರಿಸಿ.';
       } else {
-        replyText = 'Navigating to the Monthly Pension & Ration Card Service. Step 1: Provide your Aadhaar ID or click "Snap ID to Auto-Fill". Step 2: Confirm your direct benefit bank account. ANUKOOL will guide you through each step.';
+        replyText = 'Opened Monthly Pension & Ration Card Service. Step 1: Provide your Aadhaar ID or click "Snap ID to Auto-Fill". Step 2: Confirm your direct benefit bank account.';
       }
-      action = { type: 'navigate', target: '/services/ration-card' };
+      action = { type: 'navigate', target: '/services/ration-card', label: 'Open Pension Service' };
     }
 
     // 3. Scholarship / Student / Education intent
@@ -105,13 +106,13 @@ export async function POST(req: NextRequest) {
       lower.includes('vidyarthi')
     ) {
       if (language === 'hi') {
-        replyText = 'ज़रूर! मैं आपको राष्ट्रीय मेरिट छात्रवृत्ति आवेदन पर ले जा रही हूँ। ANUKOOL आपको हर चरण में सहायता करेगा।';
+        replyText = 'ज़रूर! राष्ट्रीय मेरिट छात्रवृत्ति आवेदन पृष्ठ खोल दिया गया है। ANUKOOL आपको हर चरण में सहायता करेगा।';
       } else if (language === 'kn') {
-        replyText = 'ಖಂಡಿತ! ನಾನು ನಿಮ್ಮನ್ನು ರಾಷ್ಟ್ರೀಯ ಮೆರಿಟ್ ವಿದ್ಯಾರ್ಥಿವೇತನ ಅರ್ಜಿ ಪುಟಕ್ಕೆ ಕರೆದೊಯ್ಯುತ್ತಿದ್ದೇನೆ. ANUKOOL ನಿಮಗೆ ಹಂತ-ಹಂತವಾಗಿ ಮಾರ್ಗದರ್ಶನ ನೀಡುತ್ತದೆ.';
+        replyText = 'ಖಂಡಿತ! ರಾಷ್ಟ್ರೀಯ ಮೆರಿಟ್ ವಿದ್ಯಾರ್ಥಿವೇತನ ಅರ್ಜಿ ಪುಟ ತೆರೆಯಲಾಗಿದೆ. ANUKOOL ನಿಮಗೆ ಹಂತ-ಹಂತವಾಗಿ ಮಾರ್ಗದರ್ಶನ ನೀಡುತ್ತದೆ.';
       } else {
-        replyText = 'Sure! Navigating you to the National Merit Scholarship application. ANUKOOL will guide you through each simple step.';
+        replyText = 'Opened National Merit Scholarship application. ANUKOOL will guide you through each simple step.';
       }
-      action = { type: 'navigate', target: '/services/government-scholarship' };
+      action = { type: 'navigate', target: '/services/government-scholarship', label: 'Open Scholarship' };
     }
 
     // 4. Hospital / OPD / Doctor appointment intent
@@ -130,16 +131,16 @@ export async function POST(req: NextRequest) {
       lower.includes('aspathre')
     ) {
       if (language === 'hi') {
-        replyText = 'मैं आपको अस्पताल ओपीडी स्लॉट बुकिंग पर ले जा रही हूँ। अपनी पसंदीदा तारीख और विभाग चुनें।';
+        replyText = 'अस्पताल ओपीडी स्लॉट बुकिंग खोल दी गई है। अपनी पसंदीदा तारीख और विभाग चुनें।';
       } else if (language === 'kn') {
-        replyText = 'ನಾನು ನಿಮ್ಮನ್ನು ಆಸ್ಪತ್ರೆ ಒಪಿಡಿ ಸ್ಲಾಟ್ ಬುಕಿಂಗ್ ಪುಟಕ್ಕೆ ಕರೆದೊಯ್ಯುತ್ತಿದ್ದೇನೆ. ನಿಮ್ಮ ದಿನಾಂಕ ಮತ್ತು ವಿಭಾಗವನ್ನು ಆಯ್ಕೆಮಾಡಿ.';
+        replyText = 'ಆಸ್ಪತ್ರೆ ಒಪಿಡಿ ಸ್ಲಾಟ್ ಬುಕಿಂಗ್ ಪುಟ ತೆರೆಯಲಾಗಿದೆ. ನಿಮ್ಮ ದಿನಾಂಕ ಮತ್ತು ವಿಭಾಗವನ್ನು ಆಯ್ಕೆಮಾಡಿ.';
       } else {
-        replyText = 'Navigating to the Hospital OPD appointment booking. Select your preferred department and slot.';
+        replyText = 'Opened Hospital OPD appointment booking. Select your preferred department and doctor.';
       }
-      action = { type: 'navigate', target: '/services/healthcare-appointment' };
+      action = { type: 'navigate', target: '/services/healthcare-appointment', label: 'Open Hospital OPD' };
     }
 
-    // 5. Banking / Money transfer / UPI intent
+    // 5. Banking / Money transfer / UPI / Limit intent
     else if (
       lower.includes('bank') ||
       lower.includes('transfer') ||
@@ -148,18 +149,35 @@ export async function POST(req: NextRequest) {
       lower.includes('account') ||
       lower.includes('upi') ||
       lower.includes('paise') ||
+      lower.includes('limit') ||
+      lower.includes('warning') ||
       lower.includes('बैंक') ||
       lower.includes('ಬ್ಯಾಂಕ್') ||
       lower.includes('ಹಣ')
     ) {
-      if (language === 'hi') {
-        replyText = 'मैं आपको ANUKOOL समावेशी बैंकिंग पृष्ठ पर ले जा रही हूँ। आप बैलेंस चेक कर सकते हैं या सुरक्षित आवाज से पैसे भेज सकते हैं।';
-      } else if (language === 'kn') {
-        replyText = 'ನಾನು ನಿಮ್ಮನ್ನು ANUKOOL ಬ್ಯಾಂಕಿಂಗ್ ಪುಟಕ್ಕೆ ಕರೆದೊಯ್ಯುತ್ತಿದ್ದೇನೆ. ಬ್ಯಾಲೆನ್ಸ್ ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಧ್ವನಿ ಮೂಲಕ ಹಣ ಕಳುಹಿಸಿ.';
+      // Check if user specified a limit number
+      const numMatch = lower.match(/\b\d+\b/);
+      const limitVal = numMatch ? parseInt(numMatch[0]) : null;
+
+      if (limitVal && (lower.includes('limit') || lower.includes('warning') || lower.includes('submit'))) {
+        if (language === 'hi') {
+          replyText = `आपकी सुरक्षित लेनदेन चेतावनी सीमा ₹${limitVal.toLocaleString('en-IN')} निर्धारित कर दी गई है और ANUKOOL बैंकिंग खोल दी गई है।`;
+        } else if (language === 'kn') {
+          replyText = `ನಿಮ್ಮ ಸುರಕ್ಷಿತ ವಹಿವಾಟು ಮಿತಿಯನ್ನು ₹${limitVal.toLocaleString('en-IN')} ಕ್ಕೆ ನಿಗದಿಪಡಿಸಲಾಗಿದೆ ಮತ್ತು ANUKOOL ಬ್ಯಾಂಕಿಂಗ್ ತೆರೆಯಲಾಗಿದೆ.`;
+        } else {
+          replyText = `Set your safe transaction limit to ₹${limitVal.toLocaleString('en-IN')} and opened ANUKOOL Inclusive Banking.`;
+        }
+        action = { type: 'navigate', target: `/banking?limit=${limitVal}`, label: 'Open Banking' };
       } else {
-        replyText = 'Opening ANUKOOL Inclusive Banking. You can check balance, send money via UPI, or manage limits.';
+        if (language === 'hi') {
+          replyText = 'ANUKOOL समावेशी बैंकिंग खोल दी गई है। आप बैलेंस चेक कर सकते हैं या सुरक्षित आवाज से पैसे भेज सकते हैं।';
+        } else if (language === 'kn') {
+          replyText = 'ANUKOOL ಬ್ಯಾಂಕಿಂಗ್ ತೆರೆಯಲಾಗಿದೆ. ಬ್ಯಾಲೆನ್ಸ್ ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಧ್ವನಿ ಮೂಲಕ ಹಣ ಕಳುಹಿಸಿ.';
+        } else {
+          replyText = 'Opened ANUKOOL Inclusive Banking. You can check balance, send money via UPI, or manage limits.';
+        }
+        action = { type: 'navigate', target: '/banking', label: 'Open Banking' };
       }
-      action = { type: 'navigate', target: '/banking' };
     }
 
     // 6. Electricity / Utility bill payment intent
@@ -176,13 +194,13 @@ export async function POST(req: NextRequest) {
       lower.includes('bijli')
     ) {
       if (language === 'hi') {
-        replyText = 'बिजली बिल भुगतान पृष्ठ खुल रहा है। अपना उपभोक्ता नंबर तैयार रखें।';
+        replyText = 'बिजली बिल भुगतान पृष्ठ खोल दिया गया है। अपना उपभोक्ता नंबर तैयार रखें।';
       } else if (language === 'kn') {
-        replyText = 'ವಿದ್ಯುತ್ ಬಿಲ್ ಪಾವತಿ ಪುಟ ತೆರೆಯುತ್ತಿದೆ. ನಿಮ್ಮ ಗ್ರಾಹಕ ಖಾತೆ ಸಂಖ್ಯೆಯನ್ನು ಸಿದ್ಧವಾಗಿಡಿ.';
+        replyText = 'ವಿದ್ಯುತ್ ಬಿಲ್ ಪಾವತಿ ಪುಟ ತೆರೆಯಲಾಗಿದೆ. ನಿಮ್ಮ ಗ್ರಾಹಕ ಖಾತೆ ಸಂಖ್ಯೆಯನ್ನು ಸಿದ್ಧವಾಗಿಡಿ.';
       } else {
-        replyText = 'Opening Electricity & Utility Bill Payment. Keep your consumer account number ready.';
+        replyText = 'Opened Electricity & Utility Bill Payment. Keep your consumer account number ready.';
       }
-      action = { type: 'navigate', target: '/services/banking-billpay' };
+      action = { type: 'navigate', target: '/services/banking-billpay', label: 'Open Bill Pay' };
     }
 
     // 7. Audit a service intent
@@ -195,13 +213,13 @@ export async function POST(req: NextRequest) {
       lower.includes('ಆಡಿಟ್')
     ) {
       if (language === 'hi') {
-        replyText = 'मैं ANUKOOL एक्सेसिबिलिटी ऑडिट टूल खोल रही हूँ। आप किसी भी डिजिटल पोर्टल की पहुंच जांच सकते हैं।';
+        replyText = 'मैंने ANUKOOL एक्सेसिबिलिटी ऑडिट टूल खोल दिया है। आप किसी भी डिजिटल पोर्टल की पहुंच जांच सकते हैं।';
       } else if (language === 'kn') {
-        replyText = 'ನಾನು ANUKOOL ಆಕ್ಸೆಸಿಬಿಲಿಟಿ ಆಡಿಟ್ ಟೂಲ್ ತೆರೆಯುತ್ತಿದ್ದೇನೆ. ನೀವು ಯಾವುದೇ ಡಿಜಿಟಲ್ ಪೋರ್ಟಲ್ ಅನ್ನು ಪರಿಶೀಲಿಸಬಹುದು.';
+        replyText = 'ನಾನು ANUKOOL ಆಕ್ಸೆಸಿಬಿಲಿಟಿ ಆಡಿಟ್ ಟೂಲ್ ತೆರೆದಿದ್ದೇನೆ. ನೀವು ಯಾವುದೇ ಡಿಜಿಟಲ್ ಪೋರ್ಟಲ್ ಅನ್ನು ಪರಿಶೀಲಿಸಬಹುದು.';
       } else {
-        replyText = 'Opening the ANUKOOL Accessibility Audit Tool. You can evaluate the accessibility index of any public digital service.';
+        replyText = 'Opened the ANUKOOL Accessibility Audit Tool. You can evaluate the accessibility index of any public digital service.';
       }
-      action = { type: 'navigate', target: '/audit' };
+      action = { type: 'navigate', target: '/audit', label: 'Open Audit Tool' };
     }
 
     // 8. Language switch intents

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useVoice } from '@/context/VoiceContext';
 import { useAccessibility } from '@/context/AccessibilityContext';
 import { getTranslation, LANGUAGE_NAMES } from '@/lib/multilingualEngine';
@@ -16,7 +17,8 @@ import {
   Languages, 
   Zap, 
   ShieldCheck,
-  Radio
+  Radio,
+  ArrowRight
 } from 'lucide-react';
 
 export function AnukoolVoiceModal() {
@@ -39,6 +41,7 @@ export function AnukoolVoiceModal() {
   } = useVoice();
 
   const { profile, updateProfileKey } = useAccessibility();
+  const router = useRouter();
   const t = (key: string, fallback?: string) => getTranslation(profile.language, key, fallback);
 
   const [inputVal, setInputVal] = useState('');
@@ -229,10 +232,25 @@ export function AnukoolVoiceModal() {
                 }`}
               >
                 <p className="font-medium">{msg.text}</p>
+                
+                {/* Interactive Direct Open Action Button */}
+                {msg.action?.type === 'navigate' && msg.action.target && (
+                  <button
+                    onClick={() => {
+                      router.push(msg.action!.target!);
+                      setIsAssistantModalOpen(false);
+                    }}
+                    className="mt-3 px-3.5 py-1.5 rounded-xl bg-[#134233] hover:bg-[#1a5542] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-md border border-emerald-500/40 transition-all cursor-pointer group"
+                  >
+                    <span>{msg.action.label || 'Open Page'}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-emerald-400 group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+                )}
+
                 {msg.role === 'nayan' && (
                   <button
                     onClick={() => speak(msg.text)}
-                    className="mt-2 text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1 font-semibold"
+                    className="mt-2 text-[11px] text-blue-400 hover:text-blue-300 flex items-center gap-1 font-semibold cursor-pointer"
                   >
                     <Volume2 className="w-3.5 h-3.5" />
                     <span>Replay Voice</span>

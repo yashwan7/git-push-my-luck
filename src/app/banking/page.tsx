@@ -97,6 +97,18 @@ export default function AdaptiveBankingPage() {
 
   useEffect(() => {
     try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const urlLimit = params.get('limit');
+        if (urlLimit) {
+          const parsedUrlLimit = Number(urlLimit);
+          if (!isNaN(parsedUrlLimit) && parsedUrlLimit > 0) {
+            setUserWarningLimit(parsedUrlLimit);
+            localStorage.setItem('nayan_transaction_limit', String(parsedUrlLimit));
+            return;
+          }
+        }
+      }
       const stored = localStorage.getItem('nayan_transaction_limit');
       if (stored) {
         const parsed = Number(stored);

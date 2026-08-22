@@ -11,6 +11,13 @@ export interface ChatMessage {
   role: 'user' | 'nayan';
   text: string;
   timestamp: Date;
+  action?: {
+    type: 'navigate' | 'profile' | 'emergency' | 'none';
+    target?: string;
+    label?: string;
+    key?: string;
+    value?: any;
+  };
 }
 
 interface VoiceContextType {
@@ -59,12 +66,16 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
   const recognitionRef = useRef<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
-
-  // Keep references for event callbacks
+  const isContinuousRef = useRef<boolean>(true);
   const profileRef = useRef(profile);
-  profileRef.current = profile;
-  const isContinuousRef = useRef(isContinuousMode);
-  isContinuousRef.current = isContinuousMode;
+
+  useEffect(() => {
+    isContinuousRef.current = isContinuousMode;
+  }, [isContinuousMode]);
+
+  useEffect(() => {
+    profileRef.current = profile;
+  }, [profile]);
 
   const speak = (text: string, onEnd?: () => void) => {
     setIsSpeaking(true);
@@ -119,6 +130,7 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
         role: 'nayan',
         text: reply,
         timestamp: new Date(),
+        action: data.action,
       };
       setMessages((prev) => [...prev, nayanMsg]);
 
@@ -126,6 +138,10 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
       if (data.action) {
         if (data.action.type === 'navigate' && data.action.target) {
           router.push(data.action.target);
+          // Auto close the assistant modal after a brief 1.2s delay so user sees the newly opened page!
+          setTimeout(() => {
+            setIsAssistantModalOpen(false);
+          }, 1200);
         } else if (data.action.type === 'profile' && data.action.key) {
           updateProfileKey(data.action.key, data.action.value);
         }
