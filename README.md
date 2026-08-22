@@ -1,88 +1,100 @@
-# Nayan — gaze-controlled everyday access
+website link : https://anukool-nu.vercel.app
 
-A browser-based interface controlled entirely by eye gaze and deliberate blinks,
-built for people with dyskinetic cerebral palsy who can't reliably use a
-keyboard, mouse, touchscreen, or even voice control (involuntary vocalizations
-make speech recognition unreliable for many people with dyskinetic CP).
+# 🌟 ANUKOOL (Adaptive Digital Accessibility & Inclusion Platform)
 
-## What's actually real here
+An AI-powered, multi-modal accessibility platform designed to make digital services, banking, document reading, and emergency assistance seamlessly accessible for everyone through Indic voice interactions, cognitive simplifications, and assistive vision.
 
-- **Face/iris tracking**: Google's MediaPipe FaceLandmarker (`@mediapipe/tasks-vision`),
-  running live in the browser on your webcam feed. 478-point face mesh with iris
-  landmarks and blendshape scores. No mock data — this is the same model family
-  used in production MediaPipe apps.
-- **Gaze estimation**: iris position is normalized within each eye socket, averaged
-  across both eyes, and combined with head yaw/pitch (extracted from MediaPipe's
-  facial transformation matrix) into a 5-dimensional feature vector. A **ridge
-  regression** model, fit from a 5-point on-screen calibration you do at startup,
-  maps that feature vector to normalized screen coordinates. This is the same
-  general approach real gaze-tracking libraries (e.g. WebGazer) use — calibrated
-  regression from eye features, not a lookup table or a fake cursor.
-- **Blink detection**: uses MediaPipe's `eyeBlinkLeft`/`eyeBlinkRight` blendshape
-  scores directly (more robust than hand-rolled eye-aspect-ratio math). A blink
-  only counts as a "click" if both eyes stay closed for **450ms** — an ordinary
-  reflexive blink is ~100–150ms, so this deliberately filters those out.
-- **Voice feedback**: the real browser `SpeechSynthesis` API — no external TTS
-  service, works offline.
-- **Emergency SOS**: the real browser `Geolocation` API — asks for actual GPS/
-  network location and reports real coordinates.
+---
 
-## What's simulated, on purpose
+## 🛠️ Tech Stack & Badges
 
-The account balance, transaction history, and beneficiaries (`src/lib/mockBank.ts`)
-are fixture data. No hackathon team gets production bank API access in a few
-hours — pretending otherwise would be exactly the kind of fake that prompted
-rebuilding this in the first place. The interaction layer around it (how you
-navigate to it, select it, confirm it) is 100% real and functional.
+### 🎨 Frontend & User Experience
+<p align="left">
+  <img src="https://img.shields.io/badge/Next.js_14-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js 14" />
+  <img src="https://img.shields.io/badge/React_18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React 18" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion" />
+  <img src="https://img.shields.io/badge/Lucide_Icons-F05032?style=for-the-badge&logo=lucide&logoColor=white" alt="Lucide Icons" />
+</p>
 
-## The key design decision (worth saying out loud to judges)
+### ⚙️ Backend, Server & Databases
+<p align="left">
+  <img src="https://img.shields.io/badge/Next.js_API_Routes-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js API" />
+  <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
+  <img src="https://img.shields.io/badge/Mongoose-880000?style=for-the-badge&logo=mongoose&logoColor=white" alt="Mongoose" />
+</p>
 
-This does **not** try to give you a precise mouse-like gaze cursor. Dyskinetic CP
-involves involuntary movements — demanding pixel-accurate pointing is the wrong
-UX for this population, even if it demos flashier. Instead:
+### 🧠 AI, Indic Voice & Vision Models
+<p align="left">
+  <img src="https://img.shields.io/badge/Sarvam_AI_Indic-FF6F00?style=for-the-badge&logo=openai&logoColor=white" alt="Sarvam AI" />
+  <img src="https://img.shields.io/badge/Tesseract.js_OCR-5C2D91?style=for-the-badge&logo=tesseract&logoColor=white" alt="Tesseract.js" />
+  <img src="https://img.shields.io/badge/Web_Speech_API-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Web Speech API" />
+</p>
 
-**Large zone tiles → gaze dwell to highlight → sustained blink to confirm.**
+---
 
-Two-step confirmation (you have to both look *and* deliberately blink) also
-guards against accidental selections from involuntary eye/head movement, which
-matters a lot more here than in a general gaze-interface demo.
+## 🏛️ System Architecture
 
-## Running it locally
+```mermaid
+flowchart TD
+    %% Client Tier
+    subgraph CLIENT["🖥️ Client Layer (Next.js 14 + React 18)"]
+        UI["Accessible Responsive UI (Tailwind + Framer Motion)"]
+        VOICE["VoiceContext & Multilingual Speech Controller"]
+        SCANNER["Document Scanner / OCR UI"]
+        A11Y["Motor & Cognitive Adaptation Layer"]
+    end
 
-```bash
-npm install
-npm run dev
-```
+    %% Security & API Gateway
+    subgraph GATEWAY["🛡️ Security & Route Handlers"]
+        AUTH_MW["Next.js Auth Middleware (Supabase SSR)"]
+        API["API Route Handlers (/api/*)"]
+    end
 
-Open `http://localhost:3000`, grant camera permission, click "Start camera,"
-then run the 5-point calibration (look at each gold dot as it appears). After
-that, everything is gaze + blink only.
+    %% Core Application Engines
+    subgraph ENGINES["🧠 Core Processing Engines"]
+        SPEECH_ENG["Speech Engine (STT & TTS Controller)"]
+        MULTI_ENG["Multilingual Engine (Regional Translations)"]
+        SIMP_ENG["Cognitive Simplification Engine"]
+        OCR_ENG["Tesseract.js OCR Document Extractor"]
+        AUDIT_ENG["Digital Accessibility Audit Engine"]
+    end
 
-Tips for it to actually work well:
-- Sit in decent, even light — avoid strong backlight (window behind you).
-- Keep your face fully in frame during calibration.
-- Recalibrate (button, top-left) if you change position significantly.
+    %% External Services
+    subgraph EXTERNAL["⚡ External AI & Cloud Services"]
+        SARVAM["Sarvam AI (Indic STT, TTS & Translation)"]
+        WEB_SPEECH["Web Speech Web API (Browser Fallback)"]
+    end
 
-## Deploying (so you have a live demo link)
+    %% Database Tier
+    subgraph STORAGE["💾 Data Persistence Tier"]
+        SUPABASE[("Supabase (PostgreSQL Auth & State)")]
+        MONGODB[("MongoDB Atlas (Mongoose ODM - Profiles, Logs)")]
+    end
 
-```bash
-npm i -g vercel   # if you don't have it
-vercel
-```
+    %% Flow Connections
+    UI --> VOICE
+    UI --> SCANNER
+    UI --> A11Y
+    
+    VOICE --> SPEECH_ENG
+    SCANNER --> OCR_ENG
 
-Follow the prompts (link/create a project, accept defaults). Vercel will give
-you a live `https://...vercel.app` URL — camera and geolocation APIs require
-HTTPS, which Vercel gives you automatically. No environment variables needed
-for this version since nothing calls a paid API.
+    UI --> AUTH_MW
+    AUTH_MW --> API
 
-## Realistic next steps if you have more time
+    API --> SPEECH_ENG
+    API --> MULTI_ENG
+    API --> SIMP_ENG
+    API --> OCR_ENG
+    API --> AUDIT_ENG
 
-- Swap `mockBank.ts` for a real backend (Supabase/MongoDB, like your teammate's
-  repo) once you're not racing the clock.
-- Add a settings screen to adjust dwell time and blink threshold per-user —
-  motor symptoms vary a lot person to person, so hardcoded timings are a v1
-  compromise, not a real accessibility design.
-- Add Sarvam AI (or similar) for regional-language TTS/STT to widen who this
-  actually helps in India.
-- Log calibration quality (residual error) and prompt a re-calibration if the
-  fit is poor, instead of trusting one static regression for the whole session.
+    SPEECH_ENG --> SARVAM
+    SPEECH_ENG --> WEB_SPEECH
+    MULTI_ENG --> SARVAM
+
+    API --> SUPABASE
+    API --> MONGODB
