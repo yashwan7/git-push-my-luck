@@ -660,6 +660,20 @@ export default function AdaptiveBankingPage() {
                 </div>
               </div>
 
+              {/* ANUKOOL CONVERSATIONAL ASSISTANT */}
+              <AnukoolFinancialAssistant
+                balance={account.availableBalance}
+                foodExpense={6420}
+                language={lang}
+                onTriggerTransfer={(name: string, amt: number) => {
+                  const found = beneficiaries.find(b => b.name.toLowerCase().includes(name.toLowerCase())) || beneficiaries[0];
+                  setSelectedRecipient(found);
+                  setTransferAmount(amt);
+                  setCurrentView('send_money');
+                }}
+                onOpenBills={() => setIsBillModalOpen(true)}
+              />
+
               {/* ═══════════════════════════════════════════════════════════
                   BOTTOM 2 CARDS ROW: LAST TRANSACTIONS + EXPENSES & INCOME
                  ═══════════════════════════════════════════════════════════ */}
@@ -848,20 +862,6 @@ export default function AdaptiveBankingPage() {
                 </div>
 
               </div>
-
-              {/* ANUKOOL CONVERSATIONAL ASSISTANT */}
-              <AnukoolFinancialAssistant
-                balance={account.availableBalance}
-                foodExpense={6420}
-                language={lang}
-                onTriggerTransfer={(name: string, amt: number) => {
-                  const found = beneficiaries.find(b => b.name.toLowerCase().includes(name.toLowerCase())) || beneficiaries[0];
-                  setSelectedRecipient(found);
-                  setTransferAmount(amt);
-                  setCurrentView('send_money');
-                }}
-                onOpenBills={() => setIsBillModalOpen(true)}
-              />
 
             </div>
           ) : currentView === 'send_money' ? (
