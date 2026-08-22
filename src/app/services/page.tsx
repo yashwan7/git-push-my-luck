@@ -74,7 +74,6 @@ export default function ServicesPage() {
   const [emergencyCallStatus, setEmergencyCallStatus] = useState<string | null>(null);
 
   const lang = profile.language;
-  const t = (key: string, fallback?: string) => getTranslation(lang, key, fallback);
 
   // Dynamic User Greeting
   const userDisplayName = authProfile?.fullName || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';

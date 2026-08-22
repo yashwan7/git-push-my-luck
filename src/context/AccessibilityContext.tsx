@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { AccessibilityProfile, ThemeMode } from '@/types';
+import { AccessibilityProfile, ThemeMode, SupportedLanguage } from '@/types';
 import { PERSONA_PRESETS } from '@/lib/servicesData';
 
 export const DEFAULT_ACCESSIBILITY_PROFILE: AccessibilityProfile = {
