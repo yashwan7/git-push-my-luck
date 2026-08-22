@@ -497,107 +497,100 @@ export default function ServicesPage() {
         {/* ═══════════════════════════════════════════════════════════
             LEFT DARK SIDEBAR PILL (CLEAN: HOME, SERVICES, BANKING, DOC ASSIST, SUPPORT)
            ═══════════════════════════════════════════════════════════ */}
-        <aside className="hidden lg:flex flex-col justify-between w-16 py-6 rounded-[28px] bg-[#1A3328] dark:bg-[#13241D] text-white shrink-0 items-center shadow-lg border border-emerald-900/30 relative z-30">
+        <aside className="hidden lg:flex flex-col justify-between w-18 py-5 px-1 rounded-[28px] bg-[#1A3328] dark:bg-[#13241D] text-white shrink-0 items-center shadow-lg border border-emerald-900/30 relative z-30 select-none">
           
           {/* Top Cluster */}
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-3.5 w-full">
             
-            {/* 1. Home Link with Tooltip */}
+            {/* 1. Home */}
             <Link
               href="/"
-              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all relative group cursor-pointer"
+              className="flex flex-col items-center gap-1 w-full text-emerald-200/60 hover:text-white transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer group py-1"
               aria-label="Home Dashboard"
             >
-              <Home className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              
-              {/* Floating Tooltip */}
-              <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-75 ease-out z-50 flex items-center">
-                <span>Home Dashboard</span>
-                <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+              <div className="w-10 h-10 rounded-2xl flex items-center justify-center group-hover:bg-white/10 transition-colors shadow-2xs">
+                <Home className="w-5 h-5 group-hover:text-emerald-300 transition-colors" />
               </div>
+              <span className="text-[10px] font-extrabold tracking-tight text-center leading-none text-emerald-100/70 group-hover:text-white transition-colors">
+                Home
+              </span>
             </Link>
 
-            {/* 2. Active Services Icon Pill with Tooltip */}
+            {/* 2. Services (Active) */}
             <Link
               href="/services"
-              className="w-11 h-11 rounded-2xl bg-[#2D5A47] text-white shadow-md flex items-center justify-center transition-all scale-105 border border-emerald-400/30 relative group cursor-pointer"
+              className="flex flex-col items-center gap-1 w-full text-white transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer group py-1"
               aria-label="Services Catalog"
             >
-              <Layers className="w-5 h-5 text-emerald-300 group-hover:scale-110 transition-transform" />
-              
-              {/* Floating Tooltip */}
-              <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-75 ease-out z-50 flex items-center">
-                <span>Services Catalog</span>
-                <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+              <div className="w-10 h-10 rounded-2xl bg-[#2D5A47] text-white shadow-md flex items-center justify-center border border-emerald-400/40">
+                <Layers className="w-5 h-5 text-emerald-300" />
               </div>
+              <span className="text-[10px] font-black tracking-tight text-emerald-300 text-center leading-none">
+                Services
+              </span>
             </Link>
 
-            {/* 3. 🏦 Banking Main Icon Button with Tooltip */}
+            {/* 3. 🏦 Banking */}
             <Link
               href="/banking"
-              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all cursor-pointer relative group"
+              className="flex flex-col items-center gap-1 w-full text-emerald-200/60 hover:text-white transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer group py-1"
               aria-label="Inclusive Banking"
             >
-              <Wallet className="w-5 h-5 text-emerald-300 group-hover:scale-110 transition-transform" />
-              
-              {/* Floating Tooltip */}
-              <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-75 ease-out z-50 flex items-center">
-                <span>Inclusive Banking</span>
-                <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+              <div className="w-10 h-10 rounded-2xl flex items-center justify-center group-hover:bg-white/10 transition-colors shadow-2xs">
+                <Wallet className="w-5 h-5 text-emerald-300/80 group-hover:text-emerald-300 transition-colors" />
               </div>
+              <span className="text-[10px] font-extrabold tracking-tight text-center leading-none text-emerald-100/70 group-hover:text-white transition-colors">
+                Banking
+              </span>
             </Link>
 
-            {/* 4. 🛡️ Digital Safety Hub Link with Tooltip */}
+            {/* 4. 🛡️ Digital Safety Hub */}
             <Link
               href="/safety"
-              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all cursor-pointer relative group"
+              className="flex flex-col items-center gap-1 w-full text-emerald-200/60 hover:text-white transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer group py-1"
               aria-label="Digital Safety Hub"
             >
-              <ShieldCheck className="w-5 h-5 text-emerald-300 group-hover:scale-110 transition-transform" />
-              
-              {/* Floating Tooltip */}
-              <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-75 ease-out z-50 flex items-center">
-                <span>Digital Safety &amp; Trusted Circle</span>
-                <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+              <div className="w-10 h-10 rounded-2xl flex items-center justify-center group-hover:bg-white/10 transition-colors shadow-2xs">
+                <ShieldCheck className="w-5 h-5 text-emerald-300/80 group-hover:text-emerald-300 transition-colors" />
               </div>
+              <span className="text-[10px] font-extrabold tracking-tight text-center leading-none text-emerald-100/70 group-hover:text-white transition-colors">
+                Safety
+              </span>
             </Link>
 
-            {/* 5. 📷 Dedicated Document Assist Slot with Tooltip */}
+            {/* 5. 📷 Document Assist */}
             <button
               onClick={() => {
                 setIsBankingSubmenuOpen(false);
                 setIsDocAssistModalOpen(true);
               }}
-              className="w-10 h-10 rounded-2xl text-emerald-300 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all cursor-pointer relative group"
+              className="flex flex-col items-center gap-1 w-full text-emerald-200/60 hover:text-white transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer group py-1"
               aria-label="Document Snap-to-Form Assist"
             >
-              <Camera className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 absolute top-1.5 right-1.5 ring-2 ring-[#1A3328]" />
-              
-              {/* Floating Tooltip */}
-              <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-75 ease-out z-50 flex items-center">
-                <span>Document Snap-to-Form</span>
-                <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+              <div className="w-10 h-10 rounded-2xl flex items-center justify-center group-hover:bg-white/10 transition-colors relative shadow-2xs">
+                <Camera className="w-5 h-5 text-emerald-400" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 absolute top-2 right-2 ring-2 ring-[#1A3328]" />
               </div>
+              <span className="text-[10px] font-extrabold tracking-tight text-center leading-none text-emerald-100/70 group-hover:text-white transition-colors">
+                Docs
+              </span>
             </button>
           </div>
 
           {/* Bottom Support / Emergency */}
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center w-full pt-3">
             <Link
               href="/emergency"
               onClick={() => setIsBankingSubmenuOpen(false)}
-              className="flex flex-col items-center gap-1 text-emerald-200/60 hover:text-white transition-colors relative group cursor-pointer"
+              className="flex flex-col items-center gap-1 w-full text-emerald-200/60 hover:text-white transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer group py-1"
               aria-label="Emergency & Support"
             >
-              <Headphones className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span className="text-[9px] font-bold">Support</span>
-
-              {/* Floating Tooltip */}
-              <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-75 ease-out z-50 flex items-center">
-                <span>Emergency &amp; Support</span>
-                <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+              <div className="w-10 h-10 rounded-2xl flex items-center justify-center group-hover:bg-white/10 transition-colors shadow-2xs">
+                <Headphones className="w-5 h-5 group-hover:text-emerald-300 transition-colors" />
               </div>
+              <span className="text-[10px] font-extrabold tracking-tight text-center leading-none text-emerald-100/70 group-hover:text-white transition-colors">
+                Support
+              </span>
             </Link>
           </div>
 
