@@ -55,7 +55,8 @@ import {
   Layers,
   Camera,
   Headphones,
-  History
+  History,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function AdaptiveBankingPage() {
@@ -347,37 +348,58 @@ export default function AdaptiveBankingPage() {
         {/* ═══════════════════════════════════════════════════════════
             LEFT DARK SIDEBAR PILL (UNIFIED ANUKOOL SIDEBAR)
            ═══════════════════════════════════════════════════════════ */}
-        <aside className="hidden lg:flex flex-col justify-between w-16 py-6 rounded-[28px] bg-[#1A3328] dark:bg-[#13241D] text-white shrink-0 items-center shadow-lg border border-emerald-900/30">
+        <aside className="hidden lg:flex flex-col justify-between w-16 py-6 rounded-[28px] bg-[#1A3328] dark:bg-[#13241D] text-white shrink-0 items-center shadow-lg border border-emerald-900/30 relative z-30">
           
           {/* Top Cluster */}
           <div className="flex flex-col items-center gap-4">
+            
+            {/* 1. Home Link with Tooltip */}
             <Link
               href="/"
-              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all"
-              title="Home Dashboard"
+              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all relative group cursor-pointer"
+              aria-label="Home Dashboard"
             >
-              <Home className="w-5 h-5" />
+              <Home className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              
+              {/* Floating Tooltip */}
+              <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 z-50 flex items-center">
+                <span>Home Dashboard</span>
+                <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+              </div>
             </Link>
 
+            {/* 2. Services Catalog Link with Tooltip */}
             <Link
               href="/services"
-              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all"
-              title="Services Catalog"
+              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all relative group cursor-pointer"
+              aria-label="Services Catalog"
             >
-              <Layers className="w-5 h-5" />
+              <Layers className="w-5 h-5 group-hover:scale-110 transition-transform" />
+
+              {/* Floating Tooltip */}
+              <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 z-50 flex items-center">
+                <span>Services Catalog</span>
+                <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+              </div>
             </Link>
 
-            {/* Active Banking Pill */}
+            {/* 3. Active Banking Pill with Tooltip */}
             <button
               onClick={() => {
                 setCurrentView('dashboard');
                 setActiveSidebarTab('home');
               }}
-              className="w-11 h-11 rounded-2xl bg-[#2D5A47] text-white shadow-md flex items-center justify-center transition-all scale-105 border border-emerald-400/30 cursor-pointer relative"
-              title="Inclusive Banking Dashboard"
+              className="w-11 h-11 rounded-2xl bg-[#2D5A47] text-white shadow-md flex items-center justify-center transition-all scale-105 border border-emerald-400/30 cursor-pointer relative group"
+              aria-label="Inclusive Banking Dashboard"
             >
-              <Wallet className="w-5 h-5 text-emerald-300" />
+              <Wallet className="w-5 h-5 text-emerald-300 group-hover:scale-110 transition-transform" />
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 absolute top-1.5 right-1.5 ring-2 ring-[#1A3328]" />
+
+              {/* Floating Tooltip */}
+              <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 z-50 flex items-center">
+                <span>Inclusive Banking</span>
+                <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+              </div>
             </button>
 
             {/* 🔽 IN-SIDEBAR VERTICAL SUB-FEATURES (Active while on Banking) */}
@@ -389,32 +411,50 @@ export default function AdaptiveBankingPage() {
                   setActiveSidebarTab('users');
                   setCurrentView('send_money');
                 }}
-                className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all shadow-xs group cursor-pointer ${
+                className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all shadow-xs relative group cursor-pointer ${
                   currentView === 'send_money' || currentView === 'review' || currentView === 'confirm'
                     ? 'bg-[#2563EB] text-white ring-2 ring-blue-400/40' 
                     : 'bg-white/10 hover:bg-[#2563EB] text-emerald-200 hover:text-white'
                 }`}
-                title="Send Money (UPI Transfer)"
+                aria-label="Send Money (UPI Transfer)"
               >
                 <Send className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+                
+                {/* Floating Tooltip */}
+                <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 z-50 flex items-center">
+                  <span>Send Money (UPI)</span>
+                  <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+                </div>
               </button>
 
               {/* 2. Receive QR Code */}
               <button
                 onClick={() => setIsReceiveModalOpen(true)}
-                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-[#059669] text-emerald-200 hover:text-white flex items-center justify-center transition-all shadow-xs group cursor-pointer"
-                title="Receive / Show QR Code"
+                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-[#059669] text-emerald-200 hover:text-white flex items-center justify-center transition-all shadow-xs relative group cursor-pointer"
+                aria-label="Receive / Show QR Code"
               >
                 <QrCode className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+
+                {/* Floating Tooltip */}
+                <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 z-50 flex items-center">
+                  <span>Receive Money (QR)</span>
+                  <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+                </div>
               </button>
 
               {/* 3. Pay Bills */}
               <button
                 onClick={() => setIsBillModalOpen(true)}
-                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-[#D97706] text-emerald-200 hover:text-white flex items-center justify-center transition-all shadow-xs group cursor-pointer"
-                title="Pay Electricity & Utility Bills"
+                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-[#D97706] text-emerald-200 hover:text-white flex items-center justify-center transition-all shadow-xs relative group cursor-pointer"
+                aria-label="Pay Electricity & Utility Bills"
               >
                 <Receipt className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+
+                {/* Floating Tooltip */}
+                <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 z-50 flex items-center">
+                  <span>Pay Utility Bills</span>
+                  <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+                </div>
               </button>
 
               {/* 4. Passbook / History */}
@@ -423,26 +463,53 @@ export default function AdaptiveBankingPage() {
                   setActiveSidebarTab('history');
                   setCurrentView('transactions');
                 }}
-                className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all shadow-xs group cursor-pointer ${
+                className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all shadow-xs relative group cursor-pointer ${
                   currentView === 'transactions'
                     ? 'bg-[#7C3AED] text-white ring-2 ring-purple-400/40' 
                     : 'bg-white/10 hover:bg-[#7C3AED] text-emerald-200 hover:text-white'
                 }`}
-                title="Passbook & Recent Transactions"
+                aria-label="Passbook & Recent Transactions"
               >
                 <History className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+
+                {/* Floating Tooltip */}
+                <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 z-50 flex items-center">
+                  <span>Passbook &amp; History</span>
+                  <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+                </div>
               </button>
 
             </div>
 
-            {/* 📷 Dedicated Document Assist Slot (Positioned below expanded banking sub-features) */}
+            {/* 4. 🛡️ Digital Safety Hub Link */}
+            <Link
+              href="/safety"
+              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all cursor-pointer relative group"
+              aria-label="Digital Safety Hub"
+            >
+              <ShieldCheck className="w-5 h-5 text-emerald-300 group-hover:scale-110 transition-transform" />
+
+              {/* Floating Tooltip */}
+              <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 z-50 flex items-center">
+                <span>Digital Safety &amp; Trusted Circle</span>
+                <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+              </div>
+            </Link>
+
+            {/* 5. 📷 Dedicated Document Assist Slot */}
             <Link
               href="/services"
               className="w-10 h-10 rounded-2xl text-emerald-300 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all cursor-pointer relative group"
-              title="Document Snap-to-Form Assist"
+              aria-label="Document Snap-to-Form Assist"
             >
               <Camera className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 absolute top-1.5 right-1.5 ring-2 ring-[#1A3328]" />
+
+              {/* Floating Tooltip */}
+              <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 z-50 flex items-center">
+                <span>Document Snap-to-Form</span>
+                <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+              </div>
             </Link>
           </div>
 
@@ -450,11 +517,17 @@ export default function AdaptiveBankingPage() {
           <div className="flex flex-col items-center gap-4">
             <Link
               href="/emergency"
-              className="flex flex-col items-center gap-1 text-emerald-200/60 hover:text-white transition-colors"
-              title="Emergency & Support"
+              className="flex flex-col items-center gap-1 text-emerald-200/60 hover:text-white transition-colors relative group cursor-pointer"
+              aria-label="Emergency & Support"
             >
-              <Headphones className="w-5 h-5" />
+              <Headphones className="w-5 h-5 group-hover:scale-110 transition-transform" />
               <span className="text-[9px] font-bold">Support</span>
+
+              {/* Floating Tooltip */}
+              <div className="absolute left-full ml-3 px-3 py-1.5 rounded-xl bg-zinc-950/95 dark:bg-black/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl border border-white/15 pointer-events-none opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 z-50 flex items-center">
+                <span>Emergency &amp; Support</span>
+                <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-950 dark:bg-black rotate-45 border-l border-b border-white/15" />
+              </div>
             </Link>
           </div>
 
