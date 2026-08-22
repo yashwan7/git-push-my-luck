@@ -100,22 +100,6 @@ export function VoiceController() {
             {isSpeaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </button>
 
-          {/* Quick Language Toggle */}
-          <div className="hidden md:flex items-center gap-1.5 pl-2 border-l border-zinc-800">
-            <button
-              onClick={() => updateProfileKey('language', profile.language === 'kn' ? 'en' : 'kn')}
-              className="px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-acc-xs font-semibold text-zinc-300"
-            >
-              {profile.language === 'kn' ? 'English' : 'ಕನ್ನಡ'}
-            </button>
-            <button
-              onClick={() => updateProfileKey('language', profile.language === 'hi' ? 'en' : 'hi')}
-              className="px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-acc-xs font-semibold text-zinc-300"
-            >
-              {profile.language === 'hi' ? 'English' : 'हिन्दी'}
-            </button>
-          </div>
-
         </div>
       </div>
 
