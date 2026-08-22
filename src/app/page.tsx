@@ -232,7 +232,7 @@ export default function LandingPage() {
           </div>
 
           {/* Right Column: Supportive Guidance Photo + Floating Assist Cards */}
-          <div className="lg:col-span-6 relative flex justify-center items-center">
+          <div className="lg:col-span-6 relative flex justify-center items-center py-4 sm:py-6 px-2">
             
             {/* Main Photo Container */}
             <div className="relative w-full aspect-[4/3] rounded-[30px] overflow-hidden shadow-lg border border-slate-200/80 dark:border-white/10 bg-slate-100">
@@ -245,7 +245,7 @@ export default function LandingPage() {
             </div>
 
             {/* ── 🗣️ FLOATING CARD 1 (Top-Right): Kannada Language Card ── */}
-            <div className="absolute -top-3 sm:-top-4 -right-2 sm:-right-4 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[210px] space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="absolute top-2 sm:top-3 -right-1 sm:-right-3 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[210px] space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
                 <span className="text-[11px] font-black text-slate-900 dark:text-white">ಕನ್ನಡ (Kannada)</span>
@@ -256,7 +256,7 @@ export default function LandingPage() {
             </div>
 
             {/* ── 🎙️ FLOATING CARD 2 (Middle-Left): Saathi Voice Guide ── */}
-            <div className="absolute top-1/3 -left-3 sm:-left-6 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[220px] space-y-1 animate-in fade-in slide-in-from-left-2 duration-300">
+            <div className="absolute top-1/2 -translate-y-1/2 -left-2 sm:-left-4 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[220px] space-y-1 animate-in fade-in slide-in-from-left-2 duration-300">
               <div className="flex items-center gap-1.5">
                 <div className="w-5 h-5 rounded-full bg-[#134233] text-white flex items-center justify-center">
                   <Mic className="w-3 h-3" />
@@ -271,7 +271,7 @@ export default function LandingPage() {
             </div>
 
             {/* ── 📄 FLOATING CARD 3 (Bottom-Left): Document Snap-to-Form ── */}
-            <div className="absolute -bottom-3 sm:-bottom-4 -left-2 sm:-left-3 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[230px] space-y-1 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="absolute bottom-2 sm:bottom-3 -left-1 sm:-left-2 bg-white/95 dark:bg-[#1E2028]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 dark:border-white/10 shadow-xl max-w-[230px] space-y-1 animate-in fade-in slide-in-from-bottom-2 duration-300">
               <div className="flex items-center gap-1.5">
                 <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center">
                   <Camera className="w-3 h-3" />

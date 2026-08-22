@@ -293,12 +293,12 @@ export function DocumentAssistModal({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md transition-all font-sans"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-black/80 backdrop-blur-md overflow-y-auto font-sans"
       role="dialog"
       aria-modal="true"
       aria-labelledby="document-assist-title"
     >
-      <div className="relative w-full max-w-2xl bg-white dark:bg-[#14161D] rounded-3xl border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+      <div className="relative w-full max-w-2xl bg-white dark:bg-[#14161D] rounded-[32px] border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden flex flex-col my-auto max-h-[85vh] sm:max-h-[86vh]">
 
         {/* ═══════════════════════════════════════════════════════════
             TOP HEADER
