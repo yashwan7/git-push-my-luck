@@ -501,18 +501,21 @@ export default function AdaptiveBankingPage() {
                   {/* 1. Send Money */}
                   <button
                     onClick={() => setCurrentView('send_money')}
-                    className="p-5 rounded-[24px] bg-gradient-to-br from-blue-50/90 to-blue-100/50 dark:from-blue-950/40 dark:to-[#172033] hover:from-blue-100 hover:to-blue-200/60 dark:hover:from-blue-900/50 dark:hover:to-blue-800/40 border border-blue-200/70 dark:border-blue-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
+                    className="p-5 sm:p-5.5 rounded-[26px] bg-gradient-to-br from-blue-50/90 via-blue-100/40 to-blue-100/70 dark:from-blue-950/40 dark:via-[#172033] dark:to-blue-900/30 hover:from-blue-100 hover:to-blue-200/70 dark:hover:from-blue-900/60 dark:hover:to-blue-800/50 border border-blue-200/80 hover:border-blue-400 dark:border-blue-800/50 dark:hover:border-blue-500 shadow-xs hover:shadow-[0_16px_36px_rgba(37,99,235,0.22)] hover:-translate-y-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 text-left flex flex-col justify-between min-h-[125px] group cursor-pointer relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full group-hover:before:translate-x-full before:transition-transform before:duration-700"
                   >
-                    <div className="flex justify-between items-start">
-                      <div className="w-11 h-11 rounded-2xl bg-[#2563EB] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                    <div className="flex justify-between items-start z-10">
+                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#1D4ED8] to-[#3B82F6] text-white flex items-center justify-center shadow-md group-hover:shadow-blue-500/40 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
                         <Send className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-blue-700 dark:text-blue-300">
-                        Fast UPI
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-white/90 dark:bg-black/50 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/60 shadow-2xs group-hover:bg-white transition-colors">
+                          Fast UPI
+                        </span>
+                        <ArrowRight className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all duration-300" />
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                    <div className="z-10 pt-2">
+                      <div className="font-black text-sm sm:text-base text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                         Send Money
                       </div>
                       <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -524,18 +527,21 @@ export default function AdaptiveBankingPage() {
                   {/* 2. Receive QR */}
                   <button
                     onClick={() => setIsReceiveModalOpen(true)}
-                    className="p-5 rounded-[24px] bg-gradient-to-br from-emerald-50/90 to-emerald-100/50 dark:from-emerald-950/40 dark:to-[#112920] hover:from-emerald-100 hover:to-emerald-200/60 dark:hover:from-emerald-900/50 dark:hover:to-emerald-800/40 border border-emerald-200/70 dark:border-emerald-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
+                    className="p-5 sm:p-5.5 rounded-[26px] bg-gradient-to-br from-emerald-50/90 via-emerald-100/40 to-emerald-100/70 dark:from-emerald-950/40 dark:via-[#112920] dark:to-emerald-900/30 hover:from-emerald-100 hover:to-emerald-200/70 dark:hover:from-emerald-900/60 dark:hover:to-emerald-800/50 border border-emerald-200/80 hover:border-emerald-400 dark:border-emerald-800/50 dark:hover:border-emerald-500 shadow-xs hover:shadow-[0_16px_36px_rgba(5,150,105,0.22)] hover:-translate-y-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 text-left flex flex-col justify-between min-h-[125px] group cursor-pointer relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full group-hover:before:translate-x-full before:transition-transform before:duration-700"
                   >
-                    <div className="flex justify-between items-start">
-                      <div className="w-11 h-11 rounded-2xl bg-[#059669] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                    <div className="flex justify-between items-start z-10">
+                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#047857] to-[#10B981] text-white flex items-center justify-center shadow-md group-hover:shadow-emerald-500/40 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
                         <QrCode className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-emerald-700 dark:text-emerald-300">
-                        Scan & Pay
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-white/90 dark:bg-black/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60 shadow-2xs group-hover:bg-white transition-colors">
+                          Scan & Pay
+                        </span>
+                        <ArrowRight className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all duration-300" />
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                    <div className="z-10 pt-2">
+                      <div className="font-black text-sm sm:text-base text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                         Receive QR
                       </div>
                       <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -547,18 +553,21 @@ export default function AdaptiveBankingPage() {
                   {/* 3. Pay Bills */}
                   <button
                     onClick={() => setIsBillModalOpen(true)}
-                    className="p-5 rounded-[24px] bg-gradient-to-br from-amber-50/90 to-amber-100/50 dark:from-amber-950/40 dark:to-[#2B2314] hover:from-amber-100 hover:to-amber-200/60 dark:hover:from-amber-900/50 dark:hover:to-amber-800/40 border border-amber-200/70 dark:border-amber-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
+                    className="p-5 sm:p-5.5 rounded-[26px] bg-gradient-to-br from-amber-50/90 via-amber-100/40 to-amber-100/70 dark:from-amber-950/40 dark:via-[#2B2314] dark:to-amber-900/30 hover:from-amber-100 hover:to-amber-200/70 dark:hover:from-amber-900/60 dark:hover:to-amber-800/50 border border-amber-200/80 hover:border-amber-400 dark:border-amber-800/50 dark:hover:border-amber-500 shadow-xs hover:shadow-[0_16px_36px_rgba(217,119,6,0.22)] hover:-translate-y-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 text-left flex flex-col justify-between min-h-[125px] group cursor-pointer relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full group-hover:before:translate-x-full before:transition-transform before:duration-700"
                   >
-                    <div className="flex justify-between items-start">
-                      <div className="w-11 h-11 rounded-2xl bg-[#D97706] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                    <div className="flex justify-between items-start z-10">
+                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#B45309] to-[#F59E0B] text-white flex items-center justify-center shadow-md group-hover:shadow-amber-500/40 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
                         <Receipt className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-amber-700 dark:text-amber-300">
-                        BBPS Direct
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-white/90 dark:bg-black/50 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/60 shadow-2xs group-hover:bg-white transition-colors">
+                          BBPS Direct
+                        </span>
+                        <ArrowRight className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all duration-300" />
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                    <div className="z-10 pt-2">
+                      <div className="font-black text-sm sm:text-base text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                         Pay Bills
                       </div>
                       <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -570,18 +579,21 @@ export default function AdaptiveBankingPage() {
                   {/* 4. Card Controls */}
                   <button
                     onClick={() => setIsCardModalOpen(true)}
-                    className="p-5 rounded-[24px] bg-gradient-to-br from-purple-50/90 to-purple-100/50 dark:from-purple-950/40 dark:to-[#221B2F] hover:from-purple-100 hover:to-purple-200/60 dark:hover:from-purple-900/50 dark:hover:to-purple-800/40 border border-purple-200/70 dark:border-purple-800/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between min-h-[115px] group cursor-pointer"
+                    className="p-5 sm:p-5.5 rounded-[26px] bg-gradient-to-br from-purple-50/90 via-purple-100/40 to-purple-100/70 dark:from-purple-950/40 dark:via-[#221B2F] dark:to-purple-900/30 hover:from-purple-100 hover:to-purple-200/70 dark:hover:from-purple-900/60 dark:hover:to-purple-800/50 border border-purple-200/80 hover:border-purple-400 dark:border-purple-800/50 dark:hover:border-purple-500 shadow-xs hover:shadow-[0_16px_36px_rgba(124,58,237,0.22)] hover:-translate-y-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 text-left flex flex-col justify-between min-h-[125px] group cursor-pointer relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full group-hover:before:translate-x-full before:transition-transform before:duration-700"
                   >
-                    <div className="flex justify-between items-start">
-                      <div className="w-11 h-11 rounded-2xl bg-[#7C3AED] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                    <div className="flex justify-between items-start z-10">
+                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#6D28D9] to-[#8B5CF6] text-white flex items-center justify-center shadow-md group-hover:shadow-purple-500/40 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
                         <CreditCard className="w-5 h-5" />
                       </div>
-                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-white/80 dark:bg-black/40 text-purple-700 dark:text-purple-300">
-                        RuPay Safe
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-white/90 dark:bg-black/50 text-purple-700 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/60 shadow-2xs group-hover:bg-white transition-colors">
+                          RuPay Safe
+                        </span>
+                        <ArrowRight className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all duration-300" />
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                    <div className="z-10 pt-2">
+                      <div className="font-black text-sm sm:text-base text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                         Card Controls
                       </div>
                       <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
