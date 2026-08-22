@@ -24,6 +24,7 @@ interface GoogleMapEmergencyProps {
 declare global {
   interface Window {
     google?: any;
+    gm_authFailure?: () => void;
   }
 }
 
@@ -62,9 +63,17 @@ export function GoogleMapEmergency({
     }
   }, []);
 
-  // 2. Load Google Maps JS SDK
+  // 2. Load Google Maps JS SDK with gm_authFailure protection
   useEffect(() => {
     if (!mapContainerRef.current) return;
+
+    // Intercept Google Maps auth error before it shows ugly gray dialog
+    if (typeof window !== 'undefined') {
+      window.gm_authFailure = () => {
+        setLoadError(true);
+        setMapLoaded(false);
+      };
+    }
 
     const loadScript = () => {
       if (window.google && window.google.maps) {
@@ -277,52 +286,59 @@ export function GoogleMapEmergency({
   return (
     <div className="relative w-full h-52 sm:h-56 rounded-2xl bg-[#E8EEF5] dark:bg-slate-800 border border-slate-200 dark:border-slate-700 overflow-hidden shadow-inner group">
       
-      {/* Real Google Map Canvas */}
-      <div ref={mapContainerRef} className="w-full h-full" />
+      {/* Real Google Map Canvas - Only rendered if no error */}
+      {!loadError && <div ref={mapContainerRef} className="w-full h-full" />}
 
-      {/* Fallback Animated Route SVG if Maps JS is waiting/offline */}
-      {!mapLoaded && (
-        <div className="absolute inset-0 bg-[#E8EEF5] dark:bg-slate-800 flex items-center justify-center p-4">
-          <svg className="w-full h-full" viewBox="0 0 300 160">
+      {/* Fallback Crisp Animated Route Map if Maps JS is loading or errored */}
+      {(loadError || !mapLoaded) && (
+        <div className="absolute inset-0 bg-[#E8EEF5] dark:bg-[#1E293B] flex items-center justify-center p-2">
+          <svg className="w-full h-full rounded-xl" viewBox="0 0 320 180">
             {/* Grid Pattern */}
             <defs>
-              <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" className="text-slate-300 dark:text-slate-700 opacity-40" strokeWidth="0.5" />
+              <pattern id="streetGrid" width="24" height="24" patternUnits="userSpaceOnUse">
+                <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#CBD5E1" strokeWidth="0.75" opacity="0.6" />
               </pattern>
+              <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#2563EB" />
+                <stop offset="100%" stopColor="#16A34A" />
+              </linearGradient>
             </defs>
-            <rect width="100%" height="100%" fill="url(#grid)" />
+            <rect width="100%" height="100%" fill="#F1F5F9" />
+            <rect width="100%" height="100%" fill="url(#streetGrid)" />
+
+            {/* Simulated Street Network */}
+            <path d="M 0 50 L 320 50 M 0 110 L 320 110 M 80 0 L 80 180 M 210 0 L 210 180" stroke="#CBD5E1" strokeWidth="3" opacity="0.7" fill="none" />
+            <path d="M 30 180 L 140 0 M 180 180 L 290 0" stroke="#E2E8F0" strokeWidth="2" opacity="0.8" fill="none" />
 
             {/* Glowing Under-Route */}
             <path
-              d="M 40 40 Q 110 80, 170 85 T 255 115"
+              d="M 50 50 Q 120 70, 150 110 T 260 125"
               fill="none"
-              stroke="#93C5FD"
-              strokeWidth="10"
+              stroke="#86EFAC"
+              strokeWidth="12"
               strokeLinecap="round"
-              className="opacity-60"
+              opacity="0.65"
             />
-            {/* Main Road Route */}
+            {/* Main Road Route Polyline */}
             <path
-              d="M 40 40 Q 110 80, 170 85 T 255 115"
+              d="M 50 50 Q 120 70, 150 110 T 260 125"
               fill="none"
-              stroke="#2563EB"
+              stroke="#15803D"
               strokeWidth="5"
               strokeLinecap="round"
-              strokeDasharray="6 3"
-              className="animate-pulse"
             />
 
-            {/* Origin User Marker */}
-            <g transform="translate(40, 40)">
-              <circle r="12" fill="#2563EB" opacity="0.2" className="animate-ping" />
+            {/* Origin User Marker (Blue Pulse Beacon) */}
+            <g transform="translate(50, 50)">
+              <circle r="14" fill="#2563EB" opacity="0.25" className="animate-ping" />
               <circle r="7" fill="#2563EB" stroke="#FFFFFF" strokeWidth="2.5" />
             </g>
 
-            {/* Destination Hospital Marker */}
-            <g transform="translate(255, 115)">
-              <circle r="14" fill="#DC2626" opacity="0.2" className="animate-ping" />
+            {/* Destination Hospital Marker (Red Pin) */}
+            <g transform="translate(260, 125)">
+              <circle r="16" fill="#DC2626" opacity="0.25" className="animate-ping" />
               <circle r="9" fill="#DC2626" stroke="#FFFFFF" strokeWidth="2.5" />
-              <text x="0" y="3.5" textAnchor="middle" fill="#FFFFFF" fontSize="8" fontWeight="bold">H</text>
+              <text x="0" y="3" textAnchor="middle" fill="#FFFFFF" fontSize="9" fontWeight="900">H</text>
             </g>
           </svg>
         </div>
@@ -336,22 +352,7 @@ export function GoogleMapEmergency({
         </div>
       </div>
 
-      {/* ── 🔴 Bottom-Left Hospital Name Tag ── */}
-      <div className="absolute bottom-3 left-3 z-10 flex flex-col items-start pointer-events-none max-w-[55%]">
-        <div className="px-2.5 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-black shadow-md flex items-center gap-1 truncate">
-          <span>🏥 {hospital.name.length > 22 ? hospital.name.slice(0, 22) + '...' : hospital.name}</span>
-        </div>
-      </div>
-
-      {/* ── ⏱ Attached Fastest Route & ETA Badge ── */}
-      <div className="absolute bottom-3 right-3 z-10 flex flex-col items-end pointer-events-none">
-        <div className="px-2.5 py-1 rounded-lg bg-[#2563EB] text-white text-[10px] font-black shadow-lg flex items-center gap-1.5 border border-white/20">
-          <Navigation className="w-3 h-3" />
-          <span>Fastest Route &bull; {hospital.eta} ({hospital.distance})</span>
-        </div>
-      </div>
-
-      {/* Open in Google Maps External Button */}
+      {/* Open in Google Maps External Button (Top Right) */}
       <a
         href={googleMapsUrl}
         target="_blank"
@@ -361,6 +362,18 @@ export function GoogleMapEmergency({
       >
         <ExternalLink className="w-3.5 h-3.5 text-[#2563EB]" />
       </a>
+
+      {/* ── 🔴 Bottom Action Pills: [Apollo Hospital] + [Fastest Route - 20 min (5.6 km)] ── */}
+      <div className="absolute bottom-3 left-3 right-3 z-10 flex items-center justify-between pointer-events-none gap-2">
+        <div className="px-2.5 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-black shadow-md flex items-center gap-1 truncate max-w-[45%]">
+          <span>🏥 {hospital.name.length > 18 ? hospital.name.slice(0, 18) + '...' : hospital.name}</span>
+        </div>
+
+        <div className="px-2.5 py-1 rounded-lg bg-[#166534] text-white text-[10px] font-black shadow-lg flex items-center gap-1.5 border border-emerald-400/30 shrink-0">
+          <Navigation className="w-3 h-3 text-emerald-300" />
+          <span>Fastest Route &bull; {hospital.eta || '20 min'} ({hospital.distance || '5.6 km'})</span>
+        </div>
+      </div>
 
     </div>
   );

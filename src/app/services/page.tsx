@@ -376,13 +376,13 @@ export default function ServicesPage() {
         {/* ═══════════════════════════════════════════════════════════
             LEFT DARK SIDEBAR PILL (EXACT ICONS AS SCREENSHOT)
            ═══════════════════════════════════════════════════════════ */}
-        <aside className="hidden lg:flex flex-col justify-between w-16 py-6 rounded-[28px] bg-[#181920] dark:bg-[#202127] text-white shrink-0 items-center shadow-md">
+        <aside className="hidden lg:flex flex-col justify-between w-16 py-6 rounded-[28px] bg-[#1A3328] dark:bg-[#13241D] text-white shrink-0 items-center shadow-lg border border-emerald-900/30">
           
           {/* Top Cluster */}
           <div className="flex flex-col items-center gap-4">
             <Link
-              href="/banking"
-              className="w-10 h-10 rounded-2xl text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+              href="/"
+              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center transition-colors"
               title="Home Dashboard"
             >
               <Home className="w-5 h-5" />
@@ -391,15 +391,15 @@ export default function ServicesPage() {
             {/* Active Services Icon Pill */}
             <button
               onClick={() => setActiveSidebarTab('services')}
-              className="w-11 h-11 rounded-2xl bg-[#2563EB] text-white shadow-lg flex items-center justify-center transition-all scale-105"
+              className="w-11 h-11 rounded-2xl bg-[#2D5A47] text-white shadow-md flex items-center justify-center transition-all scale-105 border border-emerald-400/30"
               title="Services Catalog"
             >
-              <Layers className="w-5 h-5" />
+              <Layers className="w-5 h-5 text-emerald-300" />
             </button>
 
             <Link
               href="/audit"
-              className="w-10 h-10 rounded-2xl text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center transition-colors"
               title="Activity & Audit"
             >
               <Activity className="w-5 h-5" />
@@ -407,7 +407,7 @@ export default function ServicesPage() {
 
             <Link
               href="/provider"
-              className="w-10 h-10 rounded-2xl text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center transition-colors"
               title="My Access"
             >
               <KeyRound className="w-5 h-5" />
@@ -415,7 +415,7 @@ export default function ServicesPage() {
 
             <button
               onClick={() => router.push('/banking')}
-              className="w-10 h-10 rounded-2xl text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center transition-colors"
               title="History"
             >
               <History className="w-5 h-5" />
@@ -423,7 +423,7 @@ export default function ServicesPage() {
 
             <button
               onClick={() => router.push('/banking')}
-              className="w-10 h-10 rounded-2xl text-slate-400 hover:text-white flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center transition-colors"
               title="Settings"
             >
               <Settings className="w-5 h-5" />
@@ -434,7 +434,7 @@ export default function ServicesPage() {
           <div className="flex flex-col items-center gap-4">
             <Link
               href="/emergency"
-              className="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors"
+              className="flex flex-col items-center gap-1 text-emerald-200/60 hover:text-white transition-colors"
               title="Support"
             >
               <Headphones className="w-5 h-5" />
@@ -454,48 +454,56 @@ export default function ServicesPage() {
              ═══════════════════════════════════════════════════════════ */}
           <div className="xl:col-span-8 space-y-6">
             
-            {/* HERO GREETING + ADAPTIVE PANEL ROW */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+            {/* UNIFIED HERO GREETING BANNER CARD WITH PHOTO */}
+            <div className="relative rounded-[32px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm overflow-hidden p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
               
-              {/* Left Greeting */}
-              <div className="md:col-span-7 space-y-2">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 shadow-xs text-[10px] font-bold text-[#2563EB]">
-                  <Sparkles className="w-3 h-3 text-amber-500" />
-                  <span>ANUKOOL DIGITAL SERVICES &bull; ACTIVE PROFILE: {activePersonaName ? activePersonaName.toUpperCase() : 'ADAPTIVE'}</span>
+              {/* Left Content Area */}
+              <div className="flex-1 space-y-4 max-w-xl z-10">
+                <div className="space-y-1">
+                  <h1 className="text-3xl sm:text-4xl font-black text-[#1E2024] dark:text-white tracking-tight leading-tight">
+                    {greetingTime}, <br className="hidden sm:inline" />
+                    <span className="text-[#1E3A2F] dark:text-emerald-400">{firstName}.</span>
+                  </h1>
+                  
+                  <div className="space-y-0.5 pt-1">
+                    <p className="text-sm font-bold text-[#1E2024] dark:text-white">
+                      What would you like to get done today?
+                    </p>
+                    <p className="text-xs text-[#8B929A] font-medium leading-relaxed">
+                      ANUKOOL helps you discover and complete digital services in the way that works best for you.
+                    </p>
+                  </div>
                 </div>
 
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1E2024] dark:text-white tracking-tight leading-none">
-                  {greetingTime}, <span className="text-[#2563EB] font-black">{firstName}.</span>
-                </h1>
-                
-                <div className="space-y-0.5">
-                  <p className="text-sm font-bold text-[#1E2024] dark:text-white">
-                    What would you like to get done today?
+                {/* Embedded ANUKOOL Adaptive Intelligence Sub-Card */}
+                <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 space-y-1.5 max-w-md">
+                  <div className="flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                    <span className="text-xs font-black text-[#1E2024] dark:text-white">
+                      ANUKOOL Adaptive Intelligence
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#64748B] dark:text-slate-300 leading-relaxed">
+                    Based on your accessibility profile, we prioritize services that are easier to navigate with voice and simplified steps.
                   </p>
-                  <p className="text-xs text-[#8B929A] font-medium leading-relaxed">
-                    ANUKOOL helps you discover and complete digital services in the way that works best for you.
-                  </p>
+                  <button
+                    onClick={() => speakText('Recommended services prioritized for your profile are displayed below.')}
+                    className="text-xs font-black text-[#1E3A2F] dark:text-emerald-400 hover:underline flex items-center gap-1 pt-0.5"
+                  >
+                    <span>Explore recommended</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
                 </div>
               </div>
 
-              {/* Right: ANUKOOL Adaptive Intelligence Panel Card */}
-              <div className="md:col-span-5 p-4 sm:p-5 rounded-[26px] bg-white dark:bg-[#232428] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-2 relative overflow-hidden">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-500" />
-                  <span className="text-xs font-black text-[#1E2024] dark:text-white">
-                    ANUKOOL Adaptive Intelligence
-                  </span>
-                </div>
-                <p className="text-[11px] text-[#8B929A] leading-relaxed">
-                  Based on your accessibility profile, we prioritize services that are easier to navigate with voice and simplified steps.
-                </p>
-                <button
-                  onClick={() => speakText('Recommended services prioritized for your profile are displayed below.')}
-                  className="text-xs font-black text-[#2563EB] hover:underline flex items-center gap-1 pt-1"
-                >
-                  <span>Explore recommended</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+              {/* Right Side: Senior Citizen Illustration Photo */}
+              <div className="relative w-full md:w-64 sm:h-56 h-48 shrink-0 rounded-2xl overflow-hidden flex items-center justify-center">
+                <img
+                  src="/images/senior-hero.jpg"
+                  alt="Senior citizen using smartphone with ANUKOOL"
+                  className="w-full h-full object-cover object-center rounded-2xl shadow-inner"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-white via-transparent to-transparent dark:from-[#232428] opacity-60 hidden md:block" />
               </div>
 
             </div>
@@ -606,8 +614,8 @@ export default function ServicesPage() {
                     onClick={() => setSelectedCategory(cat.id)}
                     className={`px-4 py-2 rounded-full font-bold text-xs transition-all shrink-0 flex items-center gap-1.5 ${
                       isActive
-                        ? 'bg-[#2563EB] text-white shadow-xs'
-                        : 'bg-white dark:bg-[#232428] text-[#1E2024] dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:border-[#2563EB]'
+                        ? 'bg-[#1E3A2F] dark:bg-emerald-700 text-white shadow-xs'
+                        : 'bg-white dark:bg-[#232428] text-[#1E2024] dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:border-[#1E3A2F]'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
