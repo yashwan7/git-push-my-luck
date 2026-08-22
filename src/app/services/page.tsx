@@ -81,9 +81,120 @@ export default function ServicesPage() {
   const firstName = userDisplayName.split(' ')[0] || 'User';
   const userInitial = userDisplayName.charAt(0).toUpperCase();
 
-  // Time of day calculation
+  // Time of day calculation & multilingual greeting
   const hour = new Date().getHours();
-  const greetingTime = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const getGreeting = () => {
+    if (lang === 'kn') {
+      return hour < 12 ? 'ಶುಭೋದಯ' : hour < 17 ? 'ಶುಭ ಅಪರಾಹ್ನ' : 'ಶುಭ ಸಂಜೆ';
+    }
+    if (lang === 'hi') {
+      return hour < 12 ? 'शुभ प्रभात' : hour < 17 ? 'शुभ दोपहर' : 'शुभ संध्या';
+    }
+    if (lang === 'ta') {
+      return hour < 12 ? 'காலை வணக்கம்' : hour < 17 ? 'மதிய வணக்கம்' : 'மாலை வணக்கம்';
+    }
+    if (lang === 'te') {
+      return hour < 12 ? 'శుభోదయం' : hour < 17 ? 'శుభ మధ్యాహ్నం' : 'శుభ సాయంత్రం';
+    }
+    return hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  };
+
+  // Comprehensive localized text mapping for services dashboard
+  const t = (key: string, fallback: string) => {
+    const dict: Record<string, Record<string, string>> = {
+      kn: {
+        hero_question: 'ಇಂದು ನೀವು ಯಾವ ಸೇವೆಯನ್ನು ಬಳಸಲು ಬಯಸುತ್ತೀರಿ?',
+        hero_subtitle: 'ಅನುಕೂಲವು ನಿಮ್ಮ ಸಾಮರ್ಥ್ಯ ಮತ್ತು ಆದ್ಯತೆಗಳಿಗೆ ತಕ್ಕಂತೆ ಡಿಜಿಟಲ್ ಸೇವೆಗಳನ್ನು ಸುಲಭವಾಗಿ ಪೂರ್ಣಗೊಳಿಸಲು ನೆರವಾಗುತ್ತದೆ.',
+        adaptive_intel: 'ಅನುಕೂಲ ಹೊಂದಿಕೊಳ್ಳುವ ಬುದ್ಧಿವಂತಿಕೆ',
+        adaptive_desc: 'ನಿಮ್ಮ ಪ್ರವೇಶಿಸುವಿಕೆ ಪ್ರೊಫೈಲ್ ಆಧಾರದ ಮೇಲೆ, ಧ್ವನಿ ಮತ್ತು ಸರಳ ಹಂತಗಳೊಂದಿಗೆ ಬಳಸಲು ಸುಲಭವಾದ ಸೇವೆಗಳಿಗೆ ಆದ್ಯತೆ ನೀಡಲಾಗಿದೆ.',
+        explore_rec: 'ಶಿಫಾರಸು ಮಾಡಿದ ಸೇವೆಗಳನ್ನು ನೋಡಿ',
+        quick_actions: 'ತ್ವರಿತ ಕಾರ್ಯಗಳು',
+        quick_actions_sub: 'ತಕ್ಷಣವೇ ಮಾಡಬಹುದಾದ ಜನಪ್ರಿಯ ಸೇವೆಗಳು',
+        view_all_actions: 'ಎಲ್ಲಾ ಸೇವೆಗಳು',
+        search_placeholder: 'ಸೇವೆಗಳು, ಯೋಜನೆಗಳು, ಆಸ್ಪತ್ರೆ, ಬಿಲ್‌ಗಳನ್ನು ಹುಡುಕಿ...',
+        recommended_for_you: 'ನಿಮಗಾಗಿ ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ',
+        view_all: 'ಎಲ್ಲಾ ನೋಡಿ',
+        all_services_catalog: 'ಎಲ್ಲಾ ಸೇವೆಗಳ ಪಟ್ಟಿ',
+        all_services_sub: 'ಯಾವುದೇ ಸಾರ್ವಜನಿಕ ಅಥವಾ ನಾಗರಿಕ ಸೇವೆಯನ್ನು ಪ್ರವೇಶಿಸಿ',
+        emergency_router: 'ತುರ್ತು AI ಮಾರ್ಗದರ್ಶಿ',
+        emergency_sub: 'ಪ್ರತಿ ನಿಮಿಷವೂ ಮುಖ್ಯವಾದಾಗ ವೇಗದ ಆರೈಕೆ ಮಾರ್ಗ.',
+        high_priority: 'ಹೆಚ್ಚಿನ ಆದ್ಯತೆ',
+        change: 'ಬದಲಾಯಿಸಿ',
+        recommended_care: 'ಶಿಫಾರಸು ಮಾಡಿದ ಆರೈಕೆ ಆಯ್ಕೆ',
+        why_this: 'ಏಕೆ ಇದು?',
+        voice_supported: 'ಧ್ವನಿ ಬೆಂಬಲಿತ',
+        view: 'ನೋಡಿ',
+        start_action: 'ಆರಂಭಿಸಿ',
+        cat_all: 'ಎಲ್ಲಾ ಸೇವೆಗಳು',
+        cat_govt: 'ಸರ್ಕಾರಿ ಸೇವೆಗಳು',
+        cat_health: 'ಆರೋಗ್ಯ ಸೇವೆಗಳು',
+        cat_bank: 'ಬ್ಯಾಂಕಿಂಗ್ ಮತ್ತು ಬಿಲ್‌ಗಳು',
+        cat_edu: 'ಶಿಕ್ಷಣ',
+        cat_emergency: 'ತುರ್ತು ಸೇವೆ',
+        qa_bill_title: 'ಬಿಲ್ ಪಾವತಿಸಿ',
+        qa_bill_desc: 'ವಿದ್ಯುತ್, ಮೊಬೈಲ್, ಡಿಟಿಎಚ್ ಮತ್ತು ಇನ್ನಷ್ಟು',
+        qa_scheme_title: 'ಸರ್ಕಾರಿ ಯೋಜನೆಗೆ ಅರ್ಜಿ',
+        qa_scheme_desc: 'ವಿದ್ಯಾರ್ಥಿವೇತನ ಮತ್ತು ಅನುದಾನಗಳು',
+        qa_hospital_title: 'ಆಸ್ಪತ್ರೆ ಅಪಾಯಿಂಟ್‌ಮೆಂಟ್',
+        qa_hospital_desc: 'ವೈದ್ಯರ ಭೇಟಿಯ ಸಮಯ ಕಾಯ್ದಿರಿಸಿ',
+        qa_simplify_title: 'ಪಠ್ಯ ಸರಳಗೊಳಿಸಿ',
+        qa_simplify_desc: 'ಕಠಿಣ ವಿಷಯವನ್ನು ಸುಲಭವಾಗಿಸಿ',
+        qa_audit_title: 'ಸೇವೆಯ ಗುಣಮಟ್ಟ ಪರಿಶೀಲಿಸಿ',
+        qa_audit_desc: 'ಯಾವುದೇ ಪೋರ್ಟಲ್‌ನ ಸುಲಭತೆ ಪರೀಕ್ಷಿಸಿ',
+        qa_emergency_title: 'ತುರ್ತು ಸಹಾಯ',
+        qa_emergency_desc: 'ತಕ್ಷಣ ತುರ್ತು ಬೆಂಬಲ ಪಡೆಯಿರಿ',
+        simulated_beds: 'ಲಭ್ಯವಿರುವ ಹಾಸಿಗೆಗಳು: 12',
+      },
+      hi: {
+        hero_question: 'आज आप क्या करना चाहते हैं?',
+        hero_subtitle: 'अनुकूल आपकी प्राथमिकताओं के अनुसार डिजिटल सेवाओं को सरल बनाता है।',
+        adaptive_intel: 'अनुकूल एडैप्टिव इंटेलिजेंस',
+        adaptive_desc: 'आपकी एक्सेसिबिलिटी प्रोफ़ाइल के आधार पर, हमने उपयोग में आसान सेवाओं को प्राथमिकता दी है।',
+        explore_rec: 'अनुशंसित सेवाएं देखें',
+        quick_actions: 'त्वरित सेवाएं',
+        quick_actions_sub: 'लोकप्रिय कार्य जो आप तुरंत कर सकते हैं',
+        view_all_actions: 'सभी कार्य देखें',
+        search_placeholder: 'सेवाएं, योजनाएं, अस्पताल, बिल, छात्रवृत्ति खोजें...',
+        recommended_for_you: 'आपके लिए अनुशंसित',
+        view_all: 'सभी देखें',
+        all_services_catalog: 'सभी सेवाओं की सूची',
+        all_services_sub: 'नागरिक एवं आवश्यक सेवाओं तक आसानी से पहुंचें',
+        emergency_router: 'आपातकालीन AI राउटर',
+        emergency_sub: 'जब हर मिनट महत्वपूर्ण हो, त्वरित सहायता और मार्ग।',
+        high_priority: 'उच्च प्राथमिकता',
+        change: 'बदलें',
+        recommended_care: 'अनुशंसित अस्पताल',
+        why_this: 'यह क्यों?',
+        voice_supported: 'वॉयस समर्थित',
+        view: 'देखें',
+        start_action: 'शुरू करें',
+        cat_all: 'सभी सेवाएं',
+        cat_govt: 'सरकारी सेवाएं',
+        cat_health: 'स्वास्थ्य सेवाएं',
+        cat_bank: 'बैंकिंग और बिल',
+        cat_edu: 'शिक्षा',
+        cat_emergency: 'आपातकाल',
+        qa_bill_title: 'बिल भरें',
+        qa_bill_desc: 'बिजली, मोबाइल, डीटीएच और अन्य',
+        qa_scheme_title: 'योजना के लिए आवेदन',
+        qa_scheme_desc: 'सरकारी योजनाएं और छात्रवृत्ति',
+        qa_hospital_title: 'अस्पताल अपॉइंटमेंट',
+        qa_hospital_desc: 'डॉक्टर से परामर्श बुक करें',
+        qa_simplify_title: 'सरल भाषा में समझें',
+        qa_simplify_desc: 'कठिन सरकारी नियमों को सरल बनाएं',
+        qa_audit_title: 'सेवा की सुगमता जांचें',
+        qa_audit_desc: 'किसी भी पोर्टल का ऑडिट करें',
+        qa_emergency_title: 'आपातकालीन सहायता',
+        qa_emergency_desc: 'तत्काल 112 सहायता प्राप्त करें',
+        simulated_beds: 'उपलब्ध बेड: 12',
+      },
+    };
+
+    if (dict[lang] && dict[lang][key]) {
+      return dict[lang][key];
+    }
+    return getTranslation(lang, key, fallback);
+  };
 
   // Localize all services based on active language
   const localizedServices: ServiceDefinition[] = useMemo(() => {
@@ -92,20 +203,20 @@ export default function ServicesPage() {
 
   // Categories Definition
   const categories = [
-    { id: 'all', label: 'All Services', icon: Zap },
-    { id: 'government', label: 'Government Services', icon: Building2 },
-    { id: 'healthcare', label: 'Healthcare', icon: Stethoscope },
-    { id: 'banking', label: 'Banking & Bills', icon: CreditCard },
-    { id: 'education', label: 'Education', icon: GraduationCap },
-    { id: 'emergency', label: 'Emergency', icon: Siren },
+    { id: 'all', label: t('cat_all', 'All Services'), icon: Zap },
+    { id: 'government', label: t('cat_govt', 'Government Services'), icon: Building2 },
+    { id: 'healthcare', label: t('cat_health', 'Healthcare'), icon: Stethoscope },
+    { id: 'banking', label: t('cat_bank', 'Banking & Bills'), icon: CreditCard },
+    { id: 'education', label: t('cat_edu', 'Education'), icon: GraduationCap },
+    { id: 'emergency', label: t('cat_emergency', 'Emergency'), icon: Siren },
   ];
 
   // 🌟 THE 6 PREMIUM ELEVATED ACTION TILES (MATCHING REFERENCE IMAGE 1:1)
   const quickActions = [
     {
       id: 'qa-bill',
-      title: 'Pay a Bill',
-      description: 'Electricity, Mobile, DTH & more',
+      title: t('qa_bill_title', 'Pay a Bill'),
+      description: t('qa_bill_desc', 'Electricity, Mobile, DTH & more'),
       href: '/services/electricity-bill',
       icon: CreditCard,
       accentBg: 'bg-gradient-to-br from-[#EEF4FF] via-[#F4F8FF] to-[#E0ECFD] dark:from-[#1E2638] dark:to-[#172030]',
@@ -117,8 +228,8 @@ export default function ServicesPage() {
     },
     {
       id: 'qa-scheme',
-      title: 'Apply for Scheme',
-      description: 'Government schemes & grants',
+      title: t('qa_scheme_title', 'Apply for Scheme'),
+      description: t('qa_scheme_desc', 'Government schemes & grants'),
       href: '/services/government-scholarship',
       icon: FileText,
       accentBg: 'bg-gradient-to-br from-[#F5F3FF] via-[#FAF8FF] to-[#ECE8FC] dark:from-[#261F3D] dark:to-[#1C172E]',
@@ -130,8 +241,8 @@ export default function ServicesPage() {
     },
     {
       id: 'qa-hospital',
-      title: 'Book Hospital',
-      description: 'Find & book appointments',
+      title: t('qa_hospital_title', 'Book Hospital'),
+      description: t('qa_hospital_desc', 'Find & book appointments'),
       href: '/services/hospital-appointment',
       icon: Stethoscope,
       accentBg: 'bg-gradient-to-br from-[#FFF1F2] via-[#FFF7F8] to-[#FCE3E6] dark:from-[#381F26] dark:to-[#2B171C]',
@@ -143,8 +254,8 @@ export default function ServicesPage() {
     },
     {
       id: 'qa-simplify',
-      title: 'Simplify Text',
-      description: 'Make complex content easy',
+      title: t('qa_simplify_title', 'Simplify Text'),
+      description: t('qa_simplify_desc', 'Make complex content easy'),
       href: '/simplifier',
       icon: Sparkles,
       accentBg: 'bg-gradient-to-br from-[#FFFBEB] via-[#FFFDF5] to-[#FEF3C7] dark:from-[#382F1E] dark:to-[#2A2317]',
@@ -156,8 +267,8 @@ export default function ServicesPage() {
     },
     {
       id: 'qa-audit',
-      title: 'Audit Service',
-      description: 'Check accessibility of any service',
+      title: t('qa_audit_title', 'Audit Service'),
+      description: t('qa_audit_desc', 'Check accessibility of any service'),
       href: '/audit',
       icon: ShieldCheck,
       accentBg: 'bg-gradient-to-br from-[#F0FDF4] via-[#F7FEFA] to-[#DCFCE7] dark:from-[#1E382A] dark:to-[#172B20]',
@@ -169,8 +280,8 @@ export default function ServicesPage() {
     },
     {
       id: 'qa-emergency',
-      title: 'Emergency Help',
-      description: 'Get urgent support instantly',
+      title: t('qa_emergency_title', 'Emergency Help'),
+      description: t('qa_emergency_desc', 'Get urgent support instantly'),
       href: '/emergency',
       icon: Siren,
       accentBg: 'bg-gradient-to-br from-[#FEF2F2] via-[#FFF8F8] to-[#FEE2E2] dark:from-[#381E1E] dark:to-[#2B1717]',
@@ -461,16 +572,16 @@ export default function ServicesPage() {
               <div className="flex-1 space-y-4 max-w-xl z-10">
                 <div className="space-y-1">
                   <h1 className="text-3xl sm:text-4xl font-black text-[#1E2024] dark:text-white tracking-tight leading-tight">
-                    {greetingTime}, <br className="hidden sm:inline" />
+                    {getGreeting()}, <br className="hidden sm:inline" />
                     <span className="text-[#1E3A2F] dark:text-emerald-400">{firstName}.</span>
                   </h1>
                   
                   <div className="space-y-0.5 pt-1">
                     <p className="text-sm font-bold text-[#1E2024] dark:text-white">
-                      What would you like to get done today?
+                      {t('hero_question', 'What would you like to get done today?')}
                     </p>
                     <p className="text-xs text-[#8B929A] font-medium leading-relaxed">
-                      ANUKOOL helps you discover and complete digital services in the way that works best for you.
+                      {t('hero_subtitle', 'ANUKOOL helps you discover and complete digital services in the way that works best for you.')}
                     </p>
                   </div>
                 </div>
@@ -480,17 +591,17 @@ export default function ServicesPage() {
                   <div className="flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                     <span className="text-xs font-black text-[#1E2024] dark:text-white">
-                      ANUKOOL Adaptive Intelligence
+                      {t('adaptive_intel', 'ANUKOOL Adaptive Intelligence')}
                     </span>
                   </div>
                   <p className="text-[11px] text-[#64748B] dark:text-slate-300 leading-relaxed">
-                    Based on your accessibility profile, we prioritize services that are easier to navigate with voice and simplified steps.
+                    {t('adaptive_desc', 'Based on your accessibility profile, we prioritize services that are easier to navigate with voice and simplified steps.')}
                   </p>
                   <button
                     onClick={() => speakText('Recommended services prioritized for your profile are displayed below.')}
                     className="text-xs font-black text-[#1E3A2F] dark:text-emerald-400 hover:underline flex items-center gap-1 pt-0.5"
                   >
-                    <span>Explore recommended</span>
+                    <span>{t('explore_rec', 'Explore recommended')}</span>
                     <ArrowRight className="w-3 h-3" />
                   </button>
                 </div>
@@ -517,11 +628,11 @@ export default function ServicesPage() {
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="text-base font-black text-[#1E2024] dark:text-white flex items-center gap-1.5">
-                    <span>Quick Actions</span>
+                    <span>{t('quick_actions', 'Quick Actions')}</span>
                     <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
                   </h3>
                   <p className="text-xs text-[#8B929A] font-medium">
-                    Popular tasks you can do right away
+                    {t('quick_actions_sub', 'Popular tasks you can do right away')}
                   </p>
                 </div>
 
@@ -529,7 +640,7 @@ export default function ServicesPage() {
                   href="/services"
                   className="text-xs font-bold text-[#2563EB] hover:underline flex items-center gap-1"
                 >
-                  <span>View all actions</span>
+                  <span>{t('view_all_actions', 'View all actions')}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
@@ -593,7 +704,7 @@ export default function ServicesPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search services, schemes, hospitals, bills, scholarships..."
+                placeholder={t('search_placeholder', 'Search services, schemes, hospitals, bills, scholarships...')}
                 className="w-full p-3.5 pl-12 pr-12 rounded-full bg-white dark:bg-[#232428] border border-slate-200/90 dark:border-white/10 shadow-xs text-xs font-semibold text-[#1E2024] dark:text-white outline-none focus:ring-2 focus:ring-[#2563EB] transition-all"
               />
               <button
@@ -638,13 +749,13 @@ export default function ServicesPage() {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <h3 className="font-black text-base text-[#1E2024] dark:text-white">
-                    Recommended for you
+                    {t('recommended_for_you', 'Recommended for you')}
                   </h3>
                   <button 
                     onClick={() => speakText('Displaying recommended scholarships, hospital booking, and utility bills.')}
                     className="text-xs font-bold text-[#2563EB] hover:underline"
                   >
-                    View all &rarr;
+                    {t('view_all', 'View all')} &rarr;
                   </button>
                 </div>
 
@@ -691,10 +802,10 @@ export default function ServicesPage() {
                         </div>
 
                         <div className="pt-2 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
-                          <div className="flex items-center gap-1 flex-wrap">
-                            {item.tags.map((t, idx) => (
-                              <span key={idx} className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded">
-                                {t}
+                          <div className="flex gap-1 flex-wrap">
+                            {item.tags.map((tg, i) => (
+                              <span key={i} className="text-[9px] font-extrabold text-[#059669] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded-md">
+                                {tg}
                               </span>
                             ))}
                           </div>
@@ -714,10 +825,10 @@ export default function ServicesPage() {
               
               <div className="flex justify-between items-center">
                 <h3 className="font-black text-base text-[#1E2024] dark:text-white">
-                  All Services (24)
+                  {t('all_services_catalog', 'All Services')} ({filteredServices.length})
                 </h3>
                 <span className="text-xs text-[#8B929A] font-bold">
-                  Sort: Most Relevant ▾
+                  {t('all_services_sub', 'Explore public services')}
                 </span>
               </div>
 
@@ -754,9 +865,9 @@ export default function ServicesPage() {
                     </div>
 
                     <div className="pt-2 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-[10px] font-bold text-[#2563EB]">
-                      <span className="text-[#059669]">Voice Supported</span>
+                      <span className="text-[#059669]">{t('voice_supported', 'Voice Supported')}</span>
                       <span className="flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
-                        <span>View</span>
+                        <span>{t('view', 'View')}</span>
                         <ArrowRight className="w-3 h-3" />
                       </span>
                     </div>
@@ -788,7 +899,7 @@ export default function ServicesPage() {
                 <Search className="w-3.5 h-3.5" />
                 <input 
                   type="text" 
-                  placeholder="Search me..." 
+                  placeholder={t('search_placeholder', 'Search me...').slice(0, 10) + '...'} 
                   className="bg-transparent outline-none w-20 text-xs font-medium text-[#1E2024] dark:text-white"
                 />
               </div>
@@ -807,11 +918,11 @@ export default function ServicesPage() {
                   <div className="flex items-center gap-2">
                     <span className="text-red-500 font-bold text-base">🚨</span>
                     <h3 className="font-black text-base text-[#1E2024] dark:text-white">
-                      Emergency AI Router
+                      {t('emergency_router', 'Emergency AI Router')}
                     </h3>
                   </div>
                   <p className="text-xs text-[#8B929A] font-medium mt-0.5">
-                    Fast care navigation when every minute matters.
+                    {t('emergency_sub', 'Fast care navigation when every minute matters.')}
                   </p>
                 </div>
 

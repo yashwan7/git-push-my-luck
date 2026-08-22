@@ -71,15 +71,23 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
           setThemeModeState(savedTheme);
         }
 
+        const savedLang = localStorage.getItem('anukool_language') as SupportedLanguage | null;
         const saved = localStorage.getItem('nayan_accessibility_profile');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed && typeof parsed === 'object') {
-            setProfile(prev => ({ ...DEFAULT_ACCESSIBILITY_PROFILE, ...prev, ...parsed }));
+            setProfile(prev => ({ 
+              ...DEFAULT_ACCESSIBILITY_PROFILE, 
+              ...prev, 
+              ...parsed,
+              ...(savedLang ? { language: savedLang } : {})
+            }));
             if (parsed.themeMode) {
               setThemeModeState(parsed.themeMode);
             }
           }
+        } else if (savedLang) {
+          setProfile(prev => ({ ...prev, language: savedLang }));
         }
       } catch (e) {
         console.warn('Failed to parse saved profile:', e);
@@ -91,7 +99,13 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
         if (res.ok) {
           const data = await res.json();
           if (data.success && data.profile) {
-            setProfile(prev => ({ ...DEFAULT_ACCESSIBILITY_PROFILE, ...prev, ...data.profile }));
+            const savedLang = localStorage.getItem('anukool_language') as SupportedLanguage | null;
+            setProfile(prev => ({ 
+              ...DEFAULT_ACCESSIBILITY_PROFILE, 
+              ...prev, 
+              ...data.profile,
+              ...(savedLang ? { language: savedLang } : {}) // prioritize user saved language
+            }));
             if (data.profile.themeMode) {
               setThemeModeState(data.profile.themeMode);
             }
@@ -165,7 +179,16 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
   };
 
   const updateProfileKey = <K extends keyof AccessibilityProfile>(key: K, value: AccessibilityProfile[K]) => {
-    setProfile(prev => ({ ...prev, [key]: value }));
+    setProfile(prev => {
+      const next = { ...prev, [key]: value };
+      try {
+        localStorage.setItem('nayan_accessibility_profile', JSON.stringify(next));
+        if (key === 'language') {
+          localStorage.setItem('anukool_language', String(value));
+        }
+      } catch (e) {}
+      return next;
+    });
     if (key === 'themeMode' && value) {
       setThemeModeState(value as ThemeMode);
     }
