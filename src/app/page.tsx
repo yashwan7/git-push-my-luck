@@ -123,63 +123,6 @@ export default function LandingPage() {
       <div className="w-full max-w-[1440px] bg-white dark:bg-[#13151B] rounded-[28px] sm:rounded-[36px] border border-slate-200/80 dark:border-white/10 shadow-sm p-6 sm:p-10 md:p-14 space-y-12 sm:space-y-14 transition-colors min-h-[calc(100vh-1.5rem)] flex flex-col justify-between">
 
         {/* ═══════════════════════════════════════════════════════════
-            TOP HEADER
-           ═══════════════════════════════════════════════════════════ */}
-        <header className="flex justify-between items-center">
-          {/* Logo & Title */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl bg-[#134233]/10 dark:bg-emerald-500/20 flex items-center justify-center text-[#134233] dark:text-emerald-400 border border-[#134233]/20">
-              <Eye className="w-5 h-5 stroke-[2.4]" />
-            </div>
-            <div>
-              <span className="font-black text-lg sm:text-xl tracking-tight text-slate-900 dark:text-white block leading-tight">
-                {t('appName', 'ANUKOOL')}
-              </span>
-              <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 block -mt-0.5">
-                {t('digitalInclusionLayer', 'Adaptive Access Layer')}
-              </span>
-            </div>
-          </Link>
-
-          {/* Right Controls: Language Selector + Sun/Moon + Get Started */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            
-            {/* Quick Language Dropdown */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-xs font-bold text-slate-700 dark:text-slate-200 shadow-2xs">
-              <Globe className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <select
-                value={profile.language}
-                onChange={(e) => updateProfileKey('language', e.target.value as SupportedLanguage)}
-                className="appearance-none bg-transparent cursor-pointer focus:outline-none pr-1 font-bold text-xs"
-              >
-                {Object.entries(LANGUAGE_NAMES).map(([code, langItem]) => (
-                  <option key={code} value={code} className="bg-white dark:bg-[#13151B] text-slate-900 dark:text-white">
-                    {langItem.nativeName} ({langItem.name})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Sun/Moon Toggle */}
-            <button
-              onClick={handleToggleTheme}
-              className="p-2 rounded-full border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
-              title="Toggle Appearance"
-            >
-              {resolvedTheme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
-            </button>
-
-            {/* Get Started Pill */}
-            <Link
-              href={getStartedHref}
-              className="px-4.5 py-2 rounded-full bg-[#134233] hover:bg-[#1a5542] text-white font-extrabold text-xs tracking-wide shadow-sm transition-all hover:scale-105"
-            >
-              {t('getStarted', 'Get Started →')}
-            </Link>
-          </div>
-        </header>
-
-        {/* ═══════════════════════════════════════════════════════════
             HERO SECTION (1:1 MATCHING USER'S REFERENCE IMAGE)
            ═══════════════════════════════════════════════════════════ */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
