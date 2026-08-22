@@ -323,7 +323,7 @@ export async function GET(req: NextRequest) {
           }
         : null,
       disclaimer:
-        'NAYAN provides care-navigation assistance. It does not diagnose medical conditions. Demo capacity is simulated. For life-threatening emergencies, immediately call emergency dispatch (112).',
+        'ANUKOOL provides care-navigation assistance. It does not diagnose medical conditions. Demo capacity is simulated. For life-threatening emergencies, immediately call emergency dispatch (112).',
     });
   } catch (error: any) {
     return NextResponse.json(

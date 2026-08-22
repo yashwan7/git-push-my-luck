@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     const { amount = 5000, recipientName = 'Ramesh', recipientAccount = 'XXXXXX1234' } = body;
 
     const numAmount = Number(amount);
-    const transactionId = 'NAYAN-DEMO-48291';
+    const transactionId = 'ANUKOOL-DEMO-48291';
     const timestamp = new Date().toLocaleString('en-IN', {
       timeZone: 'Asia/Kolkata',
       day: 'numeric',
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
       senderAccount: MOCK_BANK_ACCOUNT.maskedAccountNumber,
       timestamp,
       remainingBalance: newBalance,
-      message: 'Payment completed successfully via NAYAN Adaptive Payment Layer',
+      message: 'Payment completed successfully via ANUKOOL Adaptive Payment Layer',
     });
   } catch (error: any) {
     return NextResponse.json(

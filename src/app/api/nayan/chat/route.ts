@@ -50,11 +50,11 @@ export async function POST(req: NextRequest) {
       lower.includes('ಓದು')
     ) {
       if (language === 'hi') {
-        replyText = 'ज़रूर! मैं आपको राष्ट्रीय योग्यता छात्रवृत्ति आवेदन पर ले जा रही हूँ। NAYAN आपको हर चरण में सहायता करेगा।';
+        replyText = 'ज़रूर! मैं आपको राष्ट्रीय योग्यता छात्रवृत्ति आवेदन पर ले जा रही हूँ। ANUKOOL आपको हर चरण में सहायता करेगा।';
       } else if (language === 'kn') {
-        replyText = 'ಖಂಡಿತ! ನಾನು ನಿಮ್ಮನ್ನು ರಾಷ್ಟ್ರೀಯ ಮೆರಿಟ್ ವಿದ್ಯಾರ್ಥಿವೇತನ ಅರ್ಜಿ ಪುಟಕ್ಕೆ ಕರೆದೊಯ್ಯುತ್ತಿದ್ದೇನೆ. NAYAN ನಿಮಗೆ ಹಂತ-ಹಂತವಾಗಿ ಮಾರ್ಗದರ್ಶನ ನೀಡುತ್ತದೆ.';
+        replyText = 'ಖಂಡಿತ! ನಾನು ನಿಮ್ಮನ್ನು ರಾಷ್ಟ್ರೀಯ ಮೆರಿಟ್ ವಿದ್ಯಾರ್ಥಿವೇತನ ಅರ್ಜಿ ಪುಟಕ್ಕೆ ಕರೆದೊಯ್ಯುತ್ತಿದ್ದೇನೆ. ANUKOOL ನಿಮಗೆ ಹಂತ-ಹಂತವಾಗಿ ಮಾರ್ಗದರ್ಶನ ನೀಡುತ್ತದೆ.';
       } else {
-        replyText = 'Sure! Navigating you to the National Merit Scholarship application. NAYAN will guide you through each simple step.';
+        replyText = 'Sure! Navigating you to the National Merit Scholarship application. ANUKOOL will guide you through each simple step.';
       }
       action = { type: 'navigate', target: '/services/government-scholarship' };
     }
@@ -131,11 +131,11 @@ export async function POST(req: NextRequest) {
       lower.includes('ಆಡಿಟ್')
     ) {
       if (language === 'hi') {
-        replyText = 'मैं NAYAN एक्सेसिबिलिटी ऑडिट टूल खोल रही हूँ। आप किसी भी सरकारी या अस्पताल वेबसाइट की पहुंच जांच सकते हैं।';
+        replyText = 'मैं ANUKOOL एक्सेसिबिलिटी ऑडिट टूल खोल रही हूँ। आप किसी भी सरकारी या अस्पताल वेबसाइट की पहुंच जांच सकते हैं।';
       } else if (language === 'kn') {
-        replyText = 'ನಾನು NAYAN ಆಕ್ಸೆಸಿಬಿಲಿಟಿ ಆಡಿಟ್ ಟೂಲ್ ತೆರೆಯುತ್ತಿದ್ದೇನೆ. ನೀವು ಯಾವುದೇ ಡಿಜಿಟಲ್ ಪೋರ್ಟಲ್ ಅನ್ನು ಪರಿಶೀಲಿಸಬಹುದು.';
+        replyText = 'ನಾನು ANUKOOL ಆಕ್ಸೆಸಿಬಿಲಿಟಿ ಆಡಿಟ್ ಟೂಲ್ ತೆರೆಯುತ್ತಿದ್ದೇನೆ. ನೀವು ಯಾವುದೇ ಡಿಜಿಟಲ್ ಪೋರ್ಟಲ್ ಅನ್ನು ಪರಿಶೀಲಿಸಬಹುದು.';
       } else {
-        replyText = 'Opening the NAYAN Accessibility Audit Tool. You can check the accessibility index of any public digital service.';
+        replyText = 'Opening the ANUKOOL Accessibility Audit Tool. You can check the accessibility index of any public digital service.';
       }
       action = { type: 'navigate', target: '/audit' };
     }
@@ -197,9 +197,9 @@ export async function POST(req: NextRequest) {
     // 10. Default General Conversational Guidance
     else {
       if (language === 'hi') {
-        replyText = `मैंने सुना: "${message}"। मैं NAYAN हूँ। आप मुझसे छात्रवृत्ति आवेदन, अस्पताल की अपॉइंटमेंट, बिजली बिल भुगतान, या आपातकालीन सहायता के लिए बोल सकते हैं।`;
+        replyText = `मैंने सुना: "${message}"। मैं ANUKOOL हूँ। आप मुझसे छात्रवृत्ति आवेदन, अस्पताल की अपॉइंटमेंट, बिजली बिल भुगतान, या आपातकालीन सहायता के लिए बोल सकते हैं।`;
       } else if (language === 'kn') {
-        replyText = `ನಾನು ಕೇಳಿದೆ: "${message}". ನಾನು NAYAN. ವಿದ್ಯಾರ್ಥಿವೇತನ, ಆಸ್ಪತ್ರೆ ಬುಕಿಂಗ್, ಬಿಲ್ ಪಾವತಿ ಅಥವಾ ತುರ್ತು ಸಹಾಯಕ್ಕಾಗಿ ನೀವು ನನಗೆ ತಿಳಿಸಬಹುದು.`;
+        replyText = `ನಾನು ಕೇಳಿದೆ: "${message}". ನಾನು ANUKOOL. ವಿದ್ಯಾರ್ಥಿವೇತನ, ಆಸ್ಪತ್ರೆ ಬುಕಿಂಗ್, ಬಿಲ್ ಪಾವತಿ ಅಥವಾ ತುರ್ತು ಸಹಾಯಕ್ಕಾಗಿ ನೀವು ನನಗೆ ತಿಳಿಸಬಹುದು.`;
       } else {
         replyText = `I understood: "${message}". I can help you apply for scholarships, book hospital OPD slots, pay electricity bills, or adjust visual and motor accessibility. What would you like to do?`;
       }

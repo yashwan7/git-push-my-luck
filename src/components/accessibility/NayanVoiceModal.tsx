@@ -19,7 +19,7 @@ import {
   Radio
 } from 'lucide-react';
 
-export function NayanVoiceModal() {
+export function AnukoolVoiceModal() {
   const {
     isListening,
     isSpeaking,
@@ -82,7 +82,7 @@ export function NayanVoiceModal() {
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-in fade-in duration-200"
       role="dialog"
       aria-modal="true"
-      aria-label="NAYAN AI Conversational Voice Assistant"
+      aria-label="ANUKOOL AI Conversational Voice Assistant"
     >
       <div className="relative w-full max-w-2xl bg-zinc-950 border-2 border-civic-blue/60 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
@@ -109,7 +109,7 @@ export function NayanVoiceModal() {
 
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-xl font-extrabold text-white">NAYAN Conversational AI</h2>
+                <h2 className="text-xl font-extrabold text-white">ANUKOOL Conversational AI</h2>
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
                   Voice AI Powered
                 </span>
@@ -190,9 +190,9 @@ export function NayanVoiceModal() {
               {isListening 
                 ? '🎙️ Listening to you now... Speak anything'
                 : isSpeaking 
-                ? '🔊 Nayan is speaking...'
+                ? '🔊 Anukool is speaking...'
                 : isProcessing 
-                ? '🧠 Nayan AI is thinking & understanding...'
+                ? '🧠 Anukool AI is thinking & understanding...'
                 : 'Tap microphone to speak'}
             </span>
             {transcript && (
@@ -247,7 +247,7 @@ export function NayanVoiceModal() {
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" />
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce delay-100" />
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce delay-200" />
-              <span>Nayan AI is processing...</span>
+              <span>Anukool AI is processing...</span>
             </div>
           )}
         </div>
@@ -272,7 +272,7 @@ export function NayanVoiceModal() {
             type="text"
             value={inputVal}
             onChange={(e) => setInputVal(e.target.value)}
-            placeholder="Type or speak anything to Nayan..."
+            placeholder="Type or speak anything to Anukool..."
             className="flex-1 p-3.5 rounded-xl bg-zinc-950 border border-zinc-700 text-white text-sm focus:border-blue-500 outline-none"
           />
 

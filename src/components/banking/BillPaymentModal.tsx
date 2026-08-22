@@ -99,7 +99,7 @@ export function BillPaymentModal({
                 ₹{successBill.amount.toLocaleString('en-IN')} paid to <strong>{successBill.billerName}</strong>
               </p>
               <p className="text-xs text-emerald-600 dark:text-emerald-400 font-mono pt-1">
-                Receipt #BBPS-NAYAN-{Date.now().toString().slice(-6)}
+                Receipt #BBPS-ANUKOOL-{Date.now().toString().slice(-6)}
               </p>
             </div>
             <button

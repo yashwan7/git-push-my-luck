@@ -55,7 +55,7 @@ function LoginContent() {
     <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 -my-6 sm:-my-10 min-h-[calc(100vh-60px)] flex flex-col justify-between overflow-hidden bg-black text-white font-sans">
       
       {/* ─────────────────────────────────────────────────────────────
-          NAYAN HERO BACKGROUND (VIDEO + SCRIM + DOT GRID)
+          ANUKOOL HERO BACKGROUND (VIDEO + SCRIM + DOT GRID)
          ───────────────────────────────────────────────────────────── */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <video

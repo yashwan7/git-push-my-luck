@@ -74,11 +74,11 @@ export function CompareSplitView({ service, onComplete }: CompareSplitViewProps)
           </div>
         </div>
 
-        {/* Right Side: NAYAN Transformed View */}
+        {/* Right Side: ANUKOOL Transformed View */}
         <div className="space-y-3">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-civic-green/10 text-civic-green font-bold text-acc-xs border border-civic-green/20">
             <Layers className="w-4 h-4" />
-            <span>{t('nayanAdaptiveForm', 'NAYAN Adaptive Experience')}</span>
+            <span>{t('nayanAdaptiveForm', 'ANUKOOL Adaptive Experience')}</span>
           </div>
 
           <div className="bg-[var(--bg-surface)] p-2 rounded-2xl border-2 border-civic-blue shadow-lg">

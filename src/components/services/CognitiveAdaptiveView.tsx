@@ -61,7 +61,7 @@ export function CognitiveAdaptiveView({ service: rawService, onComplete }: Cogni
         // graceful offline fallback
       });
 
-      speak(t('submittedSuccessDesc', 'Great job! NAYAN has completed all steps and submitted your application.'));
+      speak(t('submittedSuccessDesc', 'Great job! ANUKOOL has completed all steps and submitted your application.'));
       setTimeout(onComplete, 2500);
     }
   };
@@ -88,7 +88,7 @@ export function CognitiveAdaptiveView({ service: rawService, onComplete }: Cogni
             {t('submittedSuccess', 'Application Submitted Successfully!')}
           </h2>
           <p className="text-acc-base text-slate-200">
-            {t('submittedSuccessDesc', 'NAYAN has safely submitted your application.')}
+            {t('submittedSuccessDesc', 'ANUKOOL has safely submitted your application.')}
           </p>
         </div>
         <div className="p-4 rounded-xl bg-white/10 text-acc-sm font-semibold">

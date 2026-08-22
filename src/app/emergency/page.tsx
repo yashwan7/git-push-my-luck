@@ -59,7 +59,7 @@ export default function EmergencyPage() {
               {t('emergencyBadge', 'Emergency Accessibility Layer • Instant Support')}
             </span>
             <h1 className="text-acc-3xl font-extrabold tracking-tight">
-              {t('emergencyTitle', 'NAYAN Immediate Assistance ("I Need Help")')}
+              {t('emergencyTitle', 'ANUKOOL Immediate Assistance ("I Need Help")')}
             </h1>
           </div>
         </div>

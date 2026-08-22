@@ -15,7 +15,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 
-interface NayanFinancialAssistantProps {
+interface AnukoolFinancialAssistantProps {
   balance: number;
   foodExpense: number;
   language?: string;
@@ -23,13 +23,13 @@ interface NayanFinancialAssistantProps {
   onOpenBills?: () => void;
 }
 
-export function NayanFinancialAssistant({
+export function AnukoolFinancialAssistant({
   balance,
   foodExpense = 6420,
   language = 'en',
   onTriggerTransfer,
   onOpenBills,
-}: NayanFinancialAssistantProps) {
+}: AnukoolFinancialAssistantProps) {
   const { speak, isSpeaking } = useVoice();
   const [query, setQuery] = useState('');
   const [conversation, setConversation] = useState<Array<{ role: 'user' | 'assistant'; text: string; action?: string }>>([
@@ -120,7 +120,7 @@ export function NayanFinancialAssistant({
           </div>
           <div>
             <h3 className="text-lg font-black text-[var(--text-primary)] flex items-center gap-2">
-              <span>NAYAN Financial Assistant</span>
+              <span>ANUKOOL Financial Assistant</span>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">
                 VOICE & TEXT
               </span>
@@ -168,7 +168,7 @@ export function NayanFinancialAssistant({
         {isProcessing && (
           <div className="flex gap-2 items-center text-xs text-blue-500 font-semibold italic">
             <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />
-            <span>NAYAN is analyzing your financial data...</span>
+            <span>ANUKOOL is analyzing your financial data...</span>
           </div>
         )}
       </div>

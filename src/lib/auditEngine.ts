@@ -18,7 +18,7 @@ export function runAccessibilityAudit(urlOrName: string): AuditMetrics {
           severity: 'high',
           category: 'Language Clarity',
           description: 'High density of legalistic bureaucracy ("Section 12(B) forfeiture clause")',
-          recommendation: 'Apply NAYAN Semantic Simplifier to convert to Plain Grade 4 language.'
+          recommendation: 'Apply ANUKOOL Semantic Simplifier to convert to Plain Grade 4 language.'
         },
         {
           severity: 'high',
@@ -30,13 +30,13 @@ export function runAccessibilityAudit(urlOrName: string): AuditMetrics {
           severity: 'medium',
           category: 'Cognitive Load',
           description: '15 form fields displayed simultaneously on a single scroll view',
-          recommendation: 'Transform workflow into NAYAN 1-question-per-screen Focus Mode.'
+          recommendation: 'Transform workflow into ANUKOOL 1-question-per-screen Focus Mode.'
         },
         {
           severity: 'medium',
           category: 'Visual Contrast',
           description: 'Help text text-to-background contrast ratio is 3.2:1 (below WCAG AAA 7:1)',
-          recommendation: 'Enable NAYAN High-Contrast Ink Navy or High-Contrast Dark theme.'
+          recommendation: 'Enable ANUKOOL High-Contrast Ink Navy or High-Contrast Dark theme.'
         }
       ]
     };
@@ -56,13 +56,13 @@ export function runAccessibilityAudit(urlOrName: string): AuditMetrics {
           severity: 'high',
           category: 'Multilingual Support',
           description: 'Clinical terminology available only in English; no voice synthesis in regional languages',
-          recommendation: 'Enable NAYAN Kannada/Hindi Multilingual Bridge with TTS playback.'
+          recommendation: 'Enable ANUKOOL Kannada/Hindi Multilingual Bridge with TTS playback.'
         },
         {
           severity: 'medium',
           category: 'Navigation Complexity',
           description: 'Nested dropdown menus require multi-tap precise cursor hover',
-          recommendation: 'Use NAYAN Single-Tap Large Category Selector.'
+          recommendation: 'Use ANUKOOL Single-Tap Large Category Selector.'
         }
       ]
     };
@@ -81,19 +81,19 @@ export function runAccessibilityAudit(urlOrName: string): AuditMetrics {
         severity: 'high',
         category: 'Interaction Accessibility',
         description: 'Small touch targets (< 32px height) on mobile viewports',
-        recommendation: 'Enlarge control heights to 60px with NAYAN Motor Assist.'
+        recommendation: 'Enlarge control heights to 60px with ANUKOOL Motor Assist.'
       },
       {
         severity: 'high',
         category: 'Language Complexity',
         description: 'Technical terminology in customer policy declarations',
-        recommendation: 'Rewrite declarations using NAYAN Plain Language Generator.'
+        recommendation: 'Rewrite declarations using ANUKOOL Plain Language Generator.'
       },
       {
         severity: 'medium',
         category: 'Audio Alternatives',
         description: 'No voice-guided audio prompts for visually impaired screen-reader users',
-        recommendation: 'Activate NAYAN Speech Engine audio prompts.'
+        recommendation: 'Activate ANUKOOL Speech Engine audio prompts.'
       }
     ]
   };

@@ -28,7 +28,7 @@ export function TrustExplainDrawer({ result, isOpen, onClose }: TrustExplainDraw
             </div>
             <div>
               <h2 id="trust-drawer-title" className="text-acc-lg font-bold">
-                Why NAYAN Adapted This Information
+                Why ANUKOOL Adapted This Information
               </h2>
               <p className="text-acc-xs text-[var(--text-secondary)]">
                 Trust & AI Explainability Layer
@@ -55,7 +55,7 @@ export function TrustExplainDrawer({ result, isOpen, onClose }: TrustExplainDraw
                 Original Intent & Legal Meaning 100% Preserved
               </span>
               <span className="text-acc-xs text-slate-600 dark:text-slate-300">
-                NAYAN simplifies sentence structure without altering rights or requirements.
+                ANUKOOL simplifies sentence structure without altering rights or requirements.
               </span>
             </div>
           </div>
@@ -80,7 +80,7 @@ export function TrustExplainDrawer({ result, isOpen, onClose }: TrustExplainDraw
 
             <div className="p-3.5 rounded-xl bg-civic-blue/10 border border-civic-blue/30">
               <span className="text-acc-xs font-bold text-civic-blue block mb-1 uppercase tracking-wider">
-                NAYAN Simplified Phrasing
+                ANUKOOL Simplified Phrasing
               </span>
               <p className="text-acc-base font-bold text-[var(--text-primary)]">
                 &ldquo;{result.simplifiedText}&rdquo;

@@ -175,7 +175,7 @@ export const MOCK_TRANSACTIONS: BankTransaction[] = [
     status: 'completed',
     recipientOrSource: 'Apple Subscription',
     paymentMethod: 'Card •••• 2734',
-    referenceId: 'NAYAN-APL-94821',
+    referenceId: 'ANUKOOL-APL-94821',
     note: 'iCloud + Music Subscription',
   },
   {

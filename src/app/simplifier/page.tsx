@@ -34,7 +34,7 @@ export default function SimplifierPage() {
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-acc-xs font-bold text-civic-amber uppercase tracking-widest">
           <Sparkles className="w-4 h-4" />
-          <span>{t('simplifierBadge', 'NAYAN AI Semantic Simplification Engine')}</span>
+          <span>{t('simplifierBadge', 'ANUKOOL AI Semantic Simplification Engine')}</span>
         </div>
         <h1 className="text-acc-4xl font-extrabold text-[var(--text-primary)] tracking-tight">
           {t('simplifierTitle', 'Bureaucratic Terminology & Plain Language Converter')}
@@ -81,7 +81,7 @@ export default function SimplifierPage() {
           
           <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-4">
             <span className="text-acc-xs font-extrabold text-civic-blue uppercase tracking-widest">
-              {t('plainLanguageResult', 'NAYAN Plain-Language Result')}
+              {t('plainLanguageResult', 'ANUKOOL Plain-Language Result')}
             </span>
             <button
               onClick={() => speak(result.simplifiedText)}
@@ -99,7 +99,7 @@ export default function SimplifierPage() {
             </div>
 
             <div className="p-6 rounded-2xl bg-civic-blue/10 border-2 border-civic-blue/30 space-y-2">
-              <span className="text-acc-xs font-bold text-civic-blue uppercase">{t('nayanSimplifiedNotice', 'NAYAN Simplified Meaning')}</span>
+              <span className="text-acc-xs font-bold text-civic-blue uppercase">{t('nayanSimplifiedNotice', 'ANUKOOL Simplified Meaning')}</span>
               <h3 className="text-acc-2xl font-extrabold text-[var(--text-primary)] leading-tight">
                 {result.simplifiedText}
               </h3>
@@ -112,7 +112,7 @@ export default function SimplifierPage() {
               className="px-5 py-2.5 rounded-xl bg-civic-amber/10 text-civic-amber font-extrabold text-acc-sm hover:bg-civic-amber/20 transition-colors flex items-center gap-2"
             >
               <ShieldCheck className="w-5 h-5" />
-              <span>{t('whySimplified', 'Why did NAYAN simplify this?')}</span>
+              <span>{t('whySimplified', 'Why did ANUKOOL simplify this?')}</span>
             </button>
 
             <span className="text-acc-xs font-bold text-civic-green">

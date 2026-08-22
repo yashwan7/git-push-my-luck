@@ -55,7 +55,7 @@ export default function AuditPage() {
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-acc-xs font-bold text-civic-blue uppercase tracking-widest">
           <Activity className="w-4 h-4" />
-          <span>{t('auditBadge', 'NAYAN Accessibility Intelligence & Audit Layer')}</span>
+          <span>{t('auditBadge', 'ANUKOOL Accessibility Intelligence & Audit Layer')}</span>
         </div>
         <h1 className="text-acc-4xl font-extrabold text-[var(--text-primary)] tracking-tight">
           {t('auditTitle', 'Check Service Accessibility Index')}
@@ -93,7 +93,7 @@ export default function AuditPage() {
             ) : (
               <>
                 <Activity className="w-5 h-5 text-civic-amber" />
-                <span>{t('runAudit', 'Run NAYAN Audit')}</span>
+                <span>{t('runAudit', 'Run ANUKOOL Audit')}</span>
               </>
             )}
           </button>
@@ -133,7 +133,7 @@ export default function AuditPage() {
             <div className="p-8 rounded-3xl bg-civic-navy text-white border-2 border-civic-green space-y-4 shadow-xl">
               <div className="flex items-center justify-between">
                 <span className="text-acc-xs font-bold text-civic-green uppercase tracking-wider block">
-                  {t('scoreAfter', 'Adapted NAYAN Score')}
+                  {t('scoreAfter', 'Adapted ANUKOOL Score')}
                 </span>
                 <span className="px-2.5 py-0.5 rounded bg-civic-green/20 text-civic-green text-acc-xs font-bold">
                   +26 Point Boost
@@ -150,7 +150,7 @@ export default function AuditPage() {
                 className="w-full py-3 rounded-xl bg-civic-green text-white font-extrabold text-acc-sm hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 shadow-lg"
               >
                 <Sparkles className="w-4 h-4 text-yellow-300" />
-                <span>{t('letNayanAdaptIt', 'Let NAYAN Adapt It Now')} &rarr;</span>
+                <span>{t('letAnukoolAdaptIt', 'Let ANUKOOL Adapt It Now')} &rarr;</span>
               </button>
             </div>
 
@@ -197,7 +197,7 @@ export default function AuditPage() {
                     {issue.description}
                   </h3>
                   <p className="text-acc-xs font-semibold text-civic-blue">
-                    NAYAN Recommendation: {issue.recommendation}
+                    ANUKOOL Recommendation: {issue.recommendation}
                   </p>
                 </div>
               ))}

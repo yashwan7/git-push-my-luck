@@ -66,7 +66,7 @@ export function MotorAdaptiveView({ service: rawService, onComplete }: MotorAdap
       }),
     }).catch(() => {});
 
-    speak(t('submittedSuccessDesc', 'Application completed via NAYAN Motor Assistance.'));
+    speak(t('submittedSuccessDesc', 'Application completed via ANUKOOL Motor Assistance.'));
     setTimeout(onComplete, 2000);
   };
 
@@ -91,7 +91,7 @@ export function MotorAdaptiveView({ service: rawService, onComplete }: MotorAdap
           </div>
           <div>
             <span className="text-acc-xs font-bold uppercase tracking-wider text-amber-800">
-              {t('nayanMotor', 'NAYAN Motor Accessibility & Dwell Click Layer')}
+              {t('nayanMotor', 'ANUKOOL Motor Accessibility & Dwell Click Layer')}
             </span>
             <h2 className="text-acc-xl font-extrabold">
               {t('optLargeTargets', 'Extra Large 68px Touch Targets & Dwell-Assist Active')}

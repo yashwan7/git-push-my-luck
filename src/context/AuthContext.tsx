@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         userObj.user_metadata?.full_name ||
         userObj.user_metadata?.name ||
         userObj.email?.split('@')[0] ||
-        'NAYAN User',
+        'ANUKOOL User',
       avatarUrl:
         userObj.user_metadata?.avatar_url ||
         userObj.user_metadata?.picture,

@@ -92,7 +92,7 @@ export function TransactionSecurityCheck({
             <Info className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
             <div>
               <span className="font-bold block text-blue-600 dark:text-blue-400 mb-0.5">
-                NAYAN Assistant Explanation
+                ANUKOOL Assistant Explanation
               </span>
               <p className="italic text-[var(--text-secondary)]">
                 {language === 'kn'
@@ -218,7 +218,7 @@ export function TransactionSecurityCheck({
           </div>
 
           <p className="text-[10px] text-[var(--text-secondary)] font-mono">
-            Simulated Banking Auth Gateway &bull; NAYAN Security Shield
+            Simulated Banking Auth Gateway &bull; ANUKOOL Security Shield
           </p>
 
         </div>

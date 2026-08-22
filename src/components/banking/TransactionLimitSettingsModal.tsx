@@ -50,7 +50,7 @@ export function TransactionLimitSettingsModal({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-bold text-amber-500 uppercase tracking-widest">
             <Lock className="w-4 h-4" />
-            <span>Nayan Settings &bull; Security</span>
+            <span>Anukool Settings &bull; Security</span>
           </div>
           <button
             onClick={onClose}

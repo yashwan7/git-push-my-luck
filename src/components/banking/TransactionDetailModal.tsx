@@ -20,7 +20,7 @@ interface TransactionDetailModalProps {
   transaction: BankTransaction | null;
   isOpen: boolean;
   onClose: () => void;
-  onAskNayan: (query: string) => void;
+  onAskAnukool: (query: string) => void;
   language?: string;
 }
 
@@ -28,7 +28,7 @@ export function TransactionDetailModal({
   transaction,
   isOpen,
   onClose,
-  onAskNayan,
+  onAskAnukool,
   language = 'en',
 }: TransactionDetailModalProps) {
   const [copied, setCopied] = React.useState(false);
@@ -46,7 +46,7 @@ export function TransactionDetailModal({
   };
 
   const handleExplain = () => {
-    onAskNayan(`Explain this transaction of ₹${transaction.amount} with ${transaction.title}`);
+    onAskAnukool(`Explain this transaction of ₹${transaction.amount} with ${transaction.title}`);
     onClose();
   };
 
@@ -108,7 +108,7 @@ export function TransactionDetailModal({
           </div>
           <div className="flex justify-between py-1.5">
             <span className="text-[var(--text-secondary)]">Payment Method</span>
-            <span className="font-semibold text-[var(--text-primary)]">{transaction.paymentMethod || 'NAYAN Direct Bank Transfer'}</span>
+            <span className="font-semibold text-[var(--text-primary)]">{transaction.paymentMethod || 'ANUKOOL Direct Bank Transfer'}</span>
           </div>
           {transaction.referenceId && (
             <div className="flex justify-between items-center py-1.5">
@@ -138,7 +138,7 @@ export function TransactionDetailModal({
             className="flex-1 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs sm:text-sm shadow-xl flex items-center justify-center gap-2 transition-all"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Ask NAYAN to Explain</span>
+            <span>Ask ANUKOOL to Explain</span>
           </button>
           <button
             onClick={onClose}

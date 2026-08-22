@@ -24,7 +24,7 @@ interface ServiceDetailModalProps {
   service: ServiceDefinition | null;
   isOpen: boolean;
   onClose: () => void;
-  onAskNayan: (query: string) => void;
+  onAskAnukool: (query: string) => void;
   language?: string;
 }
 
@@ -32,7 +32,7 @@ export function ServiceDetailModal({
   service,
   isOpen,
   onClose,
-  onAskNayan,
+  onAskAnukool,
   language = 'en',
 }: ServiceDetailModalProps) {
   const router = useRouter();
@@ -45,7 +45,7 @@ export function ServiceDetailModal({
   };
 
   const handleExplain = () => {
-    onAskNayan(`Explain the steps and requirements for ${service.title}`);
+    onAskAnukool(`Explain the steps and requirements for ${service.title}`);
     onClose();
   };
 
@@ -109,7 +109,7 @@ export function ServiceDetailModal({
         {/* Accessibility Features Box */}
         <div className="p-4 rounded-2xl bg-[#ECECEC]/60 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 space-y-2.5">
           <span className="text-xs font-bold text-[#1E2024] dark:text-white block uppercase tracking-wider">
-            NAYAN Accessibility Adaptations
+            ANUKOOL Accessibility Adaptations
           </span>
           <div className="grid grid-cols-2 gap-2 text-xs text-[#8B929A]">
             <div className="flex items-center gap-2 font-medium">
@@ -172,7 +172,7 @@ export function ServiceDetailModal({
             className="px-5 py-4 rounded-2xl bg-[#ECECEC] dark:bg-white/10 hover:opacity-80 text-[#1E2024] dark:text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all"
           >
             <Sparkles className="w-4 h-4 text-[#779AE6]" />
-            <span>Ask NAYAN</span>
+            <span>Ask ANUKOOL</span>
           </button>
         </div>
 

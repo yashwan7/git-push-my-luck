@@ -104,7 +104,7 @@ export const MOCK_SERVICES: ServiceDefinition[] = [
         options: [
           { value: 'confirm', label: 'I confirm all information provided is accurate.', labelKannada: 'ನೀಡಿರುವ ಎಲ್ಲ ವಿವರಗಳು ನಿಜವೆಂದು ನಾನು ದೃಢೀಕರಿಸುತ್ತೇನೆ.', labelHindi: 'मैं पुष्टि करता हूं कि सभी जानकारी सही है।' }
         ],
-        helpText: 'NAYAN will confirm your action before final sending.',
+        helpText: 'ANUKOOL will confirm your action before final sending.',
         audioPrompt: 'Step 5: Final review. Confirm your information and tap submit.',
       }
     ]
@@ -208,11 +208,11 @@ export const MOCK_SERVICES: ServiceDefinition[] = [
   },
   {
     id: 'banking-billpay',
-    title: 'Nayan Cooperative Utility & Bill Payment',
+    title: 'Anukool Cooperative Utility & Bill Payment',
     titleKannada: 'ನಯನ್ ಬ್ಯಾಂಕ್ ವಿದ್ಯುತ್ ಮತ್ತು ಬಿಲ್ಲು ಪಾವತಿ',
     titleHindi: 'नयन बैंक बिल भुगतान',
     category: 'banking',
-    organization: 'Nayan Inclusive Financial Infrastructure',
+    organization: 'Anukool Inclusive Financial Infrastructure',
     description: 'Direct accessible payment gateway for electricity, water, and essential monthly service utility bills.',
     estimatedTime: '3 minutes',
     badge: 'Banking & Utility',

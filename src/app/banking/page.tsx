@@ -13,7 +13,7 @@ import { TransactionDetailModal } from '@/components/banking/TransactionDetailMo
 import { BillPaymentModal } from '@/components/banking/BillPaymentModal';
 import { ReceiveMoneyModal } from '@/components/banking/ReceiveMoneyModal';
 import { ManageCardsModal } from '@/components/banking/ManageCardsModal';
-import { NayanFinancialAssistant } from '@/components/banking/NayanFinancialAssistant';
+import { AnukoolFinancialAssistant } from '@/components/banking/NayanFinancialAssistant';
 import { 
   BankAccount, 
   BankCard,
@@ -259,7 +259,7 @@ export default function AdaptiveBankingPage() {
           dateFormatted: 'Today',
           status: 'completed',
           recipientOrSource: selectedRecipient.name,
-          paymentMethod: 'NAYAN Direct Bank Transfer',
+          paymentMethod: 'ANUKOOL Direct Bank Transfer',
           referenceId: data.transactionId,
           note: transferNote,
         };
@@ -295,7 +295,7 @@ export default function AdaptiveBankingPage() {
         transaction={selectedTxForDetail}
         isOpen={Boolean(selectedTxForDetail)}
         onClose={() => setSelectedTxForDetail(null)}
-        onAskNayan={(query) => {
+        onAskAnukool={(query) => {
           speakCurrentStep(`Explaining transaction: ${query}`);
         }}
         language={lang}
@@ -320,7 +320,7 @@ export default function AdaptiveBankingPage() {
         card={primaryCard}
         isOpen={isCardModalOpen}
         onClose={() => setIsCardModalOpen(false)}
-        onUpdateCard={(updated) => setPrimaryCard(prev => ({ ...prev, ...updated }))}
+        onUpdateCard={(updated: Partial<BankCard>) => setPrimaryCard(prev => ({ ...prev, ...updated }))}
       />
 
       {/* ─────────────────────────────────────────────────────────────
@@ -937,12 +937,12 @@ export default function AdaptiveBankingPage() {
                 </div>
               </div>
 
-              {/* NAYAN CONVERSATIONAL ASSISTANT */}
-              <NayanFinancialAssistant
+              {/* ANUKOOL CONVERSATIONAL ASSISTANT */}
+              <AnukoolFinancialAssistant
                 balance={account.availableBalance}
                 foodExpense={6420}
                 language={lang}
-                onTriggerTransfer={(name, amt) => {
+                onTriggerTransfer={(name: string, amt: number) => {
                   const found = beneficiaries.find(b => b.name.toLowerCase().includes(name.toLowerCase())) || beneficiaries[0];
                   setSelectedRecipient(found);
                   setTransferAmount(amt);

@@ -43,7 +43,7 @@ export function VisualAdaptiveView({ service: rawService, onComplete }: VisualAd
       }),
     }).catch(() => {});
 
-    speak(t('submittedSuccessDesc', 'Application submitted successfully through NAYAN Visual Adaptive Layer.'));
+    speak(t('submittedSuccessDesc', 'Application submitted successfully through ANUKOOL Visual Adaptive Layer.'));
     setTimeout(onComplete, 2000);
   };
 
@@ -73,7 +73,7 @@ export function VisualAdaptiveView({ service: rawService, onComplete }: VisualAd
             </div>
             <div>
               <span className="text-acc-xs font-bold uppercase tracking-wider text-civic-blue">
-                {t('nayanVisual', 'NAYAN Visual Accessibility Mode')}
+                {t('nayanVisual', 'ANUKOOL Visual Accessibility Mode')}
               </span>
               <h2 className="text-acc-2xl font-extrabold text-[var(--text-primary)]">
                 {service.title}

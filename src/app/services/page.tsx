@@ -354,7 +354,7 @@ export default function ServicesPage() {
         service={selectedServiceForModal}
         isOpen={Boolean(selectedServiceForModal)}
         onClose={() => setSelectedServiceForModal(null)}
-        onAskNayan={(query) => {
+        onAskAnukool={(query) => {
           speakText(`Explaining service: ${query}`);
         }}
         language={lang}

@@ -222,7 +222,7 @@ export function GoogleMapEmergency({
       suppressMarkers: true,
       preserveViewport: false,
       polylineOptions: {
-        strokeColor: '#2563EB', // NAYAN Blue
+        strokeColor: '#2563EB', // ANUKOOL Blue
         strokeWeight: 6,
         strokeOpacity: 1.0,
         zIndex: 20,

@@ -47,9 +47,9 @@ export default function OnboardingPage() {
             <span className="text-acc-xs font-bold text-yellow-400 uppercase tracking-widest block">
               {t('profileReady', 'Profile Ready')}
             </span>
-            <h2 className="text-acc-3xl font-extrabold">{t('profileActiveTitle', 'Your NAYAN Profile is Active')}</h2>
+            <h2 className="text-acc-3xl font-extrabold">{t('profileActiveTitle', 'Your ANUKOOL Profile is Active')}</h2>
             <p className="text-acc-lg text-slate-200">
-              {t('profileActiveDesc', 'NAYAN will automatically adapt all digital services to your preferences.')}
+              {t('profileActiveDesc', 'ANUKOOL will automatically adapt all digital services to your preferences.')}
             </p>
           </div>
 
@@ -62,7 +62,7 @@ export default function OnboardingPage() {
           </div>
 
           <p className="text-acc-xs text-slate-400">
-            {t('redirecting', 'Redirecting to your NAYAN digital gateway...')}
+            {t('redirecting', 'Redirecting to your ANUKOOL digital gateway...')}
           </p>
         </div>
       </div>
@@ -92,7 +92,7 @@ export default function OnboardingPage() {
         </div>
 
         <h1 className="text-acc-3xl font-extrabold text-[var(--text-primary)] tracking-tight">
-          {t('howShouldNayanWork', 'How should NAYAN work for you?')}
+          {t('howShouldAnukoolWork', 'How should ANUKOOL work for you?')}
         </h1>
         <p className="text-acc-base text-[var(--text-secondary)]">
           {t('onboardingSubtext', 'Answer a few simple questions. No technical knowledge required.')}

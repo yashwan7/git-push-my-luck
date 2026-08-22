@@ -97,7 +97,7 @@ export default function ProviderDashboardPage() {
           </div>
           <div className="text-acc-4xl font-extrabold text-civic-green">+{metrics.averageScoreBoost} Points</div>
           <p className="text-acc-xs text-[var(--text-secondary)] font-medium">
-            72/100 &rarr; 98/100 NAYAN Index
+            72/100 &rarr; 98/100 ANUKOOL Index
           </p>
         </div>
 

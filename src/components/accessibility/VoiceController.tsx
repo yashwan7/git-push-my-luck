@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useVoice } from '@/context/VoiceContext';
 import { useAccessibility } from '@/context/AccessibilityContext';
 import { getTranslation, LANGUAGE_NAMES } from '@/lib/multilingualEngine';
-import { NayanVoiceModal } from './NayanVoiceModal';
+import { AnukoolVoiceModal } from './NayanVoiceModal';
 import { Mic, MicOff, Volume2, VolumeX, Sparkles } from 'lucide-react';
 
 export function VoiceController() {
@@ -33,7 +33,7 @@ export function VoiceController() {
     <>
       <div 
         className="fixed bottom-4 right-4 sm:right-6 z-40 flex flex-col items-end gap-2"
-        aria-label="NAYAN Multimodal Voice Interaction Assistant"
+        aria-label="ANUKOOL Multimodal Voice Interaction Assistant"
       >
         {/* Active Transcript / Feedback Tooltip */}
         {(isListening || isSpeaking || transcript) && (
@@ -66,10 +66,10 @@ export function VoiceController() {
           <button
             onClick={() => setIsAssistantModalOpen(true)}
             className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-civic-blue hover:bg-blue-600 text-white font-bold text-acc-xs shadow-lg transition-all"
-            title="Open Nayan Conversational AI Assistant"
+            title="Open Anukool Conversational AI Assistant"
           >
             <Sparkles className="w-4 h-4 text-yellow-300 animate-spin-slow" />
-            <span>Nayan Voice AI</span>
+            <span>Anukool Voice AI</span>
           </button>
 
           {/* Quick Mic Listen Button */}
@@ -119,8 +119,8 @@ export function VoiceController() {
         </div>
       </div>
 
-      {/* Full Screen Conversational Nayan Modal */}
-      <NayanVoiceModal />
+      {/* Full Screen Conversational Anukool Modal */}
+      <AnukoolVoiceModal />
     </>
   );
 }
