@@ -10,10 +10,11 @@ import {
   FileText, 
   Volume2, 
   CheckCircle2, 
-  ShieldAlert,
-  ArrowLeft
+  ShieldAlert, 
+  ArrowLeft 
 } from 'lucide-react';
 import Link from 'next/link';
+import { GoogleMapEmergency } from '@/components/emergency/GoogleMapEmergency';
 
 export default function EmergencyPage() {
   const { profile } = useAccessibility();
@@ -120,6 +121,31 @@ export default function EmergencyPage() {
 
       </div>
 
+      {/* Live Interactive Hospital Route Map */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-acc-xl font-extrabold text-[var(--text-primary)] flex items-center gap-2">
+            <MapPin className="w-5 h-5 text-red-600" />
+            <span>Fastest Route to Nearest Hospital (Live Map)</span>
+          </h2>
+          <span className="text-xs font-bold text-emerald-600 bg-emerald-100 dark:bg-emerald-950 px-2.5 py-1 rounded-full">
+            ● GPS Live
+          </span>
+        </div>
+
+        <GoogleMapEmergency
+          hospital={{
+            name: 'Apollo Hospital (Emergency & Trauma)',
+            lat: 12.9344,
+            lng: 77.6101,
+            address: 'Bannerghatta Main Rd, Bengaluru, Karnataka 560076',
+            eta: '8 min',
+            distance: '2.8 km',
+            isRecommended: true,
+          }}
+        />
+      </div>
+
       {/* Accessible Medical ID Card */}
       <div className="p-8 rounded-3xl bg-[var(--bg-surface)] border-2 border-[var(--border-color)] space-y-4 shadow-sm">
         <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-4">
@@ -131,7 +157,7 @@ export default function EmergencyPage() {
           </div>
           <button
             onClick={() => speak("Medical ID: Ramesh Kumar. Blood Group: O Positive. Emergency Contact: 9876543210.")}
-            className="p-2.5 rounded-xl bg-civic-blue/10 text-civic-blue hover:bg-civic-blue/20"
+            className="p-2.5 rounded-xl bg-civic-blue/10 text-civic-blue hover:bg-civic-blue/20 cursor-pointer"
             aria-label={t('readAloud', 'Read medical ID aloud')}
           >
             <Volume2 className="w-5 h-5" />
