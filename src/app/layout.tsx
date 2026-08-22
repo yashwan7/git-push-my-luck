@@ -30,28 +30,33 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  var mode = localStorage.getItem('nayan_theme_mode') || 'system';
-                  var isDark = true;
-                  if (mode === 'light') {
-                    isDark = false;
-                  } else if (mode === 'dark') {
+                  var mode = localStorage.getItem('nayan_theme_mode') || 'light';
+                  var isDark = false;
+                  if (mode === 'dark') {
                     isDark = true;
+                  } else if (mode === 'light') {
+                    isDark = false;
                   } else {
                     isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                   }
                   document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+                  if (isDark) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
                 } catch (e) {}
               })();
             `,
           }}
         />
       </head>
-      <body className="antialiased min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors">
+      <body className="antialiased min-h-screen flex flex-col bg-[#F3F4F6] dark:bg-[#0D0E12] text-[var(--text-primary)] transition-colors">
         <AuthProvider>
           <AccessibilityProvider>
             <VoiceProvider>
               <Navbar />
-              <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+              <main className="flex-1 w-full p-2 sm:p-4 md:p-6 max-w-[1520px] mx-auto">
                 {children}
               </main>
               <VoiceController />

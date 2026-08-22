@@ -371,7 +371,7 @@ export default function ServicesPage() {
       {/* ─────────────────────────────────────────────────────────────
           MAIN CANVAS SHELL (MATCHING REFERENCE IMAGE 1:1)
          ───────────────────────────────────────────────────────────── */}
-      <div className="max-w-[1440px] mx-auto bg-[#ECECEC] dark:bg-[#18191D] rounded-[36px] p-3 sm:p-5 md:p-7 flex gap-5 sm:gap-6">
+      <div className="w-full bg-white dark:bg-[#18191D] rounded-[36px] p-4 sm:p-6 md:p-7 flex gap-5 sm:gap-6 shadow-sm border border-slate-200/80 dark:border-white/10">
         
         {/* ═══════════════════════════════════════════════════════════
             LEFT DARK SIDEBAR PILL (EXACT ICONS AS SCREENSHOT)
@@ -878,41 +878,39 @@ export default function ServicesPage() {
               {/* Recommended Care Option Card (Dynamic based on selected case) */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="font-bold text-[#1E2024] dark:text-white">Recommended Care Option</span>
+                  <span className="font-extrabold text-[#1E2024] dark:text-white">Recommended Care Option</span>
                   <button 
                     onClick={() => speakText(`${currentEmergencyCase.hospitalName} is the closest specialized hospital for ${currentEmergencyCase.condition} with ${currentEmergencyCase.specialty}.`)}
-                    className="text-[11px] font-bold text-[#2563EB] hover:underline"
+                    className="text-[11px] font-bold text-[#1E3A2F] dark:text-emerald-400 hover:underline"
                   >
                     Why this?
                   </button>
                 </div>
 
-                {/* Main Best Match Hospital */}
-                <div className="p-3.5 rounded-2xl bg-[#F0FDF4] dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 space-y-1.5 shadow-xs">
+                {/* Main Best Match Hospital matching reference screenshot */}
+                <div className="p-3.5 rounded-2xl bg-[#F0FDF4] dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/40 space-y-2 shadow-xs">
                   <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-600 flex items-center justify-center font-bold text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-black text-sm border border-emerald-300/40">
                         🏥
                       </div>
                       <div>
-                        <h4 className="font-black text-xs text-[#1E2024] dark:text-white">
+                        <h4 className="font-extrabold text-xs text-[#1E2024] dark:text-white leading-tight">
                           {currentEmergencyCase.hospitalName}
                         </h4>
-                        <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 block">
-                          {currentEmergencyCase.specialty}
+                        <span className="text-[10px] font-bold text-[#15803D] dark:text-emerald-400 block pt-0.5">
+                          {currentEmergencyCase.specialty} &bull; 24x7
+                        </span>
+                        <span className="text-[10px] text-[#64748B] dark:text-slate-400 block font-medium">
+                          Simulated Availability: 12 beds
                         </span>
                       </div>
                     </div>
 
-                    <span className="text-[9px] font-black text-emerald-700 bg-emerald-100 dark:bg-emerald-900 px-2 py-0.5 rounded-full">
-                      Best Match &rarr;
+                    <span className="text-[9px] font-black text-emerald-800 dark:text-emerald-300 bg-emerald-200/70 dark:bg-emerald-900/80 px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
+                      RECOMMENDED
                     </span>
-                  </div>
-
-                  <div className="flex items-center gap-3 text-[10px] text-[#8B929A] font-bold pt-1">
-                    <span>⏱ {currentEmergencyCase.eta}</span>
-                    <span>&bull; {currentEmergencyCase.distance}</span>
-                    <span className="text-emerald-600 dark:text-emerald-400">&bull; Open 24x7</span>
                   </div>
                 </div>
 
