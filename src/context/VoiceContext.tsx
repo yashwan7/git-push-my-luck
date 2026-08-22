@@ -163,9 +163,14 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
         recognition.interimResults = true;
         recognition.lang = LANGUAGE_NAMES[profileRef.current.language]?.bcp47 || 'en-IN';
 
+        let finalSpeechText = '';
+        let hasProcessed = false;
+
         recognition.onstart = () => {
           setIsListening(true);
           setTranscript('Listening for your command...');
+          finalSpeechText = '';
+          hasProcessed = false;
         };
 
         recognition.onresult = (event: any) => {
@@ -173,13 +178,17 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
           for (let i = event.resultIndex; i < event.results.length; i++) {
             currentTranscript += event.results[i][0].transcript;
           }
+          finalSpeechText = currentTranscript;
           setTranscript(currentTranscript);
           setLastCommand(currentTranscript);
 
           // If finalized result
           if (event.results[event.resultIndex].isFinal) {
             setIsListening(false);
-            processUserSpeech(currentTranscript);
+            if (!hasProcessed && currentTranscript.trim()) {
+              hasProcessed = true;
+              processUserSpeech(currentTranscript);
+            }
           }
         };
 
@@ -190,6 +199,11 @@ export function VoiceProvider({ children }: { children: React.ReactNode }) {
 
         recognition.onend = () => {
           setIsListening(false);
+          // If ended before isFinal fired but text exists
+          if (!hasProcessed && finalSpeechText.trim()) {
+            hasProcessed = true;
+            processUserSpeech(finalSpeechText);
+          }
         };
 
         recognition.start();

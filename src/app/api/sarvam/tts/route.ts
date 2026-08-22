@@ -11,18 +11,20 @@ const LANGUAGE_CODE_MAP: Record<string, string> = {
   ml: 'ml-IN',
   mr: 'mr-IN',
   bn: 'bn-IN',
+  gu: 'gu-IN',
   en: 'en-IN',
 };
 
-// Natural regional speakers for bulbul:v2
+// Verified natural regional speakers for Sarvam bulbul:v2
 const SPEAKER_MAP: Record<string, string> = {
   hi: 'anushka',
   kn: 'vidya',
   ta: 'vidya',
-  te: 'abhilash',
+  te: 'vidya',
   ml: 'vidya',
   mr: 'manisha',
   bn: 'arya',
+  gu: 'anushka',
   en: 'anushka',
 };
 
@@ -43,7 +45,7 @@ export async function POST(req: NextRequest) {
     }
 
     const targetLangCode = LANGUAGE_CODE_MAP[language] || 'en-IN';
-    const speaker = SPEAKER_MAP[language] || 'meera';
+    const speaker = SPEAKER_MAP[language] || 'anushka';
 
     // Limit text chunk for optimal latency
     const truncatedText = text.slice(0, 500);
@@ -61,7 +63,7 @@ export async function POST(req: NextRequest) {
         pitch: 0,
         pace: Math.max(0.7, Math.min(pace, 1.4)),
         loudness: 1.5,
-        speech_sample_rate: 22050,
+        speech_sample_rate: 8000,
         enable_preprocessing: true,
         model: 'bulbul:v2',
       }),
