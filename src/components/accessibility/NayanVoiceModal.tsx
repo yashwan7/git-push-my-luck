@@ -216,8 +216,8 @@ export function AnukoolVoiceModal() {
               }`}
             >
               {msg.role === 'nayan' && (
-                <div className="w-8 h-8 rounded-full bg-civic-blue text-white flex items-center justify-center shrink-0 text-xs font-bold">
-                  N
+                <div className="w-8 h-8 rounded-full bg-[#1E3A2F] text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0 text-xs font-black shadow-md">
+                  A
                 </div>
               )}
 
