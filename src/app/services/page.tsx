@@ -11,6 +11,7 @@ import { MOCK_SERVICES } from '@/lib/servicesData';
 import { ServiceDefinition } from '@/types';
 import { ServiceDetailModal } from '@/components/services/ServiceDetailModal';
 import { DocumentAssistModal } from '@/components/anukool/DocumentAssistModal';
+import { BankingAssistModal } from '@/components/banking/BankingAssistModal';
 import { GoogleMapEmergency } from '@/components/emergency/GoogleMapEmergency';
 import { ChangeEmergencyModal, EMERGENCY_PRESETS, EmergencyCase } from '@/components/emergency/ChangeEmergencyModal';
 import { 
@@ -75,6 +76,7 @@ export default function ServicesPage() {
   const [isEmergencyNavigating, setIsEmergencyNavigating] = useState<boolean>(false);
   const [emergencyCallStatus, setEmergencyCallStatus] = useState<string | null>(null);
   const [isDocAssistModalOpen, setIsDocAssistModalOpen] = useState<boolean>(false);
+  const [isBankingModalOpen, setIsBankingModalOpen] = useState<boolean>(false);
 
   const lang = profile.language;
 
@@ -479,6 +481,12 @@ export default function ServicesPage() {
         onClose={() => setIsDocAssistModalOpen(false)}
       />
 
+      {/* Banking & Direct Benefit Modal Popup */}
+      <BankingAssistModal
+        isOpen={isBankingModalOpen}
+        onClose={() => setIsBankingModalOpen(false)}
+      />
+
       {/* Change Emergency Situation Modal */}
       <ChangeEmergencyModal
         isOpen={isChangeModalOpen}
@@ -516,14 +524,14 @@ export default function ServicesPage() {
               <Layers className="w-5 h-5 text-emerald-300" />
             </Link>
 
-            {/* Banking */}
-            <Link
-              href="/banking"
-              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all"
-              title="Banking & Payments"
+            {/* Banking Pop-up Trigger */}
+            <button
+              onClick={() => setIsBankingModalOpen(true)}
+              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all cursor-pointer"
+              title="Banking & Direct Benefit (Quick Overview)"
             >
               <Wallet className="w-5 h-5" />
-            </Link>
+            </button>
 
             {/* Dedicated Document Assist Slot */}
             <button
