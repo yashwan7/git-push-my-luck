@@ -113,11 +113,19 @@ export function AccessibilityProvider({ children }: { children: React.ReactNode 
   const resolvedTheme: 'light' | 'dark' = 
     themeMode === 'system' ? (systemIsDark ? 'dark' : 'light') : themeMode;
 
-  // 3. Update HTML data attributes and sync to MongoDB / localStorage whenever profile or theme changes
+  // 3. Update HTML data attributes, dark class and sync to MongoDB / localStorage whenever profile or theme changes
   useEffect(() => {
     if (typeof document !== 'undefined') {
       const root = document.documentElement;
       root.setAttribute('data-theme', resolvedTheme);
+      
+      // Synchronize Tailwind darkMode class
+      if (resolvedTheme === 'dark') {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+
       root.setAttribute('data-text-size', profile?.textSize || 'normal');
       root.setAttribute('data-contrast', profile?.contrastTheme || 'standard');
       root.setAttribute('data-reduced-motion', profile?.motionReduction ? 'true' : 'false');
