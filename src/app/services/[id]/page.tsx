@@ -15,8 +15,12 @@ import {
   Hand, 
   FileText, 
   ArrowLeft,
-  Sparkles
+  Sparkles,
+  Camera,
+  CheckCircle2
 } from 'lucide-react';
+import { SnapToFormModal } from '@/components/documents/SnapToFormModal';
+import { ExtractedDocumentData } from '@/lib/ocr/documentExtractor';
 
 export default function ServiceAdaptivePage() {
   const params = useParams();
@@ -28,6 +32,8 @@ export default function ServiceAdaptivePage() {
 
   // Active View Mode selection (default: cognitive / simplified)
   const [viewMode, setViewMode] = useState<'standard' | 'visual' | 'cognitive' | 'motor'>('cognitive');
+  const [isSnapModalOpen, setIsSnapModalOpen] = useState(false);
+  const [autoFilledName, setAutoFilledName] = useState<string | null>(null);
 
   const t = (key: string, fallback?: string) => getTranslation(profile.language, key, fallback);
 
@@ -35,20 +41,38 @@ export default function ServiceAdaptivePage() {
     router.push('/services');
   };
 
+  const handleAutoFill = (data: ExtractedDocumentData) => {
+    setAutoFilledName(data.fields.fullName || 'Verified ID');
+  };
+
   return (
     <div className="min-h-screen bg-[#ECECEC] dark:bg-[#121316] text-[#1E2024] dark:text-[#EAECEF] p-2 sm:p-4 md:p-6 font-sans transition-colors">
       
       <div className="max-w-[1340px] mx-auto bg-[#ECECEC] dark:bg-[#18191D] rounded-[36px] p-4 sm:p-7 space-y-6">
         
-        {/* Back Button & View Modes Bar */}
+        {/* Back Button, Snap-to-Form & View Modes Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <button
-            onClick={() => router.push('/services')}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 text-xs font-bold text-[#1E2024] dark:text-white shadow-sm hover:scale-105 transition-transform w-fit"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>{t('backToServices', 'Back to Services')}</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push('/services')}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 text-xs font-bold text-[#1E2024] dark:text-white shadow-sm hover:scale-105 transition-transform w-fit"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>{t('backToServices', 'Back to Services')}</span>
+            </button>
+
+            {/* Snap to Auto-Fill Button */}
+            <button
+              onClick={() => setIsSnapModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#1E3A2F] text-white border border-emerald-500/30 text-xs font-extrabold shadow-sm hover:bg-[#2A5243] transition-all hover:scale-105"
+            >
+              <Camera className="w-4 h-4 text-emerald-400" />
+              <span>Snap ID to Auto-Fill</span>
+              {autoFilledName && (
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              )}
+            </button>
+          </div>
 
           {/* View Mode Mode Toggles Bar */}
           <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 rounded-full bg-white dark:bg-[#232428] border border-slate-200 dark:border-white/10 shadow-sm">
@@ -111,6 +135,12 @@ export default function ServiceAdaptivePage() {
         </div>
 
       </div>
+
+      <SnapToFormModal
+        isOpen={isSnapModalOpen}
+        onClose={() => setIsSnapModalOpen(false)}
+        onAutoFill={handleAutoFill}
+      />
 
     </div>
   );

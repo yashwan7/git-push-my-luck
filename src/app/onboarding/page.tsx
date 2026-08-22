@@ -1,356 +1,357 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAccessibility } from '@/context/AccessibilityContext';
-import { getTranslation, LANGUAGE_NAMES } from '@/lib/multilingualEngine';
 import { 
-  SupportedLanguage, 
-  InfoFormat, 
-  InteractionStyle, 
-  CognitiveLevel, 
-  TextSize, 
-  ContrastTheme 
-} from '@/types';
-import { 
-  ArrowRight, 
-  ArrowLeft, 
-  CheckCircle2, 
-  Volume2, 
   Eye, 
-  BrainCircuit, 
+  Globe, 
+  Mic, 
   Hand, 
-  Sparkles
+  LayoutGrid, 
+  Sliders, 
+  Accessibility, 
+  ArrowRight, 
+  Lock, 
+  Check,
+  Type,
+  Maximize2
 } from 'lucide-react';
+import { useAccessibility } from '@/context/AccessibilityContext';
+import { LANGUAGE_NAMES } from '@/lib/multilingualEngine';
+import { SupportedLanguage } from '@/types';
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { profile, updateProfileKey } = useAccessibility();
-  const [step, setStep] = useState(1);
-  const [completed, setCompleted] = useState(false);
 
-  const t = (key: string, fallback?: string) => getTranslation(profile.language, key, fallback);
+  // Local state aligned with screenshot
+  const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguage>(profile.language || 'kn');
+  const [interactionMode, setInteractionMode] = useState<'touch' | 'voice' | 'both'>('touch');
+  const [interfaceStyle, setInterfaceStyle] = useState<'standard' | 'simplified' | 'large'>('simplified');
+  const [motorAssistance, setMotorAssistance] = useState<boolean>(profile.motionReduction || false);
 
-  const handleFinishOnboarding = () => {
-    setCompleted(true);
-    setTimeout(() => {
-      router.push('/dashboard');
-    }, 2000);
+  const handleContinue = () => {
+    // Apply changes to global accessibility profile
+    updateProfileKey('language', selectedLanguage);
+    updateProfileKey('motionReduction', motorAssistance);
+    
+    if (interfaceStyle === 'simplified') {
+      updateProfileKey('cognitiveLevel', 'step-by-step');
+    } else if (interfaceStyle === 'large') {
+      updateProfileKey('textSize', 'large');
+    } else {
+      updateProfileKey('cognitiveLevel', 'standard');
+      updateProfileKey('textSize', 'normal');
+    }
+
+    router.push('/services');
   };
 
-  if (completed) {
-    return (
-      <div className="max-w-2xl mx-auto py-12 text-center space-y-6 animate-in zoom-in-95 duration-300">
-        <div className="p-8 rounded-3xl bg-civic-navy text-white shadow-2xl border-4 border-civic-green space-y-6">
-          <CheckCircle2 className="w-20 h-20 text-civic-green mx-auto animate-bounce" />
-          <div className="space-y-2">
-            <span className="text-acc-xs font-bold text-yellow-400 uppercase tracking-widest block">
-              {t('profileReady', 'Profile Ready')}
-            </span>
-            <h2 className="text-acc-3xl font-extrabold">{t('profileActiveTitle', 'Your ANUKOOL Profile is Active')}</h2>
-            <p className="text-acc-lg text-slate-200">
-              {t('profileActiveDesc', 'ANUKOOL will automatically adapt all digital services to your preferences.')}
+  return (
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0E1015] text-[#1E2024] dark:text-white transition-colors">
+      
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-8 sm:space-y-10">
+        
+        {/* ═══════════════════════════════════════════════════════════
+            TOP HEADER (MATCHING RIGHT SCREENSHOT)
+           ═══════════════════════════════════════════════════════════ */}
+        <header className="flex justify-between items-center pb-2">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#1E3A2F] text-white flex items-center justify-center font-black shadow-md">
+              <Eye className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div>
+              <span className="font-extrabold text-xl tracking-tight text-[#1E2024] dark:text-white block leading-tight">
+                Anukool
+              </span>
+              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block -mt-0.5">
+                Adaptive Access Layer
+              </span>
+            </div>
+          </Link>
+
+          {/* Language Selector Dropdown */}
+          <div className="flex items-center gap-2">
+            <Globe className="w-4 h-4 text-slate-500" />
+            <select
+              value={selectedLanguage}
+              onChange={(e) => setSelectedLanguage(e.target.value as SupportedLanguage)}
+              className="appearance-none px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#18191D] text-xs font-bold text-slate-800 dark:text-white cursor-pointer focus:ring-2 focus:ring-emerald-500"
+            >
+              {Object.entries(LANGUAGE_NAMES).map(([code, lang]) => (
+                <option key={code} value={code}>
+                  {lang.name} ({lang.nativeName})
+                </option>
+              ))}
+            </select>
+          </div>
+        </header>
+
+        {/* ═══════════════════════════════════════════════════════════
+            MAIN ONBOARDING CARD
+           ═══════════════════════════════════════════════════════════ */}
+        <main className="space-y-8">
+          
+          {/* Headline */}
+          <div className="space-y-1 text-left">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#1E2024] dark:text-white">
+              How would you like to use Anukool?
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              We&apos;ll adapt the experience to what works best for you.
             </p>
           </div>
 
-          {/* Profile Summary Badge */}
-          <div className="p-4 rounded-2xl bg-slate-800 border border-slate-700 text-yellow-300 font-extrabold text-acc-base">
-            {profile.buttonTargetSize === 'extra-large' ? 'Large controls' : 'Standard controls'} &bull;{' '}
-            {profile.interactionMode === 'voice' ? 'Voice navigation' : 'Touch navigation'} &bull;{' '}
-            {LANGUAGE_NAMES[profile.language]?.nativeName || 'English'} &bull;{' '}
-            {profile.informationMode === 'simplified' ? 'Simplified language' : 'Standard text'}
+          {/* Step 1: Language */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#18191D] border border-slate-200 dark:border-white/10 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-slate-300">
+                <Globe className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div>
+                <span className="font-extrabold text-xs text-[#1E2024] dark:text-white block">
+                  Language
+                </span>
+                <span className="text-[11px] text-slate-500">
+                  Choose your preferred language.
+                </span>
+              </div>
+            </div>
+
+            <select
+              value={selectedLanguage}
+              onChange={(e) => setSelectedLanguage(e.target.value as SupportedLanguage)}
+              className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-xs font-bold text-slate-800 dark:text-white cursor-pointer"
+            >
+              {Object.entries(LANGUAGE_NAMES).map(([code, lang]) => (
+                <option key={code} value={code}>
+                  {lang.name} ({lang.nativeName})
+                </option>
+              ))}
+            </select>
           </div>
 
-          <p className="text-acc-xs text-slate-400">
-            {t('redirecting', 'Redirecting to your ANUKOOL digital gateway...')}
-          </p>
-        </div>
-      </div>
-    );
-  }
+          {/* Step 2: Interaction Mode */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-slate-300">
+                <Mic className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <span className="font-extrabold text-xs text-[#1E2024] dark:text-white block">
+                  Interaction Mode
+                </span>
+                <span className="text-[11px] text-slate-500">
+                  How would you like to interact?
+                </span>
+              </div>
+            </div>
 
-  return (
-    <div className="max-w-3xl mx-auto py-6 space-y-8">
-      
-      {/* Onboarding Header */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-acc-xs font-bold uppercase tracking-widest text-civic-blue">
-            {t('accessibilitySetup', 'Accessibility Setup')} &bull; {t('step', 'Step')} {step} {t('of', 'of')} 5
-          </span>
-          <span className="text-acc-xs font-semibold text-[var(--text-secondary)]">
-            {t('humanPreferences', 'Human-Centered Preferences')}
-          </span>
-        </div>
-        
-        {/* Progress Bar */}
-        <div className="w-full h-2 rounded-full bg-black/10 overflow-hidden">
-          <div 
-            className="h-full bg-civic-blue transition-all duration-300"
-            style={{ width: `${(step / 5) * 100}%` }}
-          />
-        </div>
-
-        <h1 className="text-acc-3xl font-extrabold text-[var(--text-primary)] tracking-tight">
-          {t('howShouldAnukoolWork', 'How should ANUKOOL work for you?')}
-        </h1>
-        <p className="text-acc-base text-[var(--text-secondary)]">
-          {t('onboardingSubtext', 'Answer a few simple questions. No technical knowledge required.')}
-        </p>
-      </div>
-
-      {/* STEP 1 — Language Selection */}
-      {step === 1 && (
-        <div className="p-8 rounded-3xl bg-[var(--bg-surface)] border-2 border-[var(--border-color)] space-y-6 shadow-md">
-          <h2 className="text-acc-xl font-bold text-[var(--text-primary)]">
-            {t('step', 'Step')} 1 — {t('qLanguage', 'What language do you feel most comfortable using?')}
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {Object.entries(LANGUAGE_NAMES).map(([code, lang]) => (
+            <div className="grid grid-cols-3 gap-3">
+              
+              {/* Touch Card */}
               <button
-                key={code}
-                type="button"
-                onClick={() => updateProfileKey('language', code as SupportedLanguage)}
-                className={`p-4 rounded-2xl border-2 text-center transition-all ${
-                  profile.language === code
-                    ? 'bg-civic-blue text-white border-civic-blue shadow-lg font-bold'
-                    : 'border-[var(--border-color)] bg-[var(--bg-surface)] hover:border-civic-blue text-[var(--text-primary)]'
+                onClick={() => setInteractionMode('touch')}
+                className={`p-4 rounded-2xl border text-center transition-all relative flex flex-col items-center justify-center h-28 ${
+                  interactionMode === 'touch'
+                    ? 'border-emerald-600 bg-white dark:bg-[#18191D] ring-2 ring-emerald-600/20 shadow-sm'
+                    : 'border-slate-200 dark:border-white/10 bg-white dark:bg-[#18191D] hover:border-slate-300'
                 }`}
               >
-                <div className="text-acc-lg font-extrabold">{lang.nativeName}</div>
-                <div className="text-acc-xs opacity-80">{lang.name}</div>
+                {interactionMode === 'touch' && (
+                  <span className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px]">
+                    <Check className="w-3.5 h-3.5" />
+                  </span>
+                )}
+                <Hand className="w-6 h-6 text-slate-700 dark:text-slate-200 mb-2" />
+                <span className="font-bold text-xs text-[#1E2024] dark:text-white">Touch</span>
               </button>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* STEP 2 — Information Preference */}
-      {step === 2 && (
-        <div className="p-8 rounded-3xl bg-[var(--bg-surface)] border-2 border-[var(--border-color)] space-y-6 shadow-md">
-          <h2 className="text-acc-xl font-bold text-[var(--text-primary)]">
-            {t('step', 'Step')} 2 — {t('qInfo', 'How would you like to receive information?')}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[
-              { id: 'read', label: t('optReadStandard', 'Read Text'), desc: t('optReadStandardDesc', 'Standard text reading'), icon: Eye },
-              { id: 'hear', label: t('optReadAloud', 'Hear Audio'), desc: t('optReadAloudDesc', 'Spoken text & voice prompts'), icon: Volume2 },
-              { id: 'read-hear', label: t('optLargeHighContrast', 'Read + Hear'), desc: t('optLargeHighContrastDesc', 'Simultaneous text and speech'), icon: Sparkles },
-              { id: 'simplified', label: t('optSimpleWords', 'Simplified Text'), desc: t('optSimpleWordsDesc', 'Plain short plain-language sentences'), icon: BrainCircuit },
-            ].map((item) => (
+              {/* Voice Card */}
               <button
-                key={item.id}
-                type="button"
-                onClick={() => updateProfileKey('informationMode', item.id as InfoFormat)}
-                className={`p-5 rounded-2xl border-2 text-left transition-all flex items-start gap-4 ${
-                  profile.informationMode === item.id
-                    ? 'bg-civic-blue text-white border-civic-blue shadow-lg'
-                    : 'border-[var(--border-color)] bg-[var(--bg-surface)] hover:border-civic-blue text-[var(--text-primary)]'
+                onClick={() => setInteractionMode('voice')}
+                className={`p-4 rounded-2xl border text-center transition-all relative flex flex-col items-center justify-center h-28 ${
+                  interactionMode === 'voice'
+                    ? 'border-emerald-600 bg-white dark:bg-[#18191D] ring-2 ring-emerald-600/20 shadow-sm'
+                    : 'border-slate-200 dark:border-white/10 bg-white dark:bg-[#18191D] hover:border-slate-300'
                 }`}
               >
-                <item.icon className="w-7 h-7 shrink-0" />
-                <div>
-                  <div className="font-bold text-acc-lg">{item.label}</div>
-                  <div className="text-acc-xs opacity-90">{item.desc}</div>
+                {interactionMode === 'voice' && (
+                  <span className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px]">
+                    <Check className="w-3.5 h-3.5" />
+                  </span>
+                )}
+                <Mic className="w-6 h-6 text-slate-700 dark:text-slate-200 mb-2" />
+                <span className="font-bold text-xs text-[#1E2024] dark:text-white">Voice</span>
+              </button>
+
+              {/* Voice + Touch Card */}
+              <button
+                onClick={() => setInteractionMode('both')}
+                className={`p-4 rounded-2xl border text-center transition-all relative flex flex-col items-center justify-center h-28 ${
+                  interactionMode === 'both'
+                    ? 'border-emerald-600 bg-white dark:bg-[#18191D] ring-2 ring-emerald-600/20 shadow-sm'
+                    : 'border-slate-200 dark:border-white/10 bg-white dark:bg-[#18191D] hover:border-slate-300'
+                }`}
+              >
+                {interactionMode === 'both' && (
+                  <span className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px]">
+                    <Check className="w-3.5 h-3.5" />
+                  </span>
+                )}
+                <div className="flex items-center gap-1 mb-2">
+                  <Hand className="w-5 h-5 text-slate-700 dark:text-slate-200" />
+                  <Mic className="w-5 h-5 text-slate-700 dark:text-slate-200" />
                 </div>
+                <span className="font-bold text-xs text-[#1E2024] dark:text-white">Voice + Touch</span>
               </button>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* STEP 3 — Interaction Style */}
-      {step === 3 && (
-        <div className="p-8 rounded-3xl bg-[var(--bg-surface)] border-2 border-[var(--border-color)] space-y-6 shadow-md">
-          <h2 className="text-acc-xl font-bold text-[var(--text-primary)]">
-            {t('step', 'Step')} 3 — {t('qInteraction', 'How do you interact with your device?')}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[
-              { id: 'touch', label: t('optTouch', 'Standard touch screen'), desc: t('optTouchDesc', 'Regular tap and scroll navigation'), icon: Hand },
-              { id: 'large-controls', label: t('optLargeTargets', 'Large buttons with extra spacing'), desc: t('optLargeTargetsDesc', 'Extra-large touch areas'), icon: Hand },
-              { id: 'voice', label: t('optVoiceCommands', 'Voice commands & speech navigation'), desc: t('optVoiceCommandsDesc', 'Speak answers and navigate hands-free'), icon: Volume2 },
-              { id: 'assisted', label: t('optAssisted', 'Assisted & Switch-friendly'), desc: t('optAssistedDesc', 'Step-by-step clear prompts'), icon: Sparkles },
-            ].map((item) => (
+            </div>
+          </div>
+
+          {/* Step 3: Interface Style */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-slate-300">
+                <LayoutGrid className="w-5 h-5 text-purple-600" />
+              </div>
+              <div>
+                <span className="font-extrabold text-xs text-[#1E2024] dark:text-white block">
+                  Interface Style
+                </span>
+                <span className="text-[11px] text-slate-500">
+                  Choose how the interface appears.
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              
+              {/* Standard Card */}
               <button
-                key={item.id}
-                type="button"
-                onClick={() => updateProfileKey('interactionMode', item.id as InteractionStyle)}
-                className={`p-5 rounded-2xl border-2 text-left transition-all flex items-start gap-4 ${
-                  profile.interactionMode === item.id
-                    ? 'bg-civic-blue text-white border-civic-blue shadow-lg'
-                    : 'border-[var(--border-color)] bg-[var(--bg-surface)] hover:border-civic-blue text-[var(--text-primary)]'
+                onClick={() => setInterfaceStyle('standard')}
+                className={`p-4 rounded-2xl border text-center transition-all relative flex flex-col items-center justify-center h-28 ${
+                  interfaceStyle === 'standard'
+                    ? 'border-emerald-600 bg-white dark:bg-[#18191D] ring-2 ring-emerald-600/20 shadow-sm'
+                    : 'border-slate-200 dark:border-white/10 bg-white dark:bg-[#18191D] hover:border-slate-300'
                 }`}
               >
-                <item.icon className="w-7 h-7 shrink-0" />
-                <div>
-                  <div className="font-bold text-acc-lg">{item.label}</div>
-                  <div className="text-acc-xs opacity-90">{item.desc}</div>
+                {interfaceStyle === 'standard' && (
+                  <span className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px]">
+                    <Check className="w-3.5 h-3.5" />
+                  </span>
+                )}
+                <div className="w-6 h-6 border-2 border-slate-700 dark:border-slate-200 rounded-md mb-2 flex items-center justify-center">
+                  <div className="w-3 h-3 bg-slate-700 dark:bg-slate-200 rounded-xs" />
                 </div>
+                <span className="font-bold text-xs text-[#1E2024] dark:text-white">Standard</span>
               </button>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* STEP 4 — Cognitive Assistance */}
-      {step === 4 && (
-        <div className="p-8 rounded-3xl bg-[var(--bg-surface)] border-2 border-[var(--border-color)] space-y-6 shadow-md">
-          <h2 className="text-acc-xl font-bold text-[var(--text-primary)]">
-            {t('step', 'Step')} 4 — {t('qPace', 'How would you like complex forms organized?')}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[
-              { id: 'standard', label: t('optStandardForm', 'Show everything together (Standard)'), desc: t('optStandardFormDesc', 'Traditional full-page form') },
-              { id: 'step-by-step', label: t('optStepByStep', 'Show 1 step at a time (Recommended)'), desc: t('optStepByStepDesc', 'Guides you one decision at a time') },
-              { id: 'max-simplified', label: t('optMaxSimplified', 'Maximum Simplified Mode'), desc: t('optMaxSimplifiedDesc', 'Single clear question per screen') },
-            ].map((item) => (
+              {/* Simplified Card */}
               <button
-                key={item.id}
-                type="button"
-                onClick={() => updateProfileKey('cognitiveLevel', item.id as CognitiveLevel)}
-                className={`p-5 rounded-2xl border-2 text-left transition-all ${
-                  profile.cognitiveLevel === item.id
-                    ? 'bg-civic-blue text-white border-civic-blue shadow-lg'
-                    : 'border-[var(--border-color)] bg-[var(--bg-surface)] hover:border-civic-blue text-[var(--text-primary)]'
+                onClick={() => setInterfaceStyle('simplified')}
+                className={`p-4 rounded-2xl border text-center transition-all relative flex flex-col items-center justify-center h-28 ${
+                  interfaceStyle === 'simplified'
+                    ? 'border-emerald-600 bg-white dark:bg-[#18191D] ring-2 ring-emerald-600/20 shadow-sm'
+                    : 'border-slate-200 dark:border-white/10 bg-white dark:bg-[#18191D] hover:border-slate-300'
                 }`}
               >
-                <div className="font-bold text-acc-lg">{item.label}</div>
-                <div className="text-acc-xs opacity-90 mt-1">{item.desc}</div>
+                {interfaceStyle === 'simplified' && (
+                  <span className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px]">
+                    <Check className="w-3.5 h-3.5" />
+                  </span>
+                )}
+                <div className="grid grid-cols-2 gap-1 w-6 h-6 mb-2">
+                  <div className="bg-slate-700 dark:bg-slate-200 rounded-xs" />
+                  <div className="bg-slate-700 dark:bg-slate-200 rounded-xs" />
+                  <div className="bg-slate-700 dark:bg-slate-200 rounded-xs" />
+                  <div className="bg-slate-700 dark:bg-slate-200 rounded-xs" />
+                </div>
+                <span className="font-bold text-xs text-[#1E2024] dark:text-white">Simplified</span>
               </button>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* STEP 5 — Fine-Tuned Preferences */}
-      {step === 5 && (
-        <div className="p-8 rounded-3xl bg-[var(--bg-surface)] border-2 border-[var(--border-color)] space-y-6 shadow-md">
-          <h2 className="text-acc-xl font-bold text-[var(--text-primary)]">
-            {t('step', 'Step')} 5 — {t('activeProfile', 'Micro Accessibility Adjustments')}
-          </h2>
+              {/* Large Controls Card */}
+              <button
+                onClick={() => setInterfaceStyle('large')}
+                className={`p-4 rounded-2xl border text-center transition-all relative flex flex-col items-center justify-center h-28 ${
+                  interfaceStyle === 'large'
+                    ? 'border-emerald-600 bg-white dark:bg-[#18191D] ring-2 ring-emerald-600/20 shadow-sm'
+                    : 'border-slate-200 dark:border-white/10 bg-white dark:bg-[#18191D] hover:border-slate-300'
+                }`}
+              >
+                {interfaceStyle === 'large' && (
+                  <span className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px]">
+                    <Check className="w-3.5 h-3.5" />
+                  </span>
+                )}
+                <span className="text-xl font-bold font-serif mb-1 text-slate-700 dark:text-slate-200">Aa</span>
+                <span className="font-bold text-xs text-[#1E2024] dark:text-white">Large Controls</span>
+              </button>
 
-          <div className="space-y-6">
-            {/* Appearance Theme Selector */}
-            <div>
-              <label className="block text-acc-sm font-bold mb-2">Appearance Mode (Theme)</label>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { id: 'light', label: '☀️ Light' },
-                  { id: 'dark', label: '🌙 Dark' },
-                  { id: 'system', label: '💻 System' },
-                ].map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => updateProfileKey('themeMode', item.id as any)}
-                    className={`py-3 rounded-xl border font-bold text-acc-xs ${
-                      (profile.themeMode || 'system') === item.id ? 'bg-civic-blue text-white border-civic-blue shadow-md' : 'border-[var(--border-color)] bg-[var(--bg-surface)]'
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Text Scale */}
-            <div>
-              <label className="block text-acc-sm font-bold mb-2">{t('textSize', 'Text Scale')}</label>
-              <div className="grid grid-cols-4 gap-2">
-                {(['normal', 'large', 'xlarge', 'xxlarge'] as TextSize[]).map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => updateProfileKey('textSize', s)}
-                    className={`py-3 rounded-xl border font-bold text-acc-xs ${
-                      profile.textSize === s ? 'bg-civic-blue text-white border-civic-blue' : 'border-[var(--border-color)]'
-                    }`}
-                  >
-                    {s === 'normal' ? '100%' : s === 'large' ? '125%' : s === 'xlarge' ? '150%' : '200%'}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Contrast Theme */}
-            <div>
-              <label className="block text-acc-sm font-bold mb-2">{t('contrast', 'Contrast & Color Theme')}</label>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { id: 'standard', label: 'Standard Light' },
-                  { id: 'high-contrast-dark', label: 'Dark High Contrast' },
-                  { id: 'high-contrast-light', label: 'Light High Contrast' },
-                  { id: 'warm-paper', label: 'Warm Paper' },
-                ].map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => updateProfileKey('contrastTheme', item.id as ContrastTheme)}
-                    className={`p-3 rounded-xl border text-left font-bold text-acc-xs ${
-                      profile.contrastTheme === item.id ? 'bg-civic-navy text-white border-civic-navy' : 'border-[var(--border-color)]'
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Motion & Confirmations Toggles */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <label className="flex items-center justify-between p-4 rounded-xl border border-[var(--border-color)] cursor-pointer">
-                <span className="font-bold text-acc-sm">{t('reduceMotion', 'Reduce Motion')}</span>
-                <input
-                  type="checkbox"
-                  checked={profile.motionReduction}
-                  onChange={(e) => updateProfileKey('motionReduction', e.target.checked)}
-                  className="w-5 h-5 accent-civic-blue"
-                />
-              </label>
-
-              <label className="flex items-center justify-between p-4 rounded-xl border border-[var(--border-color)] cursor-pointer">
-                <span className="font-bold text-acc-sm">Action Confirmation Check</span>
-                <input
-                  type="checkbox"
-                  checked={profile.actionConfirmations}
-                  onChange={(e) => updateProfileKey('actionConfirmations', e.target.checked)}
-                  className="w-5 h-5 accent-civic-blue"
-                />
-              </label>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Navigation Buttons */}
-      <div className="flex items-center justify-between pt-4">
-        <button
-          onClick={() => setStep(step - 1)}
-          disabled={step === 1}
-          className={`px-6 py-3 rounded-xl font-bold text-acc-base flex items-center gap-2 ${
-            step === 1 ? 'opacity-30 cursor-not-allowed text-[var(--text-secondary)]' : 'bg-black/5 hover:bg-black/10'
-          }`}
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>{t('previous', 'Go Back')}</span>
-        </button>
+          {/* Step 4: Accessibility Support (Motor Assistance Switch) */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-slate-300">
+                <Accessibility className="w-5 h-5 text-amber-600" />
+              </div>
+              <div>
+                <span className="font-extrabold text-xs text-[#1E2024] dark:text-white block">
+                  Accessibility Support
+                </span>
+                <span className="text-[11px] text-slate-500">
+                  Additional assistance for you.
+                </span>
+              </div>
+            </div>
 
-        {step < 5 ? (
-          <button
-            onClick={() => setStep(step + 1)}
-            className="px-8 py-4 rounded-2xl bg-civic-blue text-white font-extrabold text-acc-lg shadow-lg hover:bg-blue-700 flex items-center gap-3"
-          >
-            <span>{t('next', 'Next Step')}</span>
-            <ArrowRight className="w-6 h-6" />
-          </button>
-        ) : (
-          <button
-            onClick={handleFinishOnboarding}
-            className="px-8 py-4 rounded-2xl bg-civic-green text-white font-extrabold text-acc-lg shadow-xl hover:bg-emerald-700 flex items-center gap-3"
-          >
-            <span>{t('finishSetup', 'Save & Activate Profile')}</span>
-            <CheckCircle2 className="w-6 h-6" />
-          </button>
-        )}
+            <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#18191D] border border-slate-200 dark:border-white/10 shadow-xs flex items-center justify-between">
+              <div>
+                <span className="font-extrabold text-xs text-[#1E2024] dark:text-white block">
+                  Motor Assistance
+                </span>
+                <span className="text-[11px] text-slate-500 max-w-md block pt-0.5">
+                  Helps with steady selection and reduced accidental actions.
+                </span>
+              </div>
+
+              {/* Toggle Switch */}
+              <button
+                onClick={() => setMotorAssistance(!motorAssistance)}
+                className={`w-12 h-6.5 rounded-full transition-colors relative flex items-center p-0.5 cursor-pointer ${
+                  motorAssistance ? 'bg-[#1E3A2F]' : 'bg-slate-300 dark:bg-slate-700'
+                }`}
+              >
+                <div
+                  className={`w-5.5 h-5.5 rounded-full bg-white shadow-md transform transition-transform ${
+                    motorAssistance ? 'translate-x-5.5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* CTA Continue */}
+          <div className="pt-4 space-y-3">
+            <button
+              onClick={handleContinue}
+              className="w-full py-3.5 rounded-2xl bg-[#1E3A2F] hover:bg-[#25493B] text-white font-extrabold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01]"
+            >
+              <span>Continue</span>
+              <ArrowRight className="w-4 h-4 text-emerald-400" />
+            </button>
+
+            <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
+              <Lock className="w-3.5 h-3.5" />
+              <span>Your preferences can be changed anytime.</span>
+            </div>
+          </div>
+
+        </main>
+
       </div>
 
     </div>
