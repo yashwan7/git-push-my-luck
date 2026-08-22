@@ -65,10 +65,6 @@ export function Navbar() {
 
   const t = (key: string, fallback?: string) => getTranslation(profile.language, key, fallback);
 
-  const navLinks = [
-    { href: '/', label: t('home', 'Home') },
-  ];
-
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 dark:border-white/10 bg-white/90 dark:bg-[#18191D]/90 backdrop-blur-md transition-all shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -76,7 +72,7 @@ export function Navbar() {
           
           {/* Brand Logo & Name */}
           <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-xl px-1 py-1">
+            <Link href="/" className="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-xl px-1 py-1" title="ANUKOOL Home">
               <div className="w-9 h-9 rounded-xl bg-[#1E3A2F] text-white flex items-center justify-center font-black text-lg tracking-tighter shadow-sm group-hover:scale-105 transition-transform">
                 A
               </div>
@@ -85,23 +81,6 @@ export function Navbar() {
               </span>
             </Link>
           </div>
-
-          {/* Clean Desktop Navigation (Only Home as requested) */}
-          <nav className="hidden sm:flex items-center gap-1" aria-label="Main Navigation">
-            <Link
-              href="/"
-              className={`px-3.5 py-1.5 rounded-xl font-bold text-xs transition-all relative ${
-                pathname === '/'
-                  ? 'text-[#1E3A2F] dark:text-emerald-400 font-black'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-[#1E2024] dark:hover:text-white hover:bg-slate-100/60 dark:hover:bg-white/5'
-              }`}
-            >
-              <span>{t('home', 'Home')}</span>
-              {pathname === '/' && (
-                <span className="absolute bottom-0 left-3.5 right-3.5 h-[2.5px] bg-[#1E3A2F] dark:bg-emerald-400 rounded-full" />
-              )}
-            </Link>
-          </nav>
 
           {/* Clean Right Controls (Theme, Active Profile, Language, User Avatar) */}
           <div className="flex items-center gap-2 sm:gap-2.5">
@@ -340,17 +319,7 @@ export function Navbar() {
             <span className="text-acc-xs font-bold text-[var(--text-primary)]">Theme</span>
             <ThemeSelector variant="full" />
           </div>
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-md font-medium text-acc-base text-[var(--text-primary)] hover:bg-black/5"
-            >
-              {link.label}
-            </Link>
-          ))}
-          <div className="pt-2 border-t border-[var(--border-color)]">
+          <div className="pt-2">
             <label className="block text-acc-xs font-bold mb-1">{t('language')}</label>
             <select
               value={profile.language}
