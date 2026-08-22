@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 
 import { ThemeSelector } from '@/components/ui/ThemeSelector';
+import { AnukoolLogo } from '@/components/ui/AnukoolLogo';
 import { TransactionLimitSettingsModal } from '@/components/banking/TransactionLimitSettingsModal';
 import { DocumentAssistModal } from '@/components/anukool/DocumentAssistModal';
 import { Camera } from 'lucide-react';
@@ -70,16 +71,9 @@ export function Navbar() {
       <div className="w-full px-4 sm:px-6 md:px-8 lg:px-10">
         <div className="flex items-center justify-between h-16 sm:h-18">
           
-          {/* Brand Logo & Name */}
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-xl px-1 py-1" title="ANUKOOL Home">
-              <div className="w-9 h-9 rounded-xl bg-[#1E3A2F] text-white flex items-center justify-center font-black text-lg tracking-tighter shadow-sm group-hover:scale-105 transition-transform">
-                A
-              </div>
-              <span className="font-extrabold text-lg sm:text-xl tracking-tight text-[#1E2024] dark:text-white">
-                {t('appName', 'ANUKOOL')}
-              </span>
-            </Link>
+          {/* Elegant Brand Logo Mark & Name */}
+          <div className="flex items-center">
+            <AnukoolLogo size="md" />
           </div>
 
           {/* Clean Right Controls (Theme, Active Profile, Language, User Avatar) */}
