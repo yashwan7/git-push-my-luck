@@ -484,7 +484,7 @@ export default function ServicesPage() {
       <div className="w-full bg-white dark:bg-[#18191D] rounded-[36px] p-4 sm:p-6 md:p-7 flex gap-5 sm:gap-6 shadow-sm border border-slate-200/80 dark:border-white/10">
         
         {/* ═══════════════════════════════════════════════════════════
-            LEFT DARK SIDEBAR PILL (EXACT ICONS AS SCREENSHOT)
+            LEFT DARK SIDEBAR PILL (CLEAN: HOME, SERVICES, BANKING, SUPPORT)
            ═══════════════════════════════════════════════════════════ */}
         <aside className="hidden lg:flex flex-col justify-between w-16 py-6 rounded-[28px] bg-[#1A3328] dark:bg-[#13241D] text-white shrink-0 items-center shadow-lg border border-emerald-900/30">
           
@@ -492,60 +492,37 @@ export default function ServicesPage() {
           <div className="flex flex-col items-center gap-4">
             <Link
               href="/"
-              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all"
               title="Home Dashboard"
             >
               <Home className="w-5 h-5" />
             </Link>
 
             {/* Active Services Icon Pill */}
-            <button
-              onClick={() => setActiveSidebarTab('services')}
+            <Link
+              href="/services"
               className="w-11 h-11 rounded-2xl bg-[#2D5A47] text-white shadow-md flex items-center justify-center transition-all scale-105 border border-emerald-400/30"
               title="Services Catalog"
             >
               <Layers className="w-5 h-5 text-emerald-300" />
-            </button>
-
-            <Link
-              href="/audit"
-              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center transition-colors"
-              title="Activity & Audit"
-            >
-              <Activity className="w-5 h-5" />
             </Link>
 
+            {/* Banking */}
             <Link
-              href="/provider"
-              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center transition-colors"
-              title="My Access"
+              href="/banking"
+              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all"
+              title="Banking & Payments"
             >
-              <KeyRound className="w-5 h-5" />
+              <Wallet className="w-5 h-5" />
             </Link>
-
-            <button
-              onClick={() => router.push('/banking')}
-              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center transition-colors"
-              title="History"
-            >
-              <History className="w-5 h-5" />
-            </button>
-
-            <button
-              onClick={() => router.push('/banking')}
-              className="w-10 h-10 rounded-2xl text-emerald-200/60 hover:text-white flex items-center justify-center transition-colors"
-              title="Settings"
-            >
-              <Settings className="w-5 h-5" />
-            </button>
           </div>
 
-          {/* Bottom Support */}
+          {/* Bottom Support / Emergency */}
           <div className="flex flex-col items-center gap-4">
             <Link
               href="/emergency"
               className="flex flex-col items-center gap-1 text-emerald-200/60 hover:text-white transition-colors"
-              title="Support"
+              title="Emergency & Support"
             >
               <Headphones className="w-5 h-5" />
               <span className="text-[9px] font-bold">Support</span>

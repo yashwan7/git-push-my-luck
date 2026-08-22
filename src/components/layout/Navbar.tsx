@@ -67,10 +67,6 @@ export function Navbar() {
 
   const navLinks = [
     { href: '/', label: t('home', 'Home') },
-    { href: '/banking', label: 'Banking (Demo)' },
-    { href: '/services', label: t('services', 'Services') },
-    { href: '/audit', label: t('auditService', 'Audit a Service') },
-    { href: '/provider', label: t('providerMode', 'Provider Mode') },
   ];
 
   return (
@@ -80,74 +76,50 @@ export function Navbar() {
           
           {/* Brand Logo & Name */}
           <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-xl px-1.5 py-1">
-              <div className="w-10 h-10 rounded-xl bg-[#1E3A2F] text-white flex items-center justify-center font-black text-xl tracking-tighter shadow-sm group-hover:scale-105 transition-transform">
+            <Link href="/" className="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-xl px-1 py-1">
+              <div className="w-9 h-9 rounded-xl bg-[#1E3A2F] text-white flex items-center justify-center font-black text-lg tracking-tighter shadow-sm group-hover:scale-105 transition-transform">
                 A
               </div>
-              <div className="flex flex-col">
-                <span className="font-extrabold text-lg tracking-tight text-[#1E2024] dark:text-white flex items-center gap-2">
-                  {t('appName', 'ANUKOOL')}
-                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                    {t('adaptiveBadge', 'ADAPTIVE')}
-                  </span>
-                </span>
-                <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 hidden sm:inline -mt-0.5">
-                  {t('digitalInclusionLayer', 'Digital Inclusion Layer')}
-                </span>
-              </div>
+              <span className="font-extrabold text-lg sm:text-xl tracking-tight text-[#1E2024] dark:text-white">
+                {t('appName', 'ANUKOOL')}
+              </span>
             </Link>
           </div>
 
-          {/* Clean Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2" aria-label="Main Navigation">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-3.5 py-1.5 rounded-xl font-semibold text-xs transition-all relative ${
-                    isActive
-                      ? 'text-[#1E3A2F] dark:text-emerald-400 font-extrabold'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-[#1E2024] dark:hover:text-white hover:bg-slate-100/60 dark:hover:bg-white/5'
-                  }`}
-                >
-                  <span>{link.label}</span>
-                  {isActive && (
-                    <span className="absolute bottom-0 left-3.5 right-3.5 h-[2.5px] bg-[#1E3A2F] dark:bg-emerald-400 rounded-full" />
-                  )}
-                </Link>
-              );
-            })}
+          {/* Clean Desktop Navigation (Only Home as requested) */}
+          <nav className="hidden sm:flex items-center gap-1" aria-label="Main Navigation">
+            <Link
+              href="/"
+              className={`px-3.5 py-1.5 rounded-xl font-bold text-xs transition-all relative ${
+                pathname === '/'
+                  ? 'text-[#1E3A2F] dark:text-emerald-400 font-black'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-[#1E2024] dark:hover:text-white hover:bg-slate-100/60 dark:hover:bg-white/5'
+              }`}
+            >
+              <span>{t('home', 'Home')}</span>
+              {pathname === '/' && (
+                <span className="absolute bottom-0 left-3.5 right-3.5 h-[2.5px] bg-[#1E3A2F] dark:bg-emerald-400 rounded-full" />
+              )}
+            </Link>
           </nav>
 
-          {/* Clean Right Controls (Theme, Profile, Language, User) */}
+          {/* Clean Right Controls (Theme, Active Profile, Language, User Avatar) */}
           <div className="flex items-center gap-2 sm:gap-2.5">
 
-            {/* Flagship: Document Snap-to-Form Trigger */}
-            <button
-              onClick={() => setIsDocumentAssistOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 text-xs font-bold transition-all shadow-2xs"
-              title="Snap Document to Auto-Fill (Anukool)"
-            >
-              <Camera className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span className="hidden sm:inline">Document Assist</span>
-            </button>
-
-            {/* Compact Minimal Theme Selector */}
-            <div className="hidden sm:block">
+            {/* Dark / Light Theme Selector */}
+            <div className="block">
               <ThemeSelector variant="compact" />
             </div>
 
-            {/* Active Profile Pill */}
+            {/* Active Profile Pill & Persona Change Feature */}
             <button
               onClick={() => setIsQuickPanelOpen(!isQuickPanelOpen)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-[#1E2024] dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10 text-xs font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              aria-label="Open Quick Accessibility Settings"
-              title="Active Accessibility Profile"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-[#1E2024] dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10 text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-2xs cursor-pointer"
+              aria-label="Open Accessibility Profile Settings"
+              title="Active Accessibility Profile (Click to change)"
             >
               <Sliders className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span className="hidden sm:inline">
+              <span>
                 {activePersonaName ? activePersonaName : t('activeProfile', 'Active Profile')}
               </span>
             </button>
@@ -157,7 +129,7 @@ export function Navbar() {
               <select
                 value={profile.language}
                 onChange={(e) => updateProfileKey('language', e.target.value as SupportedLanguage)}
-                className="appearance-none pl-3 pr-7 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-[#1E2024] dark:text-slate-200 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+                className="appearance-none pl-3 pr-7 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-[#1E2024] dark:text-slate-200 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer shadow-2xs"
                 aria-label="Select Language"
               >
                 {Object.entries(LANGUAGE_NAMES).map(([code, lang]) => (
@@ -179,24 +151,27 @@ export function Navbar() {
               <Bell className="w-4 h-4" />
             </Link>
 
-            {/* Clean User Profile Avatar / Sign In */}
+            {/* Clean User Profile Avatar & Sign In / Sign Out */}
             {isAuthenticated && authProfile ? (
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 pl-1 border-l border-slate-200 dark:border-white/10">
                 <div 
-                  className="flex items-center gap-1.5 p-1 rounded-full border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5"
+                  className="flex items-center gap-2 px-2 py-1 rounded-full border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 shadow-2xs"
                   title={authProfile.email}
                 >
                   {authProfile.avatarUrl ? (
                     <img 
                       src={authProfile.avatarUrl} 
                       alt={authProfile.fullName || 'User'} 
-                      className="w-7 h-7 rounded-full object-cover" 
+                      className="w-6 h-6 rounded-full object-cover" 
                     />
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-[#1E3A2F] text-white flex items-center justify-center font-bold text-xs">
+                    <div className="w-6 h-6 rounded-full bg-[#1E3A2F] text-white flex items-center justify-center font-bold text-[11px]">
                       {(authProfile.fullName || 'U').charAt(0).toUpperCase()}
                     </div>
                   )}
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-200 hidden xl:inline max-w-[90px] truncate">
+                    {authProfile.fullName || 'User'}
+                  </span>
                 </div>
 
                 <button
@@ -211,7 +186,7 @@ export function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1E3A2F] hover:bg-[#25493B] text-white font-bold text-xs transition-all shadow-xs focus:ring-2 focus:ring-emerald-500"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#1E3A2F] hover:bg-[#25493B] text-white font-bold text-xs transition-all shadow-xs focus:ring-2 focus:ring-emerald-500"
               >
                 <LogIn className="w-3.5 h-3.5 text-emerald-300" />
                 <span>Sign In</span>
@@ -221,7 +196,7 @@ export function Navbar() {
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="sm:hidden p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               aria-label="Toggle Navigation Menu"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
