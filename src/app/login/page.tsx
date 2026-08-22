@@ -10,7 +10,7 @@ import { Sparkles, AlertCircle, ArrowLeft, ShieldCheck, Loader2 } from 'lucide-r
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { signInWithGoogle, signInWithDemo, isAuthenticated, isLoading: authLoading, isSupabaseConfigured } = useAuth();
+  const { signInWithGoogle, isAuthenticated, isLoading: authLoading } = useAuth();
 
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -20,11 +20,15 @@ function LoginContent() {
 
   useEffect(() => {
     if (urlError) {
-      setErrorMessage(urlError);
+      if (urlError === 'auth_callback_failed') {
+        setErrorMessage('Authentication session exchange failed. Please try signing in again.');
+      } else {
+        setErrorMessage(urlError);
+      }
     }
   }, [urlError]);
 
-  // If already authenticated, automatically redirect
+  // If already authenticated, redirect to target dashboard
   useEffect(() => {
     if (isAuthenticated && !authLoading) {
       router.replace(redirectUrl);
@@ -38,21 +42,11 @@ function LoginContent() {
     try {
       const res = await signInWithGoogle(redirectUrl);
       if (res?.error) {
-        if (res.isPlaceholder) {
-          // If Supabase keys aren't configured yet, smoothly log in as Ramesh Kumar Demo
-          await signInWithDemo({
-            id: 'demo_google_ramesh',
-            fullName: 'Ramesh Kumar',
-            email: 'ramesh.kumar@gmail.com',
-            avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-          }, redirectUrl);
-          return;
-        }
-        setErrorMessage(res.error.message || "We couldn't complete your sign-in. Please try again.");
+        setErrorMessage(res.error.message || 'We could not initiate Google sign-in. Please try again.');
         setIsSigningIn(false);
       }
     } catch (err: any) {
-      setErrorMessage("We couldn't complete your sign-in. Please try again.");
+      setErrorMessage('We could not complete your sign-in. Please try again.');
       setIsSigningIn(false);
     }
   };
@@ -61,7 +55,7 @@ function LoginContent() {
     <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 -my-6 sm:-my-10 min-h-[calc(100vh-60px)] flex flex-col justify-between overflow-hidden bg-black text-white font-sans">
       
       {/* ─────────────────────────────────────────────────────────────
-          EXISTING NAYAN HERO BACKGROUND (VIDEO + SCRIM + DOT GRID)
+          NAYAN HERO BACKGROUND (VIDEO + SCRIM + DOT GRID)
          ───────────────────────────────────────────────────────────── */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <video
@@ -98,7 +92,7 @@ function LoginContent() {
 
         <div className="flex items-center gap-2 text-xs font-semibold text-zinc-300">
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span className="hidden sm:inline">Secure OAuth 2.0 Access</span>
+          <span className="hidden sm:inline">Secure Supabase Google OAuth</span>
         </div>
       </header>
 
@@ -132,7 +126,7 @@ function LoginContent() {
               Welcome back
             </h1>
             <p className="text-xs sm:text-sm text-zinc-300 font-normal leading-relaxed max-w-sm mx-auto">
-              Continue to NAYAN and access your personalized digital accessibility experience.
+              Sign in with your Google account to access your personalized NAYAN accessibility profile.
             </p>
           </div>
 
@@ -156,7 +150,7 @@ function LoginContent() {
             <button
               onClick={handleGoogleSignIn}
               disabled={isSigningIn || authLoading}
-              className="w-full h-14 rounded-2xl bg-white hover:bg-zinc-100 active:scale-[0.99] text-zinc-950 font-bold text-sm sm:text-base flex items-center justify-center gap-3 transition-all duration-200 shadow-xl disabled:opacity-75 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-blue-400"
+              className="w-full h-14 rounded-2xl bg-white hover:bg-zinc-100 active:scale-[0.99] text-zinc-950 font-bold text-sm sm:text-base flex items-center justify-center gap-3 transition-all duration-200 shadow-xl disabled:opacity-75 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-blue-400 cursor-pointer"
               aria-label="Continue with Google authentication"
             >
               {isSigningIn ? (
@@ -191,20 +185,17 @@ function LoginContent() {
             </button>
           </div>
 
-          {/* New to NAYAN notice */}
+          {/* Security & Authentication Info */}
           <div className="pt-2 border-t border-white/10 text-center">
             <p className="text-xs text-zinc-400 font-medium">
-              New to NAYAN?{' '}
-              <span className="text-zinc-200">
-                Sign in with Google to automatically create your accessibility profile.
-              </span>
+              Protected by Supabase SSR Authentication &bull; Google OAuth 2.0
             </p>
           </div>
 
           {/* Privacy & Trust reassurance */}
           <div className="flex items-center justify-center gap-1.5 text-[11px] text-zinc-400">
             <Sparkles className="w-3 h-3 text-yellow-300" />
-            <span>Adapting digital experiences to human needs</span>
+            <span>Universal Digital Accessibility & Inclusion</span>
           </div>
 
         </div>

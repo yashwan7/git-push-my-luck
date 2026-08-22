@@ -92,7 +92,7 @@ export default function AdaptiveBankingPage() {
   const lang = profile.language;
 
   // Extract User Name
-  const userDisplayName = authProfile?.fullName || user?.user_metadata?.full_name || 'Alif Reza';
+  const userDisplayName = authProfile?.fullName || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'Account User';
   const userInitial = userDisplayName.charAt(0).toUpperCase();
 
   useEffect(() => {

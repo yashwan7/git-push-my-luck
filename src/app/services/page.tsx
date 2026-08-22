@@ -77,8 +77,8 @@ export default function ServicesPage() {
   const t = (key: string, fallback?: string) => getTranslation(lang, key, fallback);
 
   // Dynamic User Greeting
-  const userDisplayName = authProfile?.fullName || user?.user_metadata?.full_name || 'Yashwanth';
-  const firstName = userDisplayName.split(' ')[0] || 'there';
+  const userDisplayName = authProfile?.fullName || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
+  const firstName = userDisplayName.split(' ')[0] || 'User';
   const userInitial = userDisplayName.charAt(0).toUpperCase();
 
   // Time of day calculation
