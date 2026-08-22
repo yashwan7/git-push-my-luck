@@ -10,7 +10,7 @@ import { Sparkles, AlertCircle, ArrowLeft, ShieldCheck, Loader2 } from 'lucide-r
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { signInWithGoogle, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { signInWithGoogle, skipAuth, isAuthenticated, isLoading: authLoading } = useAuth();
 
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -183,19 +183,38 @@ function LoginContent() {
                 </>
               )}
             </button>
+
+            {/* OR DIVIDER */}
+            <div className="flex items-center gap-3 py-1 text-xs text-zinc-400">
+              <div className="flex-1 h-px bg-white/15" />
+              <span className="font-semibold uppercase tracking-wider text-[10px] text-zinc-400">or</span>
+              <div className="flex-1 h-px bg-white/15" />
+            </div>
+
+            {/* SKIP LOGIN & CONTINUE AS GUEST BUTTON */}
+            <button
+              onClick={() => {
+                skipAuth();
+                router.replace(redirectUrl);
+              }}
+              className="w-full h-13 rounded-2xl bg-white/10 hover:bg-white/15 active:scale-[0.99] border border-white/20 hover:border-white/35 text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 transition-all duration-200 shadow-sm focus:outline-none focus:ring-4 focus:ring-emerald-400 cursor-pointer group"
+            >
+              <span>Skip Login &amp; Continue as Guest</span>
+              <span className="text-emerald-400 group-hover:translate-x-1 transition-transform">→</span>
+            </button>
           </div>
 
           {/* Security & Authentication Info */}
           <div className="pt-2 border-t border-white/10 text-center">
             <p className="text-xs text-zinc-400 font-medium">
-              Protected by Supabase SSR Authentication &bull; Google OAuth 2.0
+              Sign in once to save your profile across devices &bull; Or skip to explore instantly
             </p>
           </div>
 
           {/* Privacy & Trust reassurance */}
           <div className="flex items-center justify-center gap-1.5 text-[11px] text-zinc-400">
             <Sparkles className="w-3 h-3 text-yellow-300" />
-            <span>Universal Digital Accessibility & Inclusion</span>
+            <span>Universal Digital Accessibility &amp; Inclusion</span>
           </div>
 
         </div>

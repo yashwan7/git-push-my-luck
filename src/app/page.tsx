@@ -27,12 +27,16 @@ import {
   Navigation
 } from 'lucide-react';
 import { useAccessibility } from '@/context/AccessibilityContext';
+import { useAuth } from '@/context/AuthContext';
 import { getTranslation, LANGUAGE_NAMES } from '@/lib/multilingualEngine';
 import { SupportedLanguage } from '@/types';
 
 export default function LandingPage() {
   const router = useRouter();
   const { profile, resolvedTheme, setThemeMode, updateProfileKey } = useAccessibility();
+  const { isAuthenticated } = useAuth();
+
+  const getStartedHref = isAuthenticated ? '/services' : '/login?redirect=/services';
 
   const lang = profile.language;
 
@@ -167,7 +171,7 @@ export default function LandingPage() {
 
             {/* Get Started Pill */}
             <Link
-              href="/onboarding"
+              href={getStartedHref}
               className="px-4.5 py-2 rounded-full bg-[#134233] hover:bg-[#1a5542] text-white font-extrabold text-xs tracking-wide shadow-sm transition-all hover:scale-105"
             >
               {t('getStarted', 'Get Started →')}
@@ -210,7 +214,7 @@ export default function LandingPage() {
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <Link
-                href="/onboarding"
+                href={getStartedHref}
                 className="px-6 py-3 rounded-full bg-[#134233] hover:bg-[#1a5542] text-white font-extrabold text-xs sm:text-sm shadow-md flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
               >
                 <span>{t('getStarted', 'Get Started →')}</span>

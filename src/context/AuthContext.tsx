@@ -18,7 +18,9 @@ interface AuthContextType {
   isLoading: boolean;
   signInWithGoogle: (redirectTo?: string) => Promise<{ error: AuthError | Error | null }>;
   signOut: () => Promise<void>;
+  skipAuth: () => void;
   isAuthenticated: boolean;
+  isGuest: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,6 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<AuthUserProfile | null>(null);
+  const [isGuest, setIsGuest] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const extractProfile = (userObj: User | null): AuthUserProfile | null => {
@@ -48,6 +51,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let isMounted = true;
 
+    // Check guest skip state from localStorage
+    if (typeof window !== 'undefined') {
+      const skipped = localStorage.getItem('anukool_auth_skipped') === 'true';
+      if (skipped) {
+        setIsGuest(true);
+        setProfile({
+          id: 'guest-citizen',
+          fullName: 'Guest Citizen',
+          email: 'guest@anukool.local',
+        });
+      }
+    }
+
     // 1. Initial Session Retrieval
     supabase.auth.getSession()
       .then(({ data: { session: currentSession } }) => {
@@ -56,10 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setSession(currentSession);
           setUser(currentSession.user);
           setProfile(extractProfile(currentSession.user));
-        } else {
-          setSession(null);
-          setUser(null);
-          setProfile(null);
+          setIsGuest(false);
         }
       })
       .catch((err) => {
@@ -79,10 +92,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setSession(updatedSession);
           setUser(updatedSession.user);
           setProfile(extractProfile(updatedSession.user));
+          setIsGuest(false);
         } else {
           setSession(null);
           setUser(null);
-          setProfile(null);
+          // Don't wipe guest profile if guest mode was active
+          const skipped = typeof window !== 'undefined' && localStorage.getItem('anukool_auth_skipped') === 'true';
+          if (!skipped) {
+            setProfile(null);
+            setIsGuest(false);
+          }
         }
         setIsLoading(false);
       }
@@ -93,6 +112,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       subscription.unsubscribe();
     };
   }, []);
+
+  const skipAuth = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('anukool_auth_skipped', 'true');
+    }
+    setIsGuest(true);
+    setProfile({
+      id: 'guest-citizen',
+      fullName: 'Guest Citizen',
+      email: 'guest@anukool.local',
+    });
+  };
 
   const signInWithGoogle = async (redirectTo?: string) => {
     try {
@@ -125,6 +156,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('anukool_auth_skipped');
+      }
+      setIsGuest(false);
       await supabase.auth.signOut();
       setUser(null);
       setSession(null);
@@ -146,7 +181,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         signInWithGoogle,
         signOut,
-        isAuthenticated: !!user,
+        skipAuth,
+        isAuthenticated: !!user || isGuest,
+        isGuest,
       }}
     >
       {children}
