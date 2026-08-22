@@ -517,118 +517,71 @@ export default function ServicesPage() {
               <Layers className="w-5 h-5 text-emerald-300" />
             </Link>
 
-            {/* Banking Sub-features Attached Menu Trigger */}
-            <div className="relative">
-              <button
-                onClick={() => setIsBankingSubmenuOpen(!isBankingSubmenuOpen)}
-                className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all cursor-pointer relative ${
-                  isBankingSubmenuOpen 
-                    ? 'bg-[#2D5A47] text-white shadow-md ring-2 ring-emerald-400/40 scale-105' 
-                    : 'text-emerald-200/60 hover:text-white hover:bg-white/10'
-                }`}
-                title="Banking Sub-features"
-              >
-                <Wallet className="w-5 h-5 text-emerald-300" />
-                {isBankingSubmenuOpen && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 absolute top-1.5 right-1.5" />
-                )}
-              </button>
-
-              {/* 🌟 ATTACHED BANKING SUB-FEATURES FLYOUT (Anchored directly to the Bank Logo) */}
+            {/* 🏦 Banking Main Icon Button */}
+            <button
+              onClick={() => setIsBankingSubmenuOpen(!isBankingSubmenuOpen)}
+              className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all cursor-pointer relative ${
+                isBankingSubmenuOpen 
+                  ? 'bg-[#2D5A47] text-white shadow-md ring-2 ring-emerald-400/40 scale-105' 
+                  : 'text-emerald-200/60 hover:text-white hover:bg-white/10'
+              }`}
+              title={isBankingSubmenuOpen ? "Collapse Banking Sub-features" : "Expand Banking Sub-features"}
+            >
+              <Wallet className="w-5 h-5 text-emerald-300" />
               {isBankingSubmenuOpen && (
-                <>
-                  {/* Invisible backdrop click-catcher */}
-                  <div 
-                    className="fixed inset-0 z-40 bg-transparent"
-                    onClick={() => setIsBankingSubmenuOpen(false)}
-                  />
-
-                  {/* Attached Sub-Menu Box */}
-                  <div className="absolute left-14 -top-6 z-50 w-64 bg-[#11241C] dark:bg-[#0C1914] border border-emerald-500/40 rounded-3xl p-3.5 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-left-2 duration-150 text-white space-y-2">
-                    
-                    {/* Header info */}
-                    <div className="px-2.5 py-2 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
-                          ₹
-                        </div>
-                        <div>
-                          <span className="text-[11px] font-bold block text-emerald-100">State Bank DBT</span>
-                          <span className="text-[10px] text-emerald-300/70 font-mono">₹42,500.00</span>
-                        </div>
-                      </div>
-                      <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        Active
-                      </span>
-                    </div>
-
-                    {/* Sub-feature buttons */}
-                    <div className="space-y-1 pt-1">
-                      <Link
-                        href="/banking"
-                        onClick={() => setIsBankingSubmenuOpen(false)}
-                        className="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-emerald-100 hover:text-white text-xs font-bold flex items-center gap-2.5 transition-colors group"
-                      >
-                        <div className="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <Send className="w-3.5 h-3.5" />
-                        </div>
-                        <span>Send Money (UPI)</span>
-                      </Link>
-
-                      <Link
-                        href="/banking"
-                        onClick={() => setIsBankingSubmenuOpen(false)}
-                        className="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-emerald-100 hover:text-white text-xs font-bold flex items-center gap-2.5 transition-colors group"
-                      >
-                        <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <QrCode className="w-3.5 h-3.5" />
-                        </div>
-                        <span>Receive / QR Code</span>
-                      </Link>
-
-                      <Link
-                        href="/services/electricity-bill"
-                        onClick={() => setIsBankingSubmenuOpen(false)}
-                        className="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-emerald-100 hover:text-white text-xs font-bold flex items-center gap-2.5 transition-colors group"
-                      >
-                        <div className="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <Receipt className="w-3.5 h-3.5" />
-                        </div>
-                        <span>Pay Utility Bills</span>
-                      </Link>
-
-                      <Link
-                        href="/banking"
-                        onClick={() => setIsBankingSubmenuOpen(false)}
-                        className="w-full px-3 py-2 rounded-xl hover:bg-white/10 text-emerald-100 hover:text-white text-xs font-bold flex items-center gap-2.5 transition-colors group"
-                      >
-                        <div className="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <History className="w-3.5 h-3.5" />
-                        </div>
-                        <span>Passbook & History</span>
-                      </Link>
-                    </div>
-
-                    {/* Bottom Open Full Portal Link */}
-                    <div className="pt-1.5 border-t border-white/10">
-                      <Link
-                        href="/banking"
-                        onClick={() => setIsBankingSubmenuOpen(false)}
-                        className="w-full py-2 px-3 rounded-xl bg-[#2D5A47] hover:bg-[#39725a] text-white text-[11px] font-extrabold flex items-center justify-between transition-all"
-                      >
-                        <span>Open Full Banking</span>
-                        <ChevronRight className="w-3.5 h-3.5 text-emerald-300" />
-                      </Link>
-                    </div>
-
-                  </div>
-                </>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 absolute top-1.5 right-1.5 ring-2 ring-[#1A3328]" />
               )}
+            </button>
+
+            {/* 🔽 IN-SIDEBAR VERTICAL EXPANSION: 4 Attached Sub-Features (Rolled down directly under Bank Logo) */}
+            <div className={`flex flex-col items-center gap-2 overflow-hidden transition-all duration-300 ease-in-out ${
+              isBankingSubmenuOpen ? 'max-h-60 opacity-100 py-1' : 'max-h-0 opacity-0 py-0 pointer-events-none'
+            }`}>
+              
+              {/* 1. Send Money */}
+              <Link
+                href="/banking"
+                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-[#2563EB] text-emerald-200 hover:text-white flex items-center justify-center transition-all shadow-xs group"
+                title="Send Money (UPI Transfer)"
+              >
+                <Send className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+              </Link>
+
+              {/* 2. Receive QR Code */}
+              <Link
+                href="/banking"
+                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-[#059669] text-emerald-200 hover:text-white flex items-center justify-center transition-all shadow-xs group"
+                title="Receive / Show QR Code"
+              >
+                <QrCode className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+              </Link>
+
+              {/* 3. Pay Bills */}
+              <Link
+                href="/services/electricity-bill"
+                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-[#D97706] text-emerald-200 hover:text-white flex items-center justify-center transition-all shadow-xs group"
+                title="Pay Electricity & Utility Bills"
+              >
+                <Receipt className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+              </Link>
+
+              {/* 4. Passbook / History */}
+              <Link
+                href="/banking"
+                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-[#7C3AED] text-emerald-200 hover:text-white flex items-center justify-center transition-all shadow-xs group"
+                title="Passbook & Recent Transactions"
+              >
+                <History className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+              </Link>
+
             </div>
 
-            {/* Dedicated Document Assist Slot */}
+            {/* 📷 Dedicated Document Assist Slot (Smoothly shifts down when Banking expands) */}
             <button
-              onClick={() => setIsDocAssistModalOpen(true)}
+              onClick={() => {
+                setIsBankingSubmenuOpen(false); // Roll back banking on selecting other option
+                setIsDocAssistModalOpen(true);
+              }}
               className="w-10 h-10 rounded-2xl text-emerald-300 hover:text-white flex items-center justify-center hover:bg-white/10 transition-all cursor-pointer relative group"
               title="Document Snap-to-Form Assist"
             >
@@ -641,6 +594,7 @@ export default function ServicesPage() {
           <div className="flex flex-col items-center gap-4">
             <Link
               href="/emergency"
+              onClick={() => setIsBankingSubmenuOpen(false)} // Roll back banking on selecting other option
               className="flex flex-col items-center gap-1 text-emerald-200/60 hover:text-white transition-colors"
               title="Emergency & Support"
             >
