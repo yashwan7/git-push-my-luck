@@ -11,6 +11,7 @@ import { MOCK_SERVICES } from '@/lib/servicesData';
 import { ServiceDefinition } from '@/types';
 import { ServiceDetailModal } from '@/components/services/ServiceDetailModal';
 import { DocumentAssistModal } from '@/components/anukool/DocumentAssistModal';
+import { AnukoolHeroAnimation } from '@/components/anukool/AnukoolHeroAnimation';
 import { GoogleMapEmergency } from '@/components/emergency/GoogleMapEmergency';
 import { ChangeEmergencyModal, EMERGENCY_PRESETS, EmergencyCase } from '@/components/emergency/ChangeEmergencyModal';
 import { DigitalSafetySection } from '@/components/safety/DigitalSafetySection';
@@ -643,14 +644,15 @@ export default function ServicesPage() {
                 </div>
               </div>
 
-              {/* Right Side: Senior Citizen Photo (1:1 Matching User Screenshot) */}
-              <div className="relative w-full md:w-72 lg:w-80 h-52 sm:h-60 shrink-0 rounded-[26px] overflow-hidden shadow-sm border border-slate-200/80 dark:border-white/10 bg-slate-100 dark:bg-zinc-800">
-                <img
-                  src="/images/senior-hero.jpg"
-                  alt="Senior citizen using smartphone with ANUKOOL digital assistance"
-                  className="w-full h-full object-cover object-center hover:scale-102 transition-transform duration-300"
-                />
-              </div>
+              {/* Right Side: Dynamic ANUKOOL Multi-Modal Animated Hero Visualizer */}
+              <AnukoolHeroAnimation
+                userName={firstName}
+                onOpenDocAssist={() => setIsDocAssistModalOpen(true)}
+                onOpenVoiceAssist={() => {
+                  setIsAssistantModalOpen(true);
+                  speakText(`Hello ${firstName}, ANUKOOL Voice AI is listening.`);
+                }}
+              />
 
             </div>
 

@@ -27,7 +27,7 @@ export const SAMPLE_DOCUMENTS: Record<string, { title: string; type: ExtractedDo
     title: "Aadhaar Card (Senior Citizen)",
     type: "aadhaar",
     description: "Ramesh Kumar Gowda — Pension & Healthcare verification",
-    previewUrl: "/images/senior-hero.jpg",
+    previewUrl: "",
     data: {
       documentType: "aadhaar",
       documentName: "Government of India - Unique Identification Authority",
@@ -58,7 +58,7 @@ export const SAMPLE_DOCUMENTS: Record<string, { title: string; type: ExtractedDo
     title: "12th Board Marksheet (Scholarship)",
     type: "marksheet",
     description: "Ananya Sharma — 94.2% CBSE Merit Candidate",
-    previewUrl: "/images/senior-hero.jpg",
+    previewUrl: "",
     data: {
       documentType: "marksheet",
       documentName: "Central Board of Secondary Education - Senior School Certificate",
@@ -91,7 +91,7 @@ export const SAMPLE_DOCUMENTS: Record<string, { title: string; type: ExtractedDo
     title: "Ration Card (BPL / Food Security)",
     type: "ration_card",
     description: "Food, Civil Supplies & Consumer Affairs Department",
-    previewUrl: "/images/senior-hero.jpg",
+    previewUrl: "",
     data: {
       documentType: "ration_card",
       documentName: "National Food Security Card (BPL/PHH)",

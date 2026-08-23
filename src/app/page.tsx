@@ -181,14 +181,65 @@ export default function LandingPage() {
           {/* Right Column: Supportive Guidance Photo + Floating Assist Cards */}
           <div className="lg:col-span-6 relative flex justify-center items-center py-4 sm:py-6 px-2">
             
-            {/* Main Photo Container */}
-            <div className="relative w-full aspect-[4/3] rounded-[30px] overflow-hidden shadow-lg border border-slate-200/80 dark:border-white/10 bg-slate-100">
-              <img
-                src="/images/guidance-hero.jpg"
-                alt="Digital counselor providing warm supportive guidance to citizen on laptop"
-                className="w-full h-full object-cover object-center"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
+            {/* Main Interactive AI Animated Canvas */}
+            <div className="relative w-full aspect-[4/3] rounded-[30px] overflow-hidden shadow-2xl border border-slate-200/80 dark:border-emerald-500/20 bg-gradient-to-br from-[#0B1E17] via-[#143226] to-[#081510] text-white p-5 sm:p-6 flex flex-col justify-between select-none">
+              {/* Glowing Background Radial Orbs */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute -top-12 -right-12 w-48 h-48 bg-emerald-500/25 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-teal-400/20 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:16px_16px] opacity-40" />
+              </div>
+
+              {/* Top Banner Status */}
+              <div className="relative z-10 flex items-center justify-between">
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-[10px] font-black uppercase text-emerald-300">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block mr-0.5" />
+                  ANUKOOL Multi-Modal AI
+                </div>
+                <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-200/80 bg-emerald-500/20 px-2.5 py-1 rounded-full border border-emerald-400/30">
+                  <Sparkles className="w-3 h-3 text-amber-400" />
+                  <span>Adaptive Engine</span>
+                </div>
+              </div>
+
+              {/* Central Glowing Voice AI Radar & Equalizer */}
+              <div className="relative z-10 flex flex-col items-center justify-center py-2">
+                <div className="relative flex items-center justify-center">
+                  <div className="w-24 h-24 rounded-full border border-emerald-400/30 animate-ping opacity-30 absolute pointer-events-none" />
+                  <div className="w-20 h-20 rounded-full border border-teal-300/40 animate-pulse absolute pointer-events-none" />
+                  
+                  {/* Central Core Sphere */}
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-400 p-0.5 shadow-[0_0_25px_rgba(16,185,129,0.5)] flex items-center justify-center">
+                    <div className="w-full h-full rounded-full bg-[#0D241B] flex items-center justify-center gap-0.5 px-2">
+                      <span className="w-1 h-3 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <span className="w-1 h-5 bg-emerald-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <span className="w-1 h-7 bg-teal-200 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      <span className="w-1 h-4 bg-emerald-300 rounded-full animate-bounce" style={{ animationDelay: '450ms' }} />
+                      <span className="w-1 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '600ms' }} />
+                    </div>
+                  </div>
+                </div>
+                
+                <p className="mt-3 text-xs font-black text-emerald-100 tracking-wide text-center">
+                  Indic Speech & Document Intelligence
+                </p>
+                <p className="text-[10px] text-emerald-300/70 font-medium text-center">
+                  Voice • OCR • Guided Workflows • 100% Accessible
+                </p>
+              </div>
+
+              {/* Bottom Quick Feature Strip */}
+              <div className="relative z-10 flex items-center justify-between text-[10px] text-slate-300 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
+                <span className="flex items-center gap-1 text-emerald-300 font-bold">
+                  <CheckCircle2 className="w-3 h-3" /> Voice-First
+                </span>
+                <span className="flex items-center gap-1 text-teal-300 font-bold">
+                  <CheckCircle2 className="w-3 h-3" /> Instant OCR
+                </span>
+                <span className="flex items-center gap-1 text-amber-300 font-bold">
+                  <CheckCircle2 className="w-3 h-3" /> Fraud Shield
+                </span>
+              </div>
             </div>
 
             {/* ── 🗣️ FLOATING CARD 1 (Top-Right): Kannada Language Card ── */}
