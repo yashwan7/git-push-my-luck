@@ -1,5 +1,6 @@
 website link : https://anukool-nu.vercel.app
 
+
 # 🌟 ANUKOOL (Adaptive Digital Accessibility & Inclusion Platform)
 
 An AI-powered, multi-modal accessibility platform designed to make digital services, banking, document reading, and emergency assistance seamlessly accessible for everyone through Indic voice interactions, cognitive simplifications, and assistive vision.
